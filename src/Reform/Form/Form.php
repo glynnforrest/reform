@@ -33,6 +33,14 @@ class Form
         $this->sendEvent(FormEvent::CREATE);
     }
 
+    /**
+     * Return an identifying token for this form.
+     */
+    public function getId()
+    {
+        return get_class($this);
+    }
+
     protected function init()
     {
         $this->addFormRow('Reform\Form\FormRow');

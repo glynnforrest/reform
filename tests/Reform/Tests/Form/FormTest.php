@@ -530,4 +530,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($f->isValid());
     }
 
+    public function testGetId()
+    {
+        $this->assertSame('Reform\Form\Form', $this->createForm('/url')->getId());
+    }
+
+
 }
