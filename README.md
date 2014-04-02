@@ -13,8 +13,8 @@ this?
 
     $form = new Form('/login');
     $form->text('username')
-    ->password('password')
-    ->submit('login');
+         ->password('password')
+         ->submit('login');
 
     echo $form;
 
