@@ -15,13 +15,13 @@ class Html
 
     public static function options($options = array())
     {
-        $text = array();
         if (!is_array($options)) {
             $type = gettype($options);
             throw new \InvalidArgumentException(
                 "Html::options() must be passed an array, $type given."
             );
         }
+        $text = array();
         foreach ($options as $key => $value) {
             //if we have numeric keys (e.g. checked), set the value as
             //the $key (e.g. checked="checked"), but only if it
