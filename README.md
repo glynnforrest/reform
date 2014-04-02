@@ -11,12 +11,12 @@ with. Unfortunately, for the most part, dealing with them
 sucks. Wouldn't it be cool if rendering a form could be as easy as
 this?
 
-$form = new Form('/login');
-$form->text('username')
-->password('password')
-->submit('login');
+    $form = new Form('/login');
+    $form->text('username')
+    ->password('password')
+    ->submit('login');
 
-echo $form;
+    echo $form;
 
 But what about handling the form submission, and what about validating
 those fields?
