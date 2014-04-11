@@ -11,10 +11,17 @@ use Reform\Validation\Rule\Url;
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class UrlTest extends \PHPUnit_Framework_TestCase
+class UrlTest extends RuleTest
 {
 
-    public function urlProvider()
+    protected $rule;
+
+    public function setup()
+    {
+        $this->rule = new Url();
+    }
+
+    public function dataProvider()
     {
         return array(
             array('http://example.com', true),
@@ -23,20 +30,6 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             array('example.com', false),
             array('www.example.com', false),
         );
-    }
-
-    /**
-     * @dataProvider urlProvider()
-     */
-    public function testUrl($email, $pass)
-    {
-        $rule = new Url();
-        $result = $this->getMock('Reform\Validation\Result');
-        if ($pass) {
-            $this->assertTrue($rule->validate($result, 'email_address', $email));
-        } else {
-            $this->assertFalse($rule->validate($result, 'email_address', $email));
-        }
     }
 
 }
