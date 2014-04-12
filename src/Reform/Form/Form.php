@@ -473,4 +473,15 @@ class Form
         }
     }
 
+    /**
+     * Enable this Form to use file uploads by adding
+     * enctype="multipart/form-data".
+     *
+     * @return Form This form instance
+     */
+    public function useFiles()
+    {
+        return $this->addOptions(array('enctype' => 'multipart/form-data'));
+    }
+
 }

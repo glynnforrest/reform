@@ -545,5 +545,16 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Reform\Form\Form', $this->createForm('/url')->getId());
     }
 
+    public function testUseFiles()
+    {
+        $f = $this->createForm('/url');
+        $this->assertSame($f, $f->useFiles());
+        $expected = '<form action="/url" method="POST" enctype="multipart/form-data">';
+        $this->assertSame($expected, $f->header());
+
+        $f->addOptions(array('class' => 'form'));
+        $expected = '<form action="/url" method="POST" enctype="multipart/form-data" class="form">';
+        $this->assertSame($expected, $f->header());
+    }
 
 }
