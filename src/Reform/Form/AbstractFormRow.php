@@ -2,7 +2,6 @@
 
 namespace Reform\Form;
 
-use Stringy\Stringy;
 use Reform\Helper\Html;
 
 /**
@@ -47,12 +46,10 @@ abstract class AbstractFormRow
      */
     protected function sensible($string)
     {
-        return ucfirst(
-            (string) Stringy::create($string)
-            ->underscored()
-            ->replace('_', ' ')
-            ->trim()
-        );
+        $string = preg_replace('`([A-Z])`', '-\1', $string);
+        $string = str_replace(array('-', '_'), ' ', $string);
+
+        return ucfirst(trim(strtolower($string)));
     }
 
     /**
@@ -209,7 +206,7 @@ abstract class AbstractFormRow
      * this FormRow does not support choices.
      *
      * @param array $choices An array of keys and values to use in
-     * option tags
+     *                       option tags
      */
     public function setChoices(array $choices)
     {
@@ -228,7 +225,7 @@ abstract class AbstractFormRow
      * this FormRow does not support choices.
      *
      * @param array $choices An array of keys and values to use in
-     * option tags
+     *                       option tags
      */
     public function addChoices(array $choices)
     {
