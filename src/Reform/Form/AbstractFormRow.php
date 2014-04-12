@@ -18,13 +18,13 @@ abstract class AbstractFormRow
     protected $value;
     //only applicable for types that support it
     protected $choices = array();
-    protected $options;
+    protected $attributes;
     protected $label;
     protected $error;
     protected $row_string = ':label:input:error';
     protected $error_string = '<small class="error">:error</small>';
 
-    public function __construct($type, $name, $value = null, $options = array())
+    public function __construct($type, $name, $value = null, $attributes = array())
     {
         if (!in_array($type, static::getSupportedTypes())) {
             throw new \InvalidArgumentException(sprintf(
@@ -36,7 +36,7 @@ abstract class AbstractFormRow
         $this->name = $name;
         $this->label = $this->sensible($name);
         $this->setValue($value);
-        $this->options = $options;
+        $this->attributes = $attributes;
     }
 
     /**
@@ -156,36 +156,36 @@ abstract class AbstractFormRow
     }
 
     /**
-     * Set the html options of the input attached to this FormRow. All
-     * previous options will be reset.
+     * Set the html attributes of the input attached to this FormRow. All
+     * previous attributes will be reset.
      *
-     * @param array $options An array of keys and values
+     * @param array $attributes An array of keys and values
      */
-    public function setOptions(array $options)
+    public function setAttributes(array $attributes)
     {
-        $this->options = $options;
+        $this->attributes = $attributes;
 
         return $this;
     }
 
     /**
-     * Add to the html options of the input attached to this FormRow.
+     * Add to the html attributes of the input attached to this FormRow.
      *
-     * @param array $options An array of keys and values
+     * @param array $attributes An array of keys and values
      */
-    public function addOptions(array $options)
+    public function addAttributes(array $attributes)
     {
-        $this->options = array_merge($this->options, $options);
+        $this->attributes = array_merge($this->attributes, $attributes);
 
         return $this;
     }
 
     /**
-     * Get the html options of the input attached to this FormRow.
+     * Get the html attributes of the input attached to this FormRow.
      */
-    public function getOptions()
+    public function getAttributes()
     {
-        return $this->options;
+        return $this->attributes;
     }
 
     /**

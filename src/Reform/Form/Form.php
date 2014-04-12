@@ -19,15 +19,15 @@ class Form
     protected $types = array();
     protected $action;
     protected $method;
-    protected $options;
+    protected $attributes;
     protected $rows = array();
     protected $validator;
     protected $valid = false;
 
-    public function __construct(EventDispatcherInterface $dispatcher, $action, $method = 'POST', $options = array())
+    public function __construct(EventDispatcherInterface $dispatcher, $action, $method = 'POST', $attributes = array())
     {
         $this->dispatcher = $dispatcher;
-        $this->setHeader($action, $method, $options);
+        $this->setHeader($action, $method, $attributes);
         $this->validator = new Validator();
         $this->init();
         $this->sendEvent(FormEvent::CREATE);
@@ -102,54 +102,54 @@ class Form
     }
 
     /**
-     * Set the html options of this Form. All previous options will be
+     * Set the html attributes of this Form. All previous attributes will be
      * reset.
      *
-     * @param array The options
+     * @param array The attributes
      * @return Form This Form instance
      */
-    public function setOptions(array $options)
+    public function setAttributes(array $attributes)
     {
-        $this->options = $options;
+        $this->attributes = $attributes;
 
         return $this;
     }
 
     /**
-     * Add to the html options of this Form.
+     * Add to the html attributes of this Form.
      *
-     * @param array The options
+     * @param array The attributes
      * @return Form This Form instance
      */
-    public function addOptions(array $options)
+    public function addAttributes(array $attributes)
     {
-        $this->options = array_merge($this->options, $options);
+        $this->attributes = array_merge($this->attributes, $attributes);
 
         return $this;
     }
 
     /**
-     * Get the html options of this Form.
+     * Get the html attributes of this Form.
      *
-     * @return array The options
+     * @return array The attributes
      */
-    public function getOptions()
+    public function getAttributes()
     {
-        return $this->options;
+        return $this->attributes;
     }
 
     /**
-     * Set the action, method and any additional options of the Form.
+     * Set the action, method and any additional attributes of the Form.
      *
      * @param string $action  The action.
      * @param string $method  The method.
-     * @param array  $options The options.
+     * @param array  $attributes The attributes.
      */
-    public function setHeader($action, $method = 'POST', array $options = array())
+    public function setHeader($action, $method = 'POST', array $attributes = array())
     {
         $this->setAction($action);
         $this->setMethod($method);
-        $this->setOptions($options);
+        $this->setAttributes($attributes);
 
         return $this;
     }
@@ -159,10 +159,10 @@ class Form
      */
     public function header()
     {
-        $options = array('action' => $this->action, 'method' => $this->method);
-        $options = array_merge($options, $this->options);
+        $attributes = array('action' => $this->action, 'method' => $this->method);
+        $attributes = array_merge($attributes, $this->attributes);
 
-        return Html::openTag('form', $options);
+        return Html::openTag('form', $attributes);
     }
 
     /**
@@ -224,13 +224,13 @@ class Form
         return $this->render();
     }
 
-    protected function addRow($type, $name, $value = null, $options = array())
+    protected function addRow($type, $name, $value = null, $attributes = array())
     {
         if (!isset($this->types[$type])) {
             throw new \InvalidArgumentException(sprintf('Form type "%s" not registered', $type));
         }
         $class = $this->types[$type];
-        $this->rows[$name] = new $class($type, $name, $value, $options);
+        $this->rows[$name] = new $class($type, $name, $value, $attributes);
 
         return $this;
     }
@@ -481,7 +481,7 @@ class Form
      */
     public function useFiles()
     {
-        return $this->addOptions(array('enctype' => 'multipart/form-data'));
+        return $this->addAttributes(array('enctype' => 'multipart/form-data'));
     }
 
 }

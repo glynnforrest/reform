@@ -97,36 +97,36 @@ class FormRowTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($html, $r->error());
     }
 
-    public function testGetAndSetOptions()
+    public function testGetAndSetAttributes()
     {
         $r = new FormRow('text', 'username', null, array('id' => 'username-input'));
-        $this->assertSame(array('id' => 'username-input'), $r->getOptions());
+        $this->assertSame(array('id' => 'username-input'), $r->getAttributes());
         $html = Html::input('text', 'username', null, array('id' => 'username-input'));
         $this->assertSame($html, $r->input());
 
-        $this->assertInstanceOf('\Reform\Form\FormRow', $r->setOptions(array('class' => 'input')));
-        $this->assertSame(array('class' => 'input'), $r->getOptions());
+        $this->assertInstanceOf('\Reform\Form\FormRow', $r->setAttributes(array('class' => 'input')));
+        $this->assertSame(array('class' => 'input'), $r->getAttributes());
         $html = Html::input('text', 'username', null, array('class' => 'input'));
         $this->assertSame($html, $r->input());
     }
 
-    public function testAddOptions()
+    public function testAddAttributes()
     {
         $r = new FormRow('text', 'username');
-        $this->assertSame(array(), $r->getOptions());
+        $this->assertSame(array(), $r->getAttributes());
 
-        $this->assertInstanceOf('\Reform\Form\FormRow', $r->addOptions(array('id' => 'username-input')));
-        $this->assertSame(array('id' => 'username-input'), $r->getOptions());
+        $this->assertInstanceOf('\Reform\Form\FormRow', $r->addAttributes(array('id' => 'username-input')));
+        $this->assertSame(array('id' => 'username-input'), $r->getAttributes());
         $html = Html::input('text', 'username', null, array('id' => 'username-input'));
         $this->assertSame($html, $r->input());
 
-        $this->assertInstanceOf('\Reform\Form\FormRow', $r->addOptions(array('class' => 'input')));
-        $expected_options = array(
+        $this->assertInstanceOf('\Reform\Form\FormRow', $r->addAttributes(array('class' => 'input')));
+        $expected_attributes = array(
             'id' => 'username-input',
             'class' => 'input'
         );
-        $this->assertSame($expected_options, $r->getOptions());
-        $html = Html::input('text', 'username', null, $expected_options);
+        $this->assertSame($expected_attributes, $r->getAttributes());
+        $html = Html::input('text', 'username', null, $expected_attributes);
         $this->assertSame($html, $r->input());
     }
 

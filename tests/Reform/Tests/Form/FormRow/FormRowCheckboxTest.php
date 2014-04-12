@@ -51,41 +51,41 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($html, $r->input());
     }
 
-    public function testInputPlusAddOptions()
+    public function testInputPlusAddAttributes()
     {
         $r = new FormRow('checkbox', 'remember-me', 'yes');
-        $r->addOptions(array('id' => 'checkbox-id'));
+        $r->addAttributes(array('id' => 'checkbox-id'));
         $html = Html::input('checkbox', 'remember-me', 'checked', array('checked', 'id' => 'checkbox-id'));
         $this->assertSame($html, $r->input());
     }
 
-    public function testInputPlusSetOptions()
+    public function testInputPlusSetAttributes()
     {
         $r = new FormRow('checkbox', 'remember-me', 'yes');
-        $r->setOptions(array('id' => 'checkbox-id'));
+        $r->setAttributes(array('id' => 'checkbox-id'));
         $html = Html::input('checkbox', 'remember-me', 'checked', array('checked', 'id' => 'checkbox-id'));
         $this->assertSame($html, $r->input());
     }
 
-    public function testInputSetCheckedPreserveOptions()
+    public function testInputSetCheckedPreserveAttributes()
     {
         $r = new FormRow('checkbox', 'remember-me');
-        $r->setOptions(array('class' => 'checkbox'));
-        $this->assertSame(array('class' => 'checkbox'), $r->getOptions());
+        $r->setAttributes(array('class' => 'checkbox'));
+        $this->assertSame(array('class' => 'checkbox'), $r->getAttributes());
         $r->setValue('yes');
-        $this->assertSame(array('class' => 'checkbox'), $r->getOptions());
+        $this->assertSame(array('class' => 'checkbox'), $r->getAttributes());
 
         $html = Html::input('checkbox', 'remember-me', 'checked', array('class' => 'checkbox', 'checked'));
         $this->assertSame($html, $r->input());
     }
 
-    public function testInputSetUncheckedPreserveOptions()
+    public function testInputSetUncheckedPreserveAttributes()
     {
         $r = new FormRow('checkbox', 'remember-me', 'yes');
-        $r->setOptions(array('class' => 'checkbox'));
-        $this->assertSame(array('class' => 'checkbox'), $r->getOptions());
+        $r->setAttributes(array('class' => 'checkbox'));
+        $this->assertSame(array('class' => 'checkbox'), $r->getAttributes());
         $r->setValue(null);
-        $this->assertSame(array('class' => 'checkbox'), $r->getOptions());
+        $this->assertSame(array('class' => 'checkbox'), $r->getAttributes());
 
         $html = Html::input('checkbox', 'remember-me', 'checked', array('class' => 'checkbox'));
         $this->assertSame($html, $r->input());

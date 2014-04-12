@@ -13,21 +13,21 @@ class Html
         return htmlentities($string, ENT_QUOTES, 'UTF-8', false);
     }
 
-    public static function options($options = array())
+    public static function attributes($attributes = array())
     {
-        if (!is_array($options)) {
-            $type = gettype($options);
+        if (!is_array($attributes)) {
+            $type = gettype($attributes);
             throw new \InvalidArgumentException(
-                "Html::options() must be passed an array, $type given."
+                "Html::attributes() must be passed an array, $type given."
             );
         }
         $text = array();
-        foreach ($options as $key => $value) {
+        foreach ($attributes as $key => $value) {
             //if we have numeric keys (e.g. checked), set the value as
             //the $key (e.g. checked="checked"), but only if it
             //doesn't exist already
             if (is_numeric($key)) {
-                if (!array_key_exists($value, $options)) {
+                if (!array_key_exists($value, $attributes)) {
                     $key = $value;
                 } else {
                     continue;
@@ -39,9 +39,9 @@ class Html
         return empty($text) ? '' : ' ' . implode(' ', $text);
     }
 
-    public static function openTag($tag, $options = array())
+    public static function openTag($tag, $attributes = array())
     {
-        return '<' . $tag . self::options($options) . '>';
+        return '<' . $tag . self::attributes($attributes) . '>';
     }
 
     public static function closeTag($tag)
@@ -49,34 +49,34 @@ class Html
         return '</' . $tag . '>';
     }
 
-    public static function tag($tag, $content = null, $options = array())
+    public static function tag($tag, $content = null, $attributes = array())
     {
-        return self::openTag($tag, $options) . $content . self::closeTag($tag);
+        return self::openTag($tag, $attributes) . $content . self::closeTag($tag);
     }
 
-    public static function selfTag($tag, $options = array())
+    public static function selfTag($tag, $attributes = array())
     {
-        return '<' . $tag . self::options($options) . ' />';
+        return '<' . $tag . self::attributes($attributes) . ' />';
     }
 
-    public static function input($type, $name, $value = null, $options = array())
+    public static function input($type, $name, $value = null, $attributes = array())
     {
         if ($type === 'textarea') {
-            $options = array_merge(array(
+            $attributes = array_merge(array(
                 'id' => $name,
                 'name' => $name
-            ), $options);
+            ), $attributes);
 
-            return self::tag('textarea', $value, $options);
+            return self::tag('textarea', $value, $attributes);
         }
-        $options = array_merge(array(
+        $attributes = array_merge(array(
             'type' => $type,
             'id' => $name,
             'name' => $name,
             'value' => $value
-        ), $options);
+        ), $attributes);
 
-        return self::selfTag('input', $options);
+        return self::selfTag('input', $attributes);
     }
 
     /**
@@ -90,52 +90,52 @@ class Html
      * @param string $name     The name attribute of the select tag
      * @param array  $name     An array of keys and value to use as option tags.
      * @param string $selected The value of the input to pre-select.
-     * @param options array An array of html options.
+     * @param attributes array An array of html attributes.
      */
-    public static function select($name, array $values, $selected = null, $options = array())
+    public static function select($name, array $values, $selected = null, $attributes = array())
     {
-        $options['name'] = $name;
-        $text = self::openTag('select', $options);
+        $attributes['name'] = $name;
+        $text = self::openTag('select', $attributes);
         foreach ($values as $k => $v) {
             if (is_numeric($k)) {
                 $k = $v;
             }
             if ($v === $selected) {
-                $options = array('value' => $v, 'selected');
+                $attributes = array('value' => $v, 'selected');
             } else {
-                $options = array('value' => $v);
+                $attributes = array('value' => $v);
             }
-            $text .= self::tag('option', $k, $options);
+            $text .= self::tag('option', $k, $attributes);
         }
         $text .= self::closeTag('select');
 
         return $text;
     }
 
-    public static function js($src, $options = array())
+    public static function js($src, $attributes = array())
     {
-        $options = array_merge(array(
+        $attributes = array_merge(array(
             'type' => 'text/javascript',
-            'src' => $src), $options);
+            'src' => $src), $attributes);
 
-        return self::tag('script', null, $options) . PHP_EOL;
+        return self::tag('script', null, $attributes) . PHP_EOL;
     }
 
-    public static function css($src, $options = array())
+    public static function css($src, $attributes = array())
     {
-        $options = array_merge(array(
+        $attributes = array_merge(array(
             'rel' => 'stylesheet',
             'type' => 'text/css',
-            'href' => $src), $options);
+            'href' => $src), $attributes);
 
-        return self::selfTag('link', $options) . PHP_EOL;
+        return self::selfTag('link', $attributes) . PHP_EOL;
     }
 
-    public static function label($for, $content = null, $options = array())
+    public static function label($for, $content = null, $attributes = array())
     {
-        $options = array_merge(array('for' => $for), $options);
+        $attributes = array_merge(array('for' => $for), $attributes);
 
-        return self::tag('label', $content, $options);
+        return self::tag('label', $content, $attributes);
     }
 
 }

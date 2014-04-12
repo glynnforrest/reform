@@ -23,9 +23,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
     }
 
-    protected function createForm($url, $method = 'POST', $options = array())
+    protected function createForm($url, $method = 'POST', $attributes = array())
     {
-        $form = new Form($this->dispatcher, $url, $method, $options);
+        $form = new Form($this->dispatcher, $url, $method, $attributes);
 
         return $form;
     }
@@ -96,23 +96,23 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f->setMethod('something-stupid');
     }
 
-    public function testGetAndSetOptions()
+    public function testGetAndSetAttributes()
     {
         $f = $this->createForm('/url');
-        $this->assertSame(array(), $f->getOptions());
-        $options = array('id' => 'my-form', 'class' => 'form');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->setOptions($options));
-        $this->assertSame($options, $f->getOptions());
+        $this->assertSame(array(), $f->getAttributes());
+        $attributes = array('id' => 'my-form', 'class' => 'form');
+        $this->assertInstanceOf('\Reform\Form\Form', $f->setAttributes($attributes));
+        $this->assertSame($attributes, $f->getAttributes());
     }
 
-    public function testAddOptions()
+    public function testAddAttributes()
     {
         $f = $this->createForm('/url');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->addOptions(array('id' => 'my-form')));
-        $this->assertSame(array('id' => 'my-form'), $f->getOptions());
-        $this->assertInstanceOf('\Reform\Form\Form', $f->addOptions(array('class' => 'form')));
-        $options = array('id' => 'my-form', 'class' => 'form');
-        $this->assertSame($options, $f->getOptions());
+        $this->assertInstanceOf('\Reform\Form\Form', $f->addAttributes(array('id' => 'my-form')));
+        $this->assertSame(array('id' => 'my-form'), $f->getAttributes());
+        $this->assertInstanceOf('\Reform\Form\Form', $f->addAttributes(array('class' => 'form')));
+        $attributes = array('id' => 'my-form', 'class' => 'form');
+        $this->assertSame($attributes, $f->getAttributes());
     }
 
     public function testGetAndSetValue()
@@ -224,10 +224,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($first, $second);
     }
 
-    protected function stubRow($type, $name, $value = null, $error = null, $options = array())
+    protected function stubRow($type, $name, $value = null, $error = null, $attributes = array())
     {
         $html = Html::label($name, ucfirst($name));
-        $html .= Html::input($type, $name, $value, $options);
+        $html .= Html::input($type, $name, $value, $attributes);
         if ($error) {
             $html .= '<small class="error">' . $error . '</small>';
         }
@@ -552,7 +552,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $expected = '<form action="/url" method="POST" enctype="multipart/form-data">';
         $this->assertSame($expected, $f->header());
 
-        $f->addOptions(array('class' => 'form'));
+        $f->addAttributes(array('class' => 'form'));
         $expected = '<form action="/url" method="POST" enctype="multipart/form-data" class="form">';
         $this->assertSame($expected, $f->header());
     }

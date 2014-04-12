@@ -25,7 +25,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL, Html::js('/js/test.js'));
     }
 
-    public function testJsOptions()
+    public function testJsAttributes()
     {
         $this->assertSame('<script type="text/javascript" src="/js/test.js" id="my_script" class="script"></script>' . PHP_EOL, Html::js('/js/test.js', array(
         'id' => 'my_script', 'class' => 'script')));
@@ -36,7 +36,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('<link rel="stylesheet" type="text/css" href="/css/style.css" />' . PHP_EOL, Html::css('/css/style.css'));
     }
 
-    public function testCssOptions()
+    public function testCssAttributes()
     {
         $this->assertSame('<link rel="stylesheet" type="text/css" href="/css/style.css" id="my_style" class="style" />' . PHP_EOL, Html::css('/css/style.css', array(
         'id' => 'my_style', 'class' => 'style')));
@@ -105,10 +105,10 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::input('textarea', 'comment', 'Something', array('id' => 'other-id')));
     }
 
-    public function testOptionsThrowsExceptionForBadOptions()
+    public function testAttributesThrowsExceptionForBadAttributes()
     {
         $this->setExpectedException('\InvalidArgumentException');
-        Html::options(null);
+        Html::attributes(null);
     }
 
     public function testLabel()
@@ -117,7 +117,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::label('username', 'Username'));
     }
 
-    public function testLabelOverrideOptions()
+    public function testLabelOverrideAttributes()
     {
         $expected = '<label for="username1">Username</label>';
         $this->assertSame($expected, Html::label('username', 'Username', array(
@@ -125,10 +125,10 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         )));
     }
 
-    public function testDuplicateOptionsRemoved()
+    public function testDuplicateAttributesRemoved()
     {
         $expected = ' id="tick" name="tick" checked="checked"';
-        $options = Html::options(array(
+        $attributes = Html::attributes(array(
             'id' => 'foo',
             'name' => 'bar',
             'id' => 'tick',
@@ -136,7 +136,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
             'checked' => 'checked',
             'checked'
         ));
-        $this->assertSame($expected, $options);
+        $this->assertSame($expected, $attributes);
     }
 
     public function testSelect()
@@ -147,7 +147,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::select('choice', array('Foo' => 'foo')));
     }
 
-    public function testSelectWithOptions()
+    public function testSelectWithAttributes()
     {
         $expected = '<select name="choice">';
         $expected .= '<option value="foo">Foo</option>';

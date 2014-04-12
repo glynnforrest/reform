@@ -12,13 +12,13 @@ use Reform\Helper\Html;
 class FormRow extends AbstractFormRow
 {
 
-    public function __construct($type, $name, $value = null, $options = array())
+    public function __construct($type, $name, $value = null, $attributes = array())
     {
         //automatically add a value to a submit field
         if ($type === 'submit' && $value === null) {
             $value = $this->sensible($name);
         }
-        parent::__construct($type, $name, $value, $options);
+        parent::__construct($type, $name, $value, $attributes);
     }
 
     /**
@@ -29,15 +29,15 @@ class FormRow extends AbstractFormRow
         if ($this->type === 'select') {
             $selected = $this->value;
 
-            return Html::select($this->name, $this->choices, $selected, $this->options);
+            return Html::select($this->name, $this->choices, $selected, $this->attributes);
         }
 
         switch ($this->type) {
         //if input is a checkbox and it has a truthy value, add
-        //checked to options before render
+        //checked to attributes before render
         case 'checkbox':
             if ($this->value !== null) {
-                $this->addOptions(array('checked'));
+                $this->addAttributes(array('checked'));
             }
             //no matter what, the value of the input is 'checked'
             $value = 'checked';
@@ -55,7 +55,7 @@ class FormRow extends AbstractFormRow
             $value = $this->value;
         }
 
-        return Html::input($this->type, $this->name, $value, $this->options);
+        return Html::input($this->type, $this->name, $value, $this->attributes);
     }
     /**
      * Render this FormRow instance as Html, with label, input and
