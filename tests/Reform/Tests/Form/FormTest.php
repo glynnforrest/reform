@@ -25,7 +25,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
 
     protected function createForm($url, $method = 'POST', $attributes = array())
     {
-        $form = new Form($this->dispatcher, $url, $method, $attributes);
+        $form = new Form($url, $method, $attributes);
 
         return $form;
     }
@@ -555,6 +555,39 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f->addAttributes(array('class' => 'form'));
         $expected = '<form action="/url" method="POST" enctype="multipart/form-data" class="form">';
         $this->assertSame($expected, $f->header());
+    }
+
+    public function testSetEventDispatcher()
+    {
+        $f = $this->createForm('/url');
+        $this->dispatcher->expects($this->once())
+                         ->method('hasListeners')
+                         ->with('form.create')
+                         ->will($this->returnValue(true));
+        $this->dispatcher->expects($this->once())
+                         ->method('dispatch')
+                         ->with('form.create');
+        $this->assertSame($f, $f->setEventDispatcher($this->dispatcher));
+    }
+
+    public function testValidateEvents()
+    {
+        $f = $this->createForm('/url');
+        $f->setEventDispatcher($this->dispatcher);
+        $this->dispatcher->expects($this->exactly(2))
+                         ->method('hasListeners')
+                         ->with($this->logicalOr(
+                             'form.pre-validate',
+                             'form.post-validate'
+                         ))
+                         ->will($this->returnValue(true));
+        $this->dispatcher->expects($this->exactly(2))
+                         ->method('dispatch')
+                         ->with($this->logicalOr(
+                             'form.pre-validate',
+                             'form.post-validate'
+                         ));
+        $f->validate(array());
     }
 
 }

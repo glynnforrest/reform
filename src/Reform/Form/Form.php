@@ -24,13 +24,33 @@ class Form
     protected $validator;
     protected $valid = false;
 
-    public function __construct(EventDispatcherInterface $dispatcher, $action, $method = 'POST', $attributes = array())
+    public function __construct($action, $method = 'POST', $attributes = array())
     {
-        $this->dispatcher = $dispatcher;
         $this->setHeader($action, $method, $attributes);
         $this->validator = new Validator();
         $this->init();
+    }
+
+    /**
+     * Attach an EventDispatcher to this Form. Instances of the
+     * FormEvent will be dispatched at various points:
+     *
+     * CREATE - sent when this method is called. For this reason it is
+     * recommended to call this method immediately after
+     * instantiation if using events.
+     *
+     * PRE_VALIDATE - sent before the form is validated.
+     *
+     * POST_VALIDATE - sent after the form has been validated.
+     *
+     * @param EventDispatcherInterface $dispatcher
+     * @return Form This Form instance
+     */
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
         $this->sendEvent(FormEvent::CREATE);
+        return $this;
     }
 
     /**
@@ -448,6 +468,10 @@ class Form
 
     protected function sendEvent($event_name)
     {
+        if (!$this->dispatcher) {
+            return;
+        }
+
         if ($this->dispatcher->hasListeners($event_name)) {
             $event = new FormEvent($this);
             $this->dispatcher->dispatch($event_name, $event);
