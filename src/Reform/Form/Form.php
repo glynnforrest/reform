@@ -43,13 +43,14 @@ class Form
      *
      * POST_VALIDATE - sent after the form has been validated.
      *
-     * @param EventDispatcherInterface $dispatcher
-     * @return Form This Form instance
+     * @param  EventDispatcherInterface $dispatcher
+     * @return Form                     This Form instance
      */
     public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
         $this->sendEvent(FormEvent::CREATE);
+
         return $this;
     }
 
@@ -66,11 +67,24 @@ class Form
         $this->addFormRow('Reform\Form\FormRow');
     }
 
+    /**
+     * Set the Validator used to validate this form.
+     *
+     * @param \Reform\Validation\Validator The validator
+     * @return \Reform\Form\Form This Form instance
+     */
     public function setValidator(Validator $validator)
     {
         $this->validator = $validator;
+
+        return $this;
     }
 
+    /**
+     * Get the Validator used to validate this form.
+     *
+     * @return \Reform\Validation\Validator The validator
+     */
     public function getValidator()
     {
         return $this->validator;
@@ -161,8 +175,8 @@ class Form
     /**
      * Set the action, method and any additional attributes of the Form.
      *
-     * @param string $action  The action.
-     * @param string $method  The method.
+     * @param string $action     The action.
+     * @param string $method     The method.
      * @param array  $attributes The attributes.
      */
     public function setHeader($action, $method = 'POST', array $attributes = array())

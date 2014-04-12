@@ -590,4 +590,13 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f->validate(array());
     }
 
+    public function testSetAndGetValidator()
+    {
+        $f = $this->createForm('/url');
+        $this->assertInstanceOf('\Reform\Validation\Validator', $f->getValidator());
+        $validator = $this->getMock('\Reform\Validation\Validator');
+        $this->assertSame($f, $f->setValidator($validator));
+        $this->assertSame($validator, $f->getValidator());
+    }
+
 }
