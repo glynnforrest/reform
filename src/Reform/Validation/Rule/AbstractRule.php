@@ -4,8 +4,6 @@ namespace Reform\Validation\Rule;
 
 use Reform\Validation\Result;
 
-use Stringy\Stringy;
-
 /**
  * AbstractRule
  *
@@ -35,6 +33,7 @@ abstract class AbstractRule
 
         $message = str_replace(array_keys($context), array_values($context), $this->message);
         $result->addError($name, $message);
+
         return false;
     }
 
@@ -45,12 +44,10 @@ abstract class AbstractRule
      */
     protected function sensible($name)
     {
-        return ucfirst(
-            (string) Stringy::create($name)
-            ->underscored()
-            ->replace('_', ' ')
-            ->trim()
-        );
+        $name = preg_replace('`([A-Z])`', '-\1', $name);
+        $name = str_replace(array('-', '_'), ' ', $name);
+
+        return ucfirst(trim(strtolower($name)));
     }
 
 }
