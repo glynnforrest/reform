@@ -102,11 +102,13 @@ class Form
     }
 
     /**
-     * Set the options of this Form, such as class or id.
+     * Set the html options of this Form. All previous options will be
+     * reset.
      *
-     * @param array $options The options.
+     * @param array The options
+     * @return Form This Form instance
      */
-    public function setOptions(array $options = array())
+    public function setOptions(array $options)
     {
         $this->options = $options;
 
@@ -114,7 +116,22 @@ class Form
     }
 
     /**
-     * Get the options attribute of this Form, such as class or id.
+     * Add to the html options of this Form.
+     *
+     * @param array The options
+     * @return Form This Form instance
+     */
+    public function addOptions(array $options)
+    {
+        $this->options = array_merge($this->options, $options);
+
+        return $this;
+    }
+
+    /**
+     * Get the html options of this Form.
+     *
+     * @return array The options
      */
     public function getOptions()
     {

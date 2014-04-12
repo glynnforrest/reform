@@ -105,6 +105,16 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($options, $f->getOptions());
     }
 
+    public function testAddOptions()
+    {
+        $f = $this->createForm('/url');
+        $this->assertInstanceOf('\Reform\Form\Form', $f->addOptions(array('id' => 'my-form')));
+        $this->assertSame(array('id' => 'my-form'), $f->getOptions());
+        $this->assertInstanceOf('\Reform\Form\Form', $f->addOptions(array('class' => 'form')));
+        $options = array('id' => 'my-form', 'class' => 'form');
+        $this->assertSame($options, $f->getOptions());
+    }
+
     public function testGetAndSetValue()
     {
         $f = $this->createForm('/url');
