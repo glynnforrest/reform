@@ -21,13 +21,13 @@ abstract class RuleTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProvider()
      */
-    public function testRule($email, $pass)
+    public function testRule($value, $pass)
     {
         $result = $this->getMock('Reform\Validation\Result');
         if ($pass) {
-            $this->assertTrue($this->rule->validate($result, 'email_address', $email));
+            $this->assertTrue($this->rule->validate($result, 'value', $value));
         } else {
-            $this->assertFalse($this->rule->validate($result, 'email_address', $email));
+            $this->assertFalse($this->rule->validate($result, 'value', $value));
         }
     }
 
