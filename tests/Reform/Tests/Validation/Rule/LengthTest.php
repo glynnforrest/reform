@@ -40,4 +40,66 @@ class LengthTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @dataProvider dataProvider()
+     */
+    public function testMinimumOnly($min, $max, $value, $pass)
+    {
+        $rule = new Length($min);
+        $result = $this->getMock('Reform\Validation\Result');
+        if ($pass) {
+            $this->assertTrue($rule->validate($result, 'value', $value));
+        } else {
+            $this->assertFalse($rule->validate($result, 'value', $value));
+        }
+    }
+
+    public function testBetweenMessage()
+    {
+        $rule = new Length(4, 6);
+        $result = $this->getMock('Reform\Validation\Result');
+        $result->expects($this->exactly(2))
+               ->method('addError')
+               ->with('foo', 'Foo must be between 4 and 6 characters long.');
+
+        $rule->validate($result, 'foo', 'bar');
+        $rule->validate($result, 'foo', 'bar');
+    }
+
+    public function testMinimumMessage()
+    {
+        $rule = new Length(4);
+        $result = $this->getMock('Reform\Validation\Result');
+        $result->expects($this->exactly(2))
+               ->method('addError')
+               ->with('foo', 'Foo must be at least 4 characters long.');
+
+        $rule->validate($result, 'foo', 'bar');
+        $rule->validate($result, 'foo', 'bar');
+    }
+
+    public function testBetweenConfigurableMessage()
+    {
+        $rule = new Length(4, 6, 'between :min and :max please');
+        $result = $this->getMock('Reform\Validation\Result');
+        $result->expects($this->exactly(2))
+               ->method('addError')
+               ->with('foo', 'between 4 and 6 please');
+
+        $rule->validate($result, 'foo', 'bar');
+        $rule->validate($result, 'foo', 'bar');
+    }
+
+    public function testMinimumConfigurableMessage()
+    {
+        $rule = new Length(4, null, 'more than :min please');
+        $result = $this->getMock('Reform\Validation\Result');
+        $result->expects($this->exactly(2))
+               ->method('addError')
+               ->with('foo', 'more than 4 please');
+
+        $rule->validate($result, 'foo', 'bar');
+        $rule->validate($result, 'foo', 'bar');
+    }
+
 }

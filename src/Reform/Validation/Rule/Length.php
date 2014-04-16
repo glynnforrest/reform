@@ -13,15 +13,18 @@ class Length extends AbstractRule
 {
 
     protected $message = ':name must be between :min and :max characters long.';
+    protected $minimum_message = ':name must be at least :min characters long.';
     protected $min;
     protected $max;
 
-    public function __construct($min, $max, $message = null)
+    public function __construct($min, $max = null, $message = null)
     {
         $this->min = $min;
         $this->max = $max;
         if ($message) {
             $this->message = $message;
+        } elseif (!$this->max) {
+            $this->message = $this->minimum_message;
         }
     }
 
@@ -35,7 +38,7 @@ class Length extends AbstractRule
 
         $length = mb_strlen((string) $value);
 
-        if ($length > $this->max) {
+        if ($this->max && $length > $this->max) {
             return $this->fail($result, $name, $value, array(
                 ':min' => $this->min,
                 ':max' => $this->max));
