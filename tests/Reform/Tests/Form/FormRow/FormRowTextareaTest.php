@@ -38,7 +38,8 @@ class FormRowTextareaTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $comment = 'Hello world';
-        $r = new FormRow('textarea', 'comment', $comment);
+        $r = new FormRow('textarea', 'comment');
+        $r->setValue($comment);
         $expected = Html::label('comment', 'Comment');
         $expected .= Html::input('textarea', 'comment', $comment);
         $this->assertSame($expected, $r->render());
@@ -58,7 +59,8 @@ class FormRowTextareaTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $comment = 'Hello world';
-        $r = new FormRow('textarea', 'comment', $comment);
+        $r = new FormRow('textarea', 'comment');
+        $r->setValue($comment);
         $error = 'Comment isn\'t good enough.';
         $r->setError($error);
         $expected = Html::label('comment', 'Comment');
