@@ -30,7 +30,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testInputChecked()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'some-truthy-value');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('some-truthy-value');
         $html = Html::input('checkbox', 'remember-me', 'checked', array('checked'));
         $this->assertSame($html, $r->input());
     }
@@ -45,7 +46,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testInputSetUnchecked()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'some-truthy-value');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('some-truthy-value');
         $r->setValue(null);
         $html = Html::input('checkbox', 'remember-me', 'checked');
         $this->assertSame($html, $r->input());
@@ -53,7 +55,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testInputPlusAddAttributes()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'yes');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('yes');
         $r->addAttributes(array('id' => 'checkbox-id'));
         $html = Html::input('checkbox', 'remember-me', 'checked', array('checked', 'id' => 'checkbox-id'));
         $this->assertSame($html, $r->input());
@@ -61,7 +64,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testInputPlusSetAttributes()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'yes');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('yes');
         $r->setAttributes(array('id' => 'checkbox-id'));
         $html = Html::input('checkbox', 'remember-me', 'checked', array('checked', 'id' => 'checkbox-id'));
         $this->assertSame($html, $r->input());
@@ -81,7 +85,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testInputSetUncheckedPreserveAttributes()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'yes');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('yes');
         $r->setAttributes(array('class' => 'checkbox'));
         $this->assertSame(array('class' => 'checkbox'), $r->getAttributes());
         $r->setValue(null);
@@ -101,7 +106,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValue()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'truthy value');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('truthy value');
         $expected = Html::label('remember-me', 'Remember me');
         $expected .= Html::input('checkbox', 'remember-me', 'checked', array('checked'));
         $this->assertSame($expected, $r->render());
@@ -120,7 +126,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValueAndError()
     {
-        $r = new FormRow('checkbox', 'agree', 'truthy value');
+        $r = new FormRow('checkbox', 'agree');
+        $r->setValue('truthy value');
         $error = 'You must tick the checkbox.';
         $r->setError($error);
         $expected = Html::label('agree', 'Agree');
@@ -131,7 +138,8 @@ class FormRowCheckboxTest extends \PHPUnit_Framework_TestCase
 
     public function testStillGetCheckboxValueAfterRender()
     {
-        $r = new FormRow('checkbox', 'remember-me', 'yes');
+        $r = new FormRow('checkbox', 'remember-me');
+        $r->setValue('yes');
         $html = Html::label('remember-me', 'Remember me');
         $html .= Html::input('checkbox', 'remember-me', 'checked', array('checked'));
         $this->assertSame($html, $r->render());
