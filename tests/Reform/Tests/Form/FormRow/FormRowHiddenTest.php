@@ -37,7 +37,8 @@ class FormRowHiddenTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $token = '12345';
-        $r = new FormRow('hidden', 'token', $token);
+        $r = new FormRow('hidden', 'token');
+        $r->setValue($token);
         $expected = Html::input('hidden', 'token', $token);
         $this->assertSame($expected, $r->render());
     }
@@ -53,7 +54,8 @@ class FormRowHiddenTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $token = '123456789';
-        $r = new FormRow('hidden', 'token', $token);
+        $r = new FormRow('hidden', 'token');
+        $r->setValue($token);
         $r->setError('Token is invalid');
         $expected = Html::input('hidden', 'token', $token);
         $this->assertSame($expected, $r->render());
