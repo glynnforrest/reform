@@ -46,7 +46,8 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValue()
     {
-        $r = new FormRow('submit', '_save', 'GO');
+        $r = new FormRow('submit', '_save');
+        $r->setValue('GO');
         $expected = Html::input('submit', '_save', 'GO');
         $this->assertSame($expected, $r->render());
     }
@@ -61,7 +62,8 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValueAndError()
     {
-        $r = new FormRow('submit', '_save', 'SEND');
+        $r = new FormRow('submit', '_save');
+        $r->setValue('SEND');
         $r->setError('An error occurred.');
         $expected = Html::input('submit', '_save', 'SEND');
         $this->assertSame($expected, $r->render());

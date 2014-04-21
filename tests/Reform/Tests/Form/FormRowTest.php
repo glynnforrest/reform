@@ -72,7 +72,8 @@ class FormRowTest extends \PHPUnit_Framework_TestCase
 
     public function testChangeTypeHtml()
     {
-        $r = new FormRow('text', 'pass', 'secret');
+        $r = new FormRow('text', 'pass');
+        $r->setValue('secret');
         $this->assertSame(Html::input('text', 'pass', 'secret'), $r->input());
         $this->assertInstanceOf('\Reform\Form\FormRow', $r->setType('password'));
         $this->assertSame(Html::input('password', 'pass'), $r->input());

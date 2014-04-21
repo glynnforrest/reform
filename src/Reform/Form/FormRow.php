@@ -12,16 +12,6 @@ use Reform\Helper\Html;
 class FormRow extends AbstractFormRow
 {
 
-    public function __construct($type, $name, $label = null, $attributes = array())
-    {
-        //move to another place
-        //automatically add a value to a submit field
-        if ($type === 'submit' && $value === null) {
-            $value = $this->sensible($name);
-        }
-        parent::__construct($type, $name, $label, $attributes);
-    }
-
     /**
      * Render the input attached to this FormRow as Html.
      */
@@ -46,6 +36,14 @@ class FormRow extends AbstractFormRow
         case 'password':
             //remove the value from all password fields
             $value = null;
+            break;
+        case 'submit':
+            //add a value to the submit button if there is none
+            if ($this->value === null) {
+                $value = $this->sensible($this->name);
+                break;
+            }
+            $value = $this->value;
             break;
         case 'date':
             //parse the value as a datetime
