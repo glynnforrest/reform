@@ -43,8 +43,6 @@ class FormRow extends AbstractFormRow
                 $value = $this->sensible($this->name);
                 break;
             }
-            $value = $this->value;
-            break;
         case 'date':
             //parse the value as a datetime
             //add day
