@@ -37,7 +37,8 @@ class FormRowSelectTest extends \PHPUnit_Framework_TestCase
 
     public function testInputWithValue()
     {
-        $r = new FormRow('select', 'decision', 'yes');
+        $r = new FormRow('select', 'decision');
+        $r->setValue('yes');
         $html = Html::select('decision', array());
         $this->assertSame($html, $r->input());
     }
@@ -71,7 +72,8 @@ class FormRowSelectTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValue()
     {
-        $r = new FormRow('select', 'decision', 'yes');
+        $r = new FormRow('select', 'decision');
+        $r->setValue('yes');
         $r->setChoices(array('yes', 'no'));
         $expected = Html::label('decision', 'Decision');
         $expected .= Html::select('decision', array('Yes' => 'yes', 'No' => 'no'), 'yes');
@@ -91,7 +93,8 @@ class FormRowSelectTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValueAndError()
     {
-        $r = new FormRow('select', 'decision', 'no');
+        $r = new FormRow('select', 'decision');
+        $r->setValue('no');
         $error = 'Bad move, pal.';
         $r->setError($error);
         $r->setChoices(array('yes', 'no'));
