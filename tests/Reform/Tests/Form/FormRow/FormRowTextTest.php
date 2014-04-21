@@ -38,7 +38,8 @@ class FormRowTextTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $email = 'test@example.com';
-        $r = new FormRow('text', 'email', $email);
+        $r = new FormRow('text', 'email');
+        $r->setValue($email);
         $expected = Html::label('email', 'Email');
         $expected .= Html::input('text', 'email', $email);
         $this->assertSame($expected, $r->render());
@@ -58,7 +59,8 @@ class FormRowTextTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $email = 'foo_bar';
-        $r = new FormRow('text', 'email', $email);
+        $r = new FormRow('text', 'email');
+        $r->setValue($email);
         $error = 'Email is invalid.';
         $r->setError($error);
         $expected = Html::label('email', 'Email');
