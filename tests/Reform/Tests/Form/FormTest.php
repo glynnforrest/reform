@@ -142,8 +142,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetAndSetValues()
     {
         $f = $this->createForm('/url');
-        $f->text('username', 'glynn');
-        $f->password('password', 'secret');
+        $f->text('username')
+          ->setValue('username', 'glynn')
+          ->password('password')
+          ->setValue('password', 'secret');
         $expected = array('username' => 'glynn', 'password' => 'secret');
         $this->assertSame($expected, $f->getValues());
         $changed = array('username' => 'glynnforrest', 'password' => 'token');
@@ -154,8 +156,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testSetValuesIgnoresUndefinedRow()
     {
         $f = $this->createForm('/url');
-        $f->text('username');
-        $f->password('password');
+        $f->text('username')
+          ->password('password');
         $values = array('username' => 'glynn', 'password' => 'secret', 'foo' => 'bar');
         $expected = array('username' => 'glynn', 'password' => 'secret');
         $f->setValues($values);
@@ -250,9 +252,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testCreateAndModify()
     {
         $f = $this->createForm('/url');
-        $f->text('username', 'glynn');
+        $f->text('username')
+          ->setValue('username', 'glynn');
         $comment =  'Hello world';
-        $f->textarea('comment', $comment);
+        $f->textarea('comment')
+          ->setValue('comment', $comment);
 
         $first_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
         $first_form .= $this->stubRow('text', 'username', 'glynn');
@@ -283,8 +287,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testAddErrors()
     {
         $f = $this->createForm('/url');
-        $f->text('username');
-        $f->text('email', 'foo');
+        $f->text('username')
+          ->text('email')
+          ->setValue('email', 'foo');
 
         $username_error = 'Username is required.';
         $email_error = 'Email is invalid';
@@ -406,8 +411,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetValuesWithArray()
     {
         $f = $this->createForm('/url');
-        $f->text('data[0]', 'foo')
-          ->text('data[1]', 'bar');
+        $f->text('data[0]')
+          ->setValue('data[0]', 'foo')
+          ->text('data[1]')
+          ->setValue('data[1]', 'bar');
         $expected = array(
             'data' => array(
                 'foo', 'bar'
@@ -421,10 +428,18 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetValuesWithComplexArray()
     {
         $f = $this->createForm('/url');
-        $f->text('data[rows][first]', 'foo')
-          ->text('data[rows][second]', 'bar')
-          ->text('data[foo]', 'baz')
-          ->text('foo', 'bar');
+        $f->text('data[rows][first]')
+          ->setValue('data[rows][first]', 'foo')
+
+          ->text('data[rows][second]')
+          ->setValue('data[rows][second]', 'bar')
+
+          ->text('data[foo]')
+          ->setValue('data[foo]', 'baz')
+
+          ->text('foo')
+          ->setValue('foo', 'bar');
+
         $expected = array(
             'data' => array(
                 'rows' => array(
@@ -445,8 +460,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetValuesOverwritesArrays()
     {
         $f = $this->createForm('/url');
-        $f->text('data[foo]', 'foo')
-          ->text('data', 'bar');
+        $f->text('data[foo]')
+          ->setValue('data[foo]', 'foo')
+
+          ->text('data')
+          ->setValue('data', 'bar');
         $expected = array(
             'data' => 'bar'
         );
@@ -456,8 +474,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetValuesOverwritesRows()
     {
         $f = $this->createForm('/url');
-        $f->text('data', 'bar')
-          ->text('data[bar]', 'bar');
+        $f->text('data')
+          ->setValue('data', 'bar')
+
+          ->text('data[bar]')
+          ->setValue('data[bar]', 'bar');
         $expected = array(
             'data' => array(
                 'bar' => 'bar'
@@ -469,8 +490,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetValuesOverwritesArraysNested()
     {
         $f = $this->createForm('/url');
-        $f->text('data[foo][bar][baz]', 'foo')
-          ->text('data[foo][bar]', 'bar');
+        $f->text('data[foo][bar][baz]')
+          ->setValue('data[foo][bar][baz]', 'foo')
+
+          ->text('data[foo][bar]')
+          ->setValue('data[foo][bar]', 'bar');
         $expected = array(
             'data' => array(
                 'foo' => array(
@@ -484,8 +508,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetValuesOverwritesRowsNested()
     {
         $f = $this->createForm('/url');
-        $f->text('data[foo][bar]', 'bar')
-          ->text('data[foo][bar][baz]', 'baz');
+        $f->text('data[foo][bar]')
+          ->setValue('data[foo][bar]', 'bar')
+
+          ->text('data[foo][bar][baz]')
+          ->setValue('data[foo][bar][baz]', 'baz');
         $expected = array(
             'data' => array(
                 'foo' => array(

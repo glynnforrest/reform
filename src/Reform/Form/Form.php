@@ -258,13 +258,13 @@ class Form
         return $this->render();
     }
 
-    protected function addRow($type, $name, $value = null, $attributes = array())
+    protected function addRow($type, $name, $label = null, $attributes = array())
     {
         if (!isset($this->types[$type])) {
             throw new \InvalidArgumentException(sprintf('Form type "%s" not registered', $type));
         }
         $class = $this->types[$type];
-        $this->rows[$name] = new $class($type, $name, $value, $attributes);
+        $this->rows[$name] = new $class($type, $name, $label, $attributes);
 
         return $this;
     }
@@ -308,7 +308,8 @@ class Form
     {
         if (!array_key_exists($name, $this->rows)) {
             if ($create_row) {
-                return $this->text($name, $value);
+                $this->text($name);
+                return $this->setValue($name, $value);
             }
 
             return $this;
