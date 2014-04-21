@@ -23,7 +23,7 @@ abstract class AbstractFormRow
     protected $row_string = ':label:input:error';
     protected $error_string = '<small class="error">:error</small>';
 
-    public function __construct($type, $name, $value = null, $attributes = array())
+    public function __construct($type, $name, $label = null, $attributes = array())
     {
         if (!in_array($type, static::getSupportedTypes())) {
             throw new \InvalidArgumentException(sprintf(
@@ -33,8 +33,7 @@ abstract class AbstractFormRow
         }
         $this->type = $type;
         $this->name = $name;
-        $this->label = $this->sensible($name);
-        $this->setValue($value);
+        $this->label = $label ? $label : $this->sensible($name);
         $this->attributes = $attributes;
     }
 

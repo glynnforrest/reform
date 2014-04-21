@@ -12,13 +12,14 @@ use Reform\Helper\Html;
 class FormRow extends AbstractFormRow
 {
 
-    public function __construct($type, $name, $value = null, $attributes = array())
+    public function __construct($type, $name, $label = null, $attributes = array())
     {
+        //move to another place
         //automatically add a value to a submit field
         if ($type === 'submit' && $value === null) {
             $value = $this->sensible($name);
         }
-        parent::__construct($type, $name, $value, $attributes);
+        parent::__construct($type, $name, $label, $attributes);
     }
 
     /**
