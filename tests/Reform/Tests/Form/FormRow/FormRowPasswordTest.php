@@ -38,7 +38,8 @@ class FormRowPasswordTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $password = 'hunter2';
-        $r = new FormRow('password', 'password', $password);
+        $r = new FormRow('password', 'password');
+        $r->setValue($password);
         $expected = Html::label('password', 'Password');
         $expected .= Html::input('password', 'password');
         $this->assertSame($expected, $r->render());
@@ -58,7 +59,8 @@ class FormRowPasswordTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $password = 'super_secret';
-        $r = new FormRow('password', 'password', $password);
+        $r = new FormRow('password', 'password');
+        $r->setValue($password);
         $error = 'Password is incorrect.';
         $r->setError($error);
         $expected = Html::label('password', 'Password');
