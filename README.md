@@ -55,7 +55,7 @@ composer.json file:
 
 	{
 		"require": {
-			"glynnforrest/reform": "0.1.*"
+			"glynnforrest/reform": "0.3.*"
 		}
 	}
 
