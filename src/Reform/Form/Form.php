@@ -258,7 +258,7 @@ class Form
         return $this->render();
     }
 
-    protected function addRow($type, $name, $label = null, $attributes = array())
+    public function addRow($type, $name, $label = null, $attributes = array())
     {
         if (!isset($this->types[$type])) {
             throw new \InvalidArgumentException(sprintf('Form type "%s" not registered', $type));
