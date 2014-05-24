@@ -29,7 +29,8 @@ class CsrfListener implements EventSubscriberInterface
         $form = $event->getForm();
         $id = $form->getId();
         $this->manager->maybeInit($id);
-        $form->addRow('hidden', $this->form_field, $this->manager->get($id));
+        $form->addRow('hidden', $this->form_field);
+        $form->setValue($this->form_field, $this->manager->get($id));
     }
 
     public function afterFormValidate(FormEvent $event)
