@@ -46,7 +46,10 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                       ->will($this->returnValue('csrf_id'));
         $this->form->expects($this->once())
                    ->method('addRow')
-                   ->with('hidden', '_token', 'csrf_id');
+                   ->with('hidden', '_token');
+        $this->form->expects($this->once())
+                   ->method('setValue')
+                   ->with('_token', 'csrf_id');
         $this->listener->onFormCreate($this->newEvent());
     }
 
@@ -62,7 +65,10 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                       ->will($this->returnValue('csrf_id'));
         $this->form->expects($this->once())
                    ->method('addRow')
-                   ->with('hidden', '__csrf_token', 'csrf_id');
+                   ->with('hidden', '__csrf_token');
+        $this->form->expects($this->once())
+                   ->method('setValue')
+                   ->with('__csrf_token', 'csrf_id');
         $listener->onFormCreate($this->newEvent());
     }
 
