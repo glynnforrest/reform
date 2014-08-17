@@ -1,6 +1,13 @@
 Changelog
 =========
 
+### 0.2.0 2014-04-12
+
+This release cuts down on required libraries.
+
+* Symfony EventDispatcher is now optional.
+* Removing dependency on Stringy.
+
 ### 0.1.2 2014-04-12
 
 * Html tag attributes can now be added to the main form tag and form rows.
