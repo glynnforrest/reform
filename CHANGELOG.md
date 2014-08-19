@@ -1,6 +1,17 @@
 Changelog
 =========
 
+### 0.3.1 2014-08-18
+
+By using the Blockade security library, this version uses form events
+to add automatic CSRF protection for forms. The CsrfListener listens
+for when a form is submitted and checks the token using Blockade's
+CrsfManager. An exception is thrown if the submitted token is invalid.
+
+* Adding CSRF protection using glynnforrest/blockade.
+* Adding Alpha validation rule.
+* Making Form#addRow() public.
+
 ### 0.3.0 2014-04-21
 
 Version 0.3 introduces a backwards incompatible change when creating
