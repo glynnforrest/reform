@@ -1,6 +1,19 @@
 Changelog
 =========
 
+### 0.3.0 2014-04-21
+
+Version 0.3 introduces a backwards incompatible change when creating
+form rows. A FormRow now accepts name, label and attributes on
+instantiation, instead of the name, value and attributes. This creates
+a distinct separation between presenting the form and the actual value
+of the form. To set the value of the row, call setValue().
+
+* Backwards incompatible break - FormRow now takes the label instead
+  of the value on creation.
+* Adding Length validation rule.
+* Adding more tests, particularly for validation rules.
+
 ### 0.2.0 2014-04-12
 
 This release cuts down on required libraries.
@@ -22,7 +35,9 @@ Adding Form#getId().
 
 Initial release. A summary of what's included so far:
 
-* A Validator that uses instances of Rules to check incoming form data.
+* A Validator that uses instances of Rules to check incoming form
+  data. Current rules are AlphaNumeric, Email, Integer, Matches,
+  Range, Regex and Required.
 * A FormRow represents a single row in a form, including the label,
   input and error message. This row can be customized before being
   rendered.
