@@ -10,7 +10,7 @@ use Reform\Helper\Html;
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class CheckboxTest extends \PHPUnit_Framework_TestCase
+class CheckboxTest extends RowTestCase
 {
 
     protected function getRow($name, $label = null, $attributes = array())

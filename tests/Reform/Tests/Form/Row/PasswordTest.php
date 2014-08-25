@@ -10,7 +10,7 @@ use Reform\Helper\Html;
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class PasswordTest extends \PHPUnit_Framework_TestCase
+class PasswordTest extends RowTestCase
 {
 
     protected function getRow($name, $label = null, $attributes = array())
