@@ -1,37 +1,32 @@
 <?php
 
-namespace Reform\Form;
+namespace Reform\Form\Row;
 
 use Reform\Helper\Html;
 
 /**
- * AbstractFormRow
+ * AbstractRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-abstract class AbstractFormRow
+abstract class AbstractRow
 {
 
-    protected $type;
     protected $name;
     protected $value;
+
     //only applicable for types that support it
     protected $choices = array();
+    protected $choices_enabled = false;
+
     protected $attributes;
     protected $label;
     protected $error;
     protected $row_string = ':label:input:error';
     protected $error_string = '<small class="error">:error</small>';
 
-    public function __construct($type, $name, $label = null, $attributes = array())
+    public function __construct($name, $label = null, $attributes = array())
     {
-        if (!in_array($type, static::getSupportedTypes())) {
-            throw new \InvalidArgumentException(sprintf(
-                '%s does not support type "%s"',
-                get_class($this),
-                $type));
-        }
-        $this->type = $type;
         $this->name = $name;
         $this->label = $label ? $label : $this->sensible($name);
         $this->attributes = $attributes;
@@ -132,26 +127,6 @@ abstract class AbstractFormRow
     }
 
     /**
-     * Set the type of input attached to this FormRow.
-     *
-     * @param string $type The input type.
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Get the type of input attached to this FormRow.
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
      * Set the html attributes of the input attached to this FormRow. All
      * previous attributes will be reset.
      *
@@ -190,10 +165,10 @@ abstract class AbstractFormRow
      */
     protected function checkCanUseChoices()
     {
-        if ($this->type === 'select' || $this->type === 'radio') {
+        if ($this->choices_enabled) {
             return true;
         }
-        throw new \InvalidArgumentException("Form row '$this->name' with type '$this->type' does not support choices");
+        throw new \InvalidArgumentException(sprintf('"%s" does not support choices', get_class($this)));
     }
 
     /**
@@ -201,8 +176,8 @@ abstract class AbstractFormRow
      * keys are given in the choices array or, due to PHP's array
      * implementation, keys are strings containing valid integers,
      * keys will be created automatically by calling
-     * FormRow::sensible. An Exception will be thrown if the type of
-     * this FormRow does not support choices.
+     * FormRow::sensible. An Exception will be thrown if this FormRow
+     * does not support choices.
      *
      * @param array $choices An array of keys and values to use in
      *                       option tags
@@ -220,11 +195,10 @@ abstract class AbstractFormRow
      * no keys are given in the choices array or, due to PHP's array
      * implementation, keys are strings containing valid integers,
      * keys will be created automatically by calling
-     * FormRow::sensible. An Exception will be thrown if the type of
-     * this FormRow does not support choices.
+     * FormRow::sensible. An Exception will be thrown if this FormRow
+     * does not support choices.
      *
-     * @param array $choices An array of keys and values to use in
-     *                       option tags
+     * @param array $choices An array of keys and values to use in option tags
      */
     public function addChoices(array $choices)
     {
@@ -250,10 +224,5 @@ abstract class AbstractFormRow
     abstract public function input();
 
     abstract public function render();
-
-    public static function getSupportedTypes()
-    {
-        return array();
-    }
 
 }
