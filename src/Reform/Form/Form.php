@@ -5,6 +5,7 @@ namespace Reform\Form;
 use Reform\Helper\Html;
 use Reform\Validation\Validator;
 use Reform\Validation\Rule\AbstractRule;
+use Reform\Form\Row\AbstractRow;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,7 +65,14 @@ class Form
 
     protected function init()
     {
-        $this->addFormRow('Reform\Form\FormRow');
+        $this->registerType('text', 'Reform\Form\Row\Text');
+        $this->registerType('checkbox', 'Reform\Form\Row\Checkbox');
+        $this->registerType('hidden', 'Reform\Form\Row\Hidden');
+        $this->registerType('password', 'Reform\Form\Row\Password');
+        $this->registerType('radio', 'Reform\Form\Row\Radio');
+        $this->registerType('select', 'Reform\Form\Row\Select');
+        $this->registerType('submit', 'Reform\Form\Row\Submit');
+        $this->registerType('textarea', 'Reform\Form\Row\Textarea');
     }
 
     /**
@@ -258,15 +266,20 @@ class Form
         return $this->render();
     }
 
-    public function addRow($type, $name, $label = null, $attributes = array())
+    public function newRow($type, $name, $label = null, $attributes = array())
     {
         if (!isset($this->types[$type])) {
             throw new \InvalidArgumentException(sprintf('Form type "%s" not registered', $type));
         }
         $class = $this->types[$type];
-        $this->rows[$name] = new $class($type, $name, $label, $attributes);
+        $this->rows[$name] = new $class($name, $label, $attributes);
 
         return $this;
+    }
+
+    public function addRow($name, AbstractRow $row)
+    {
+        $this->rows[$name] = $row;
     }
 
     /**
@@ -430,9 +443,10 @@ class Form
 
     public function __call($method, array $args)
     {
+        //call newRow with the method name as the first argument
         array_unshift($args, $method);
 
-        return call_user_func_array(array($this, 'addRow'), $args);
+        return call_user_func_array(array($this, 'newRow'), $args);
     }
 
     public function validate(array $values)
@@ -505,11 +519,9 @@ class Form
         return $this->valid;
     }
 
-    public function addFormRow($class)
+    public function registerType($type, $class)
     {
-        foreach ($class::getSupportedTypes() as $type) {
-            $this->types[$type] = $class;
-        }
+        $this->types[$type] = $class;
     }
 
     /**

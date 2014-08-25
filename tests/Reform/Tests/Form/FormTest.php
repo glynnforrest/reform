@@ -136,7 +136,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f = $this->createForm('/url');
         $this->assertInstanceOf('\Reform\Form\Form', $f->setValue('username', 'user42', true));
         $this->assertSame('user42', $f->getValue('username'));
-        $this->assertSame('text', $f->getRow('username')->getType());
+        $this->assertSame('Reform\Form\Row\Text', get_class($f->getRow('username')));
     }
 
     public function testGetAndSetValues()
@@ -202,7 +202,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Reform\Form\Form', $f->setValues($new, true));
         foreach ($new as $name => $value) {
             $this->assertSame($value, $f->getValue($name));
-            $this->assertSame('text', $f->getRow($name)->getType());
+            $this->assertSame('Reform\Form\Row\Text', get_class($f->getRow($name)));
         }
     }
 
@@ -210,7 +210,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $f = $this->createForm('/url');
         $this->assertInstanceOf('\Reform\Form\Form', $f->text('username'));
-        $this->assertInstanceOf('\Reform\Form\FormRow', $f->getRow('username'));
+        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->getRow('username'));
     }
 
     public function testRowIsReturnedByReference()
@@ -269,11 +269,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $username_row->setValue('glynnforrest');
 
         $comment_row = $f->getRow('comment');
-        $comment_row->setType('text');
+        $comment_row->setValue('foo');
 
         $second_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
         $second_form .= $this->stubRow('text', 'username', 'glynnforrest');
-        $second_form .= $this->stubRow('text', 'comment', $comment);
+        $second_form .= $this->stubRow('textarea', 'comment', 'foo');
         $second_form .= '</form>';
         $this->assertSame($second_form, $f->render());
     }
