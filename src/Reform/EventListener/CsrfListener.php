@@ -4,6 +4,7 @@ namespace Reform\EventListener;
 
 use Blockade\CsrfManager;
 use Reform\Form\FormEvent;
+use Reform\Form\Row\Hidden;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -29,8 +30,9 @@ class CsrfListener implements EventSubscriberInterface
         $form = $event->getForm();
         $id = $form->getId();
         $this->manager->maybeInit($id);
-        $form->addRow('hidden', $this->form_field);
-        $form->setValue($this->form_field, $this->manager->get($id));
+        $input = new Hidden($this->form_field);
+        $input->setValue($this->manager->get($id));
+        $form->addRow($this->form_field, $input);
     }
 
     public function afterFormValidate(FormEvent $event)
