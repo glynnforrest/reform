@@ -18,9 +18,7 @@ class Checkbox extends AbstractRow
             $this->addAttributes(array('checked'));
         }
         //no matter what, the value of the input is 'checked'
-        $value = 'checked';
-
-        return Html::input('checkbox', $this->name, $value, $this->attributes);
+        return Html::input('checkbox', $this->name, 'checked', $this->attributes);
     }
 
     public function render()
