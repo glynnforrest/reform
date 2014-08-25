@@ -1,19 +1,22 @@
 <?php
 
-namespace Reform\Tests\Form\FormRow;
+namespace Reform\Tests\Form\Row;
 
 use Reform\Form\Row\Text;
 use Reform\Helper\Html;
-
-require_once __DIR__ . '/../../../../bootstrap.php';
 
 /**
  * TextTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class TextTest extends \PHPUnit_Framework_TestCase
+class TextTest extends RowTestCase
 {
+
+    protected function getRow($name, $label = null, $attributes = array())
+    {
+        return new Text($name, $label, $attributes);
+    }
 
     public function testInput()
     {
