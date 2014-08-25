@@ -1,35 +1,33 @@
 <?php
 
-namespace Reform\Tests\Form\FormRow;
+namespace Reform\Tests\Form\Row;
 
-use Reform\Form\FormRow;
+use Reform\Form\Row\Textarea;
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 /**
- * FormRowTextareaTest
+ * TextareaTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class FormRowTextareaTest extends \PHPUnit_Framework_TestCase
+class TextareaTest extends RowTestCase
 {
-    public function testConstruct()
+
+    protected function getRow($name, $label = null, $attributes = array())
     {
-        $r = new FormRow('textarea', 'username');
-        $this->assertSame('textarea', $r->getType());
+        return new Textarea($name, $label, $attributes);
     }
 
     public function testInput()
     {
-        $r = new FormRow('textarea', 'name');
+        $r = $this->getRow('name');
         $expected = Html::input('textarea', 'name');
         $this->assertSame($expected, $r->input());
     }
 
     public function testRow()
     {
-        $r = new FormRow('textarea', 'name');
+        $r = $this->getRow('name');
         $expected = Html::label('name', 'Name');
         $expected .= Html::input('textarea', 'name');
         $this->assertSame($expected, $r->render());
@@ -38,7 +36,7 @@ class FormRowTextareaTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $comment = 'Hello world';
-        $r = new FormRow('textarea', 'comment');
+        $r = $this->getRow('comment');
         $r->setValue($comment);
         $expected = Html::label('comment', 'Comment');
         $expected .= Html::input('textarea', 'comment', $comment);
@@ -47,7 +45,7 @@ class FormRowTextareaTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithError()
     {
-        $r = new FormRow('textarea', 'comment');
+        $r = $this->getRow('comment');
         $error = 'Comment is required.';
         $r->setError($error);
         $expected = Html::label('comment', 'Comment');
@@ -59,7 +57,7 @@ class FormRowTextareaTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $comment = 'Hello world';
-        $r = new FormRow('textarea', 'comment');
+        $r = $this->getRow('comment');
         $r->setValue($comment);
         $error = 'Comment isn\'t good enough.';
         $r->setError($error);
