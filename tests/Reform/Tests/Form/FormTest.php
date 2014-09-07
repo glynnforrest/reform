@@ -127,16 +127,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testSetValueIgnoresUndefinedRow()
     {
         $f = $this->createForm('/url');
-        $f->setValue('username', 'user42');
+        $this->assertSame($f, $f->setValue('username', 'user42'));
         $this->assertSame(array(), $f->getValues());
-    }
-
-    public function testSetCreateNewRow()
-    {
-        $f = $this->createForm('/url');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->setValue('username', 'user42', true));
-        $this->assertSame('user42', $f->getValue('username'));
-        $this->assertSame('Reform\Form\Row\Text', get_class($f->getRow('username')));
     }
 
     public function testGetAndSetValues()
@@ -195,17 +187,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($errors, $f->getErrors());
     }
 
-    public function testSetValuesCreateRows()
-    {
-        $f = $this->createForm('/url');
-        $new = array('foo' => 'bar', 'baz' => 'qux', 'fu bar' => 'foo bar');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->setValues($new, true));
-        foreach ($new as $name => $value) {
-            $this->assertSame($value, $f->getValue($name));
-            $this->assertSame('Reform\Form\Row\Text', get_class($f->getRow($name)));
-        }
-    }
-
     public function testGetRow()
     {
         $f = $this->createForm('/url');
@@ -235,18 +216,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         }
 
         return $html;
-    }
-
-    public function testCreateFromArray()
-    {
-        $f = $this->createForm('/url');
-        $values = array('username' => 'glynn', 'age' => 100);
-        $f->setValues($values, true);
-        $expected = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
-        $expected .= $this->stubRow('text', 'username', 'glynn');
-        $expected .= $this->stubRow('text', 'age', 100);
-        $expected .= '</form>';
-        $this->assertSame($expected, $f->render());
     }
 
     public function testCreateAndModify()

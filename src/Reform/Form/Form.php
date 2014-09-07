@@ -309,22 +309,14 @@ class Form
     }
 
     /**
-     * Set the value of the input attached to FormRow $name. If
-     * the row doesn't exist and $create_row is true, a new FormRow
-     * will be created with type 'text'.
+     * Set the value of FormRow $name.
      *
-     * @param string $name       The name of the FormRow
-     * @param string $value      The value
-     * @param bool   $create_row Create a new FormRow if it doesn't exist
+     * @param string $name  The name of the FormRow
+     * @param string $value The value
      */
-    public function setValue($name, $value, $create_row = false)
+    public function setValue($name, $value)
     {
-        if (!array_key_exists($name, $this->rows)) {
-            if ($create_row) {
-                $this->text($name);
-                return $this->setValue($name, $value);
-            }
-
+        if (!isset($this->rows[$name])) {
             return $this;
         }
         $this->rows[$name]->setValue($value);
@@ -341,17 +333,14 @@ class Form
     }
 
     /**
-     * Set the value of the input in multiple FormRows. If any row
-     * doesn't exist and $create_rows is true, new FormRows will be
-     * created with type 'text'.
+     * Set the value of multiple FormRows.
      *
-     * @param array $values     An array of keys and values to set
-     * @param bool  $create_row Create a new FormRow if it doesn't exist
+     * @param array $values The array of values
      */
-    public function setValues(array $values = array(), $create_rows = false)
+    public function setValues(array $values = array())
     {
         foreach ($this->flattenArray($values) as $name => $value) {
-            $this->setValue($name, $value, $create_rows);
+            $this->setValue($name, $value);
         }
 
         return $this;
