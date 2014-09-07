@@ -65,7 +65,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testCreateSimpleForm()
     {
         $f = $this->createForm('/post/url', 'get');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->text('name'));
+        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->text('name'));
         $expected = Html::openTag('form', array('action' => '/post/url', 'method' => 'GET'));
         $expected .= Html::label('name', 'Name');
         $expected .= Html::input('text', 'name');
@@ -134,10 +134,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetAndSetValues()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->setValue('username', 'glynn')
-          ->password('password')
-          ->setValue('password', 'secret');
+        $f->text('username')->setValue('glynn');
+        $f->password('password')->setValue('secret');
         $expected = array('username' => 'glynn', 'password' => 'secret');
         $this->assertSame($expected, $f->getValues());
         $changed = array('username' => 'glynnforrest', 'password' => 'token');
@@ -148,8 +146,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testSetValuesIgnoresUndefinedRow()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->password('password');
+        $f->text('username');
+        $f->password('password');
         $values = array('username' => 'glynn', 'password' => 'secret', 'foo' => 'bar');
         $expected = array('username' => 'glynn', 'password' => 'secret');
         $f->setValues($values);
@@ -190,7 +188,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetRow()
     {
         $f = $this->createForm('/url');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->text('username'));
+        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->text('username'));
         $this->assertInstanceOf('\Reform\Form\Row\Text', $f->getRow('username'));
     }
 
@@ -221,11 +219,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testCreateAndModify()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->setValue('username', 'glynn');
+        $f->text('username')->setValue('glynn');
         $comment =  'Hello world';
-        $f->textarea('comment')
-          ->setValue('comment', $comment);
+        $f->textarea('comment')->setValue($comment);
 
         $first_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
         $first_form .= $this->stubRow('text', 'username', 'glynn');
@@ -256,9 +252,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testAddErrors()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->text('email')
-          ->setValue('email', 'foo');
+        $f->text('username');
+        $f->text('email');
+        $f->setValue('email', 'foo');
 
         $username_error = 'Username is required.';
         $email_error = 'Email is invalid';
@@ -331,12 +327,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $f = $this->createForm('/url');
         $f->text('username')
-          ->check('username', new Rule\Required())
-          ->check('username', new Rule\AlphaNumeric())
-          ->password('password')
-          ->check('password', new Rule\Required());
+          ->addRule(new Rule\Required())
+          ->addRule(new Rule\AlphaNumeric());
+        $f->password('password')
+          ->addRule(new Rule\Required());
 
-        $f->validate($values);
+        $f->submitForm($values);
         if ($pass) {
             $this->assertTrue($f->isValid());
         } else {
@@ -347,11 +343,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testIsValidIsResetOnValidation()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->check('username', new Rule\Required());
-        $f->validate(array('username' => 'foo'));
+        $f->text('username')->addRule(new Rule\Required());
+        $f->submitForm(array('username' => 'foo'));
         $this->assertTrue($f->isValid());
-        $f->validate(array('username' => ''));
+        $f->submitForm(array('username' => ''));
         $this->assertFalse($f->isValid());
     }
 
@@ -362,10 +357,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $f = $this->createForm('/url');
         $f->text('username')
-          ->check('username', new Rule\Required())
-          ->check('username', new Rule\AlphaNumeric())
-          ->password('password')
-          ->check('password', new Rule\Required());
+          ->addRule(new Rule\Required())
+          ->addRule(new Rule\AlphaNumeric());
+        $f->password('password')
+          ->addRule(new Rule\Required());
 
         $request = Request::create('/url');
         $request->request->add($values);
@@ -526,10 +521,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
             )
         );
         $f = $this->createForm('/url');
-        $f->text('foo')
-          ->text('bar[one]')
-          ->text('bar[two]')
-          ->text('baz[one][two]');
+        $f->text('foo');
+        $f->text('bar[one]');
+        $f->text('bar[two]');
+        $f->text('baz[one][two]');
         $request = Request::create('/url');
         $request->request->add($values);
         $f->handle($request);

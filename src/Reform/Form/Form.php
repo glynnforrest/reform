@@ -266,7 +266,16 @@ class Form
         return $this->render();
     }
 
-    public function newRow($type, $name, $label = null, $attributes = array())
+    /**
+     * Create a new row and add it to the Form. If no label is
+     * supplied a label will be guessed using the $name attribute.
+     *
+     * @param string      $type       A registered form row type
+     * @param string      $name       The name of the row
+     * @param string|null $label      The label to give the row
+     * @param array       $attributes Any attributes to give the row
+     */
+    public function newRow($type, $name, $label = null, array $attributes = array())
     {
         if (!isset($this->types[$type])) {
             throw new \InvalidArgumentException(sprintf('Form type "%s" not registered', $type));
@@ -274,7 +283,7 @@ class Form
         $class = $this->types[$type];
         $this->rows[$name] = new $class($name, $label, $attributes);
 
-        return $this;
+        return $this->rows[$name];
     }
 
     public function addRow($name, AbstractRow $row)
