@@ -6,14 +6,16 @@ use Reform\Helper\Html;
 use Reform\Validation\Rule;
 
 /**
- * RowTestCase
+ * AbstractRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-abstract class RowTestCase extends \PHPUnit_Framework_TestCase
+class AbstractRowTest extends \PHPUnit_Framework_TestCase
 {
 
-    abstract protected function getRow($name, $label = null, $attributes = array());
+    protected function getRow($name, $label = null, $attributes = array()) {
+        return $this ->getMockForAbstractClass('Reform\Form\Row\AbstractRow', array($name, $label, $attributes));
+    }
 
     public function testGetAndSetValue()
     {
