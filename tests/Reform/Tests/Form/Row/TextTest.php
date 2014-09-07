@@ -10,13 +10,8 @@ use Reform\Helper\Html;
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class TextTest extends RowTestCase
+class TextTest extends \PHPUnit_Framework_TestCase
 {
-
-    protected function getRow($name, $label = null, $attributes = array())
-    {
-        return new Text($name, $label, $attributes);
-    }
 
     public function testInput()
     {

@@ -10,7 +10,7 @@ use Reform\Helper\Html;
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class HiddenTest extends RowTestCase
+class HiddenTest extends \PHPUnit_Framework_TestCase
 {
 
     protected function getRow($name, $label = null, $attributes = array())

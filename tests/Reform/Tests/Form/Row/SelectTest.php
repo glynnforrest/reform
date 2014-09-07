@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../../../bootstrap.php';
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class SelectTest extends RowWithChoicesTestCase
+class SelectTest extends \PHPUnit_Framework_TestCase
 {
 
     protected function getRow($name, $label = null, $attributes = array())
