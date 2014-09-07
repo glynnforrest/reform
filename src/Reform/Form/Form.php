@@ -448,18 +448,24 @@ class Form
 
     /**
      * Add the rules from all rows to form a complete Validator for
-     * this form.
+     * this form. The Validator can only be built once - no additional
+     * rules may be added after building.
      */
-    public function buildValidator(Validator $validator)
+    public function buildValidator()
     {
+        if ($this->validator_built) {
+            return $this->validator;
+        }
+
         foreach ($this->rows as $name => $row) {
             foreach ($row->getRules() as $rule) {
-                $validator->check($name, $rule);
+                $this->validator->addRule($name, $rule);
             }
             $row->disableRules();
         }
+        $this->validator_built = true;
 
-        return $validator;
+        return $this->validator;
     }
 
     /**
@@ -493,12 +499,7 @@ class Form
         //allows for modification
         $this->sendEvent(FormEvent::PRE_VALIDATE);
 
-        //construct the validator
-        //this is a one time thing
-        if (!$this->validator_built) {
-            $this->buildValidator($this->validator);
-            $this->validator_build = true;
-        }
+        $this->buildValidator();
 
         //validate
         $result = $this->validator->validateForm($this->getValues());
@@ -543,9 +544,15 @@ class Form
         }
     }
 
-    public function check($name, AbstractRule $rule)
+    /**
+     * Add a validation rule to a row.
+     *
+     * @param string       $name The name of the row
+     * @param AbstractRule $rule The validation rule
+     */
+    public function addRule($name, AbstractRule $rule)
     {
-        $this->validator->check($name, $rule);
+        $this->getRow($name)->addRule($rule);
 
         return $this;
     }

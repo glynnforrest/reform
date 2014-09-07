@@ -12,11 +12,12 @@ use Reform\Validation\Validator;
  */
 class ValidatorTest extends \PHPUnit_Framework_TestCase {
 
-    public function testCheckReturnsValidator()
+    public function testAddRule()
     {
         $v = new Validator();
         $rule = $this->getMock('Reform\Validation\Rule\AbstractRule');
-        $this->assertSame($v, $v->check('one', $rule));
+        $this->assertSame($v, $v->addRule('one', $rule));
+        $this->assertSame(array('one' => array($rule)), $v->getRules());
     }
 
     public function testValidationReturnsResult() {
@@ -33,7 +34,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase {
     {
         $v = new Validator();
         $rule = $this->getMock('Reform\Validation\Rule\AbstractRule');
-        $v->check('name', $rule);
+        $this->assertSame($v, $v->addRule('name', $rule));
         $rule->expects($this->once())
              ->method('validate')
              ->will($this->returnValue(true));

@@ -15,7 +15,17 @@ class Validator
     protected $rules = array();
     protected $required = array();
 
-    public function check($name, AbstractRule $rule)
+    /**
+     * Get the validation rules.
+     *
+     * @return array An array of validation rules.
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    public function addRule($name, AbstractRule $rule)
     {
         if (!isset($this->rules[$name])) {
             $this->rules[$name] = array();

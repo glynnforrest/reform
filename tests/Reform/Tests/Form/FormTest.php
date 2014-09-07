@@ -292,12 +292,37 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $f->getFields());
     }
 
-    public function testCheck()
+    public function testBuildValidation()
+    {
+        $f = $this->createForm('/url');
+        $v = $this->getMock('Reform\Validation\Validator');
+        $f->setValidator($v);
+
+        $rule = new Rule\Required();
+        $f->text('foo')->addRule($rule);
+        $v->expects($this->once())
+          ->method('addRule')
+          ->with('foo', $rule);
+
+        $this->assertSame($v, $f->buildValidator());
+        //no matter how many times build is called, nothing changes
+        $this->assertSame($v, $f->buildValidator());
+        $this->assertSame($v, $f->buildValidator());
+
+        //allowing new rules is forbidden after building the validation
+        $this->setExpectedException('Reform\Exception\BuildValidationException');
+        $f->getRow('foo')->addRule($rule);
+    }
+
+    public function testAddRule()
     {
         $f = $this->createForm('/url');
         $f->text('foo');
-        $this->assertSame($f, $f->check('foo', new Rule\Required()));
+        $rule = new Rule\Required();
+        $this->assertSame($f, $f->addRule('foo', $rule));
+        $f->buildValidator();
         $validator = $f->getValidator();
+        $this->assertSame(array('foo' => array($rule)), $validator->getRules());
     }
 
     public function testIsValidDefaultsToFalse()
