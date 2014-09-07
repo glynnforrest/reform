@@ -59,7 +59,7 @@ class Validator
     }
 
     /**
-     * Validation an array of values.
+     * Validate an array of values.
      */
     public function validate(array $input, $early_exit = false)
     {
@@ -73,19 +73,20 @@ class Validator
     }
 
     /**
-     * Validation an array of values from a form. Unlike validate(), if
-     * a submitted value is empty, the rules for that value will not
-     * be applied unless the value has the 'required' rule. This
-     * allows validation on optional fields, but only if they are
-     * present.
+     * Validate an array of values from a form. Unlike validate(),
+     * if a value is not submitted, the rules for that value will not
+     * be check unless the value has the 'Required' rule. This allows
+     * validation on optional fields, but only if they are present.
      */
     public function validateForm(array $input, $early_exit = false)
     {
         $result = new Result($input);
         foreach ($this->rules as $name => $rules) {
-            //if a value is submitted but empty, and not required, skip it
-            if (!in_array($name, $this->required)) {
-                if (!$this->required($input[$name])) {
+            //skip a value if it is not required...
+            if (!isset($this->required[$name])) {
+                //and not submitted.
+                //here 'submitted' means either not existing or failing submitted()
+                if (!isset($input[$name]) || !$this->submitted($input[$name])) {
                     continue;
                 }
             }
@@ -95,7 +96,11 @@ class Validator
         return $result;
     }
 
-    protected function required($value)
+    /**
+     * Check if a value has been submitted. This means not empty or
+     * containing only white space.
+     */
+    protected function submitted($value)
     {
         if (is_string($value)) {
             $value = trim($value);
