@@ -3,6 +3,7 @@
 namespace Reform\Tests\Form\Row;
 
 use Reform\Helper\Html;
+use Reform\Validation\Rule;
 
 /**
  * RowTestCase
@@ -104,6 +105,51 @@ abstract class RowTestCase extends \PHPUnit_Framework_TestCase
             'class' => 'input'
         );
         $this->assertSame($expected_attributes, $r->getAttributes());
+    }
+
+    public function testRules()
+    {
+        $r = $this->getRow('username');
+        $this->assertSame(array(), $r->getRules());
+
+        $rule1 = new Rule\Required();
+        $this->assertSame($r, $r->addRule($rule1));
+        $this->assertSame(array($rule1), $r->getRules());
+
+        $rule2 = new Rule\Required();
+        $this->assertSame($r, $r->addRule($rule2));
+        $this->assertSame(array($rule1, $rule2), $r->getRules());
+
+        $this->assertSame($r, $r->setRules(array($rule2)));
+        $this->assertSame(array($rule2), $r->getRules());
+    }
+
+    public function testDisableRulesWithAddRule()
+    {
+        $r = $this->getRow('foo');
+
+        $r->addRule(new Rule\Required());
+        $r->disableRules();
+        $this->setExpectedException('Reform\Exception\BuildValidationException');
+        $r->addRule(new Rule\Required());
+    }
+
+    public function testDisableRulesWithSetRules()
+    {
+        $r = $this->getRow('foo');
+
+        $r->setRules(array(new Rule\Required()));
+        $r->disableRules();
+        $this->setExpectedException('Reform\Exception\BuildValidationException');
+        $r->setRules(array(new Rule\Required()));
+    }
+
+    public function testSubmitForm()
+    {
+        $r = $this->getRow('foo');
+        $this->assertSame(null, $r->getValue());
+        $r->submitForm(['foo' => 'foo']);
+        $this->assertSame('foo', $r->getValue());
     }
 
 }

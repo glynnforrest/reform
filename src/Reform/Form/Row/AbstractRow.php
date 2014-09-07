@@ -3,6 +3,8 @@
 namespace Reform\Form\Row;
 
 use Reform\Helper\Html;
+use Reform\Validation\Rule\AbstractRule;
+use Reform\Exception\BuildValidationException;
 
 /**
  * AbstractRow
@@ -21,6 +23,8 @@ abstract class AbstractRow
 
     protected $attributes;
     protected $label;
+    protected $rules = array();
+    protected $rules_enabled = true;
     protected $error;
     protected $row_string = ':label:input:error';
     protected $error_string = '<small class="error">:error</small>';
@@ -219,6 +223,73 @@ abstract class AbstractRow
     public function getChoices()
     {
         return $this->choices;
+    }
+
+    /**
+     * Prevent any additional validation rules from being added to
+     * this row. This is used internally by the Form class when
+     * creating the Validator.
+     */
+    public function disableRules()
+    {
+        $this->rules_enabled = false;
+    }
+
+    /**
+     * Ensure that validation rules are allowed to be added.
+     */
+    protected function ensureRulesEnabled()
+    {
+        if (!$this->rules_enabled) {
+            throw new BuildValidationException("Adding rules is forbidden, validation has already been prepared");
+        }
+    }
+
+    /**
+     * Set the assigned validation rules.
+     *
+     * @param array $rules The validation rules
+     */
+    public function setRules(array $rules)
+    {
+        $this->ensureRulesEnabled();
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    /**
+     * Assign a validation rule.
+     *
+     * @param AbstractRule $rule The validation rule
+     */
+    public function addRule(AbstractRule $rule)
+    {
+        $this->ensureRulesEnabled();
+        $this->rules[] = $rule;
+
+        return $this;
+    }
+
+    /**
+     * Return the assigned validation rules.
+     *
+     * @return array An array of rules
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    /**
+     * Pass in submitted values to allow the row to assign any values
+     * that are required.
+     *
+     * @param array $values The values
+     */
+    public function submitForm(array $values)
+    {
+        $this->value = isset($values[$this->name]) ? $values[$this->name] : null;
     }
 
     abstract public function input();
