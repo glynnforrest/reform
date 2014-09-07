@@ -12,7 +12,49 @@ use Reform\Helper\Html;
 class Select extends AbstractRow
 {
 
-    protected $choices_enabled = true;
+    protected $choices = array();
+
+    /**
+     * Set the choices for this row. Keys will be created
+     * automatically if no keys are given or, due to PHP's array
+     * implementation, keys are strings containing valid integers.
+     *
+     * @param array $choices An array of keys and values to use for choices
+     */
+    public function setChoices(array $choices)
+    {
+        $this->choices = array();
+        $this->addChoices($choices);
+
+        return $this;
+    }
+
+    /**
+     * Add to the choices for this row. Keys will be created
+     * automatically if no keys are given or, due to PHP's array
+     * implementation, keys are strings containing valid integers.
+     *
+     * @param array $choices An array of keys and values to use for choices
+     */
+    public function addChoices(array $choices)
+    {
+        foreach ($choices as $k => $v) {
+            if (is_int($k)) {
+                $k = $this->sensible($v);
+            }
+            $this->choices[$k] = $v;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the choices for this row.
+     */
+    public function getChoices()
+    {
+        return $this->choices;
+    }
 
     public function input()
     {

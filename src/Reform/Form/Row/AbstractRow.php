@@ -17,10 +17,6 @@ abstract class AbstractRow
     protected $name;
     protected $value;
 
-    //only applicable for types that support it
-    protected $choices = array();
-    protected $choices_enabled = false;
-
     protected $attributes;
     protected $label;
     protected $rules = array();
@@ -161,68 +157,6 @@ abstract class AbstractRow
     public function getAttributes()
     {
         return $this->attributes;
-    }
-
-    /**
-     * Return true if the type of this FormRow can use choices, and
-     * throw an Exception if not.
-     */
-    protected function checkCanUseChoices()
-    {
-        if ($this->choices_enabled) {
-            return true;
-        }
-        throw new \InvalidArgumentException(sprintf('"%s" does not support choices', get_class($this)));
-    }
-
-    /**
-     * Set the choices for the input attached to this FormRow. If no
-     * keys are given in the choices array or, due to PHP's array
-     * implementation, keys are strings containing valid integers,
-     * keys will be created automatically by calling
-     * FormRow::sensible. An Exception will be thrown if this FormRow
-     * does not support choices.
-     *
-     * @param array $choices An array of keys and values to use in
-     *                       option tags
-     */
-    public function setChoices(array $choices)
-    {
-        $this->choices = array();
-        $this->addChoices($choices);
-
-        return $this;
-    }
-
-    /**
-     * Add to the choices for the input attached to this FormRow. If
-     * no keys are given in the choices array or, due to PHP's array
-     * implementation, keys are strings containing valid integers,
-     * keys will be created automatically by calling
-     * FormRow::sensible. An Exception will be thrown if this FormRow
-     * does not support choices.
-     *
-     * @param array $choices An array of keys and values to use in option tags
-     */
-    public function addChoices(array $choices)
-    {
-        $this->checkCanUseChoices();
-        foreach ($choices as $k => $v) {
-            if (is_int($k)) {
-                $k = $this->sensible($v);
-            }
-            $this->choices[$k] = $v;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the choices for the input attached to this FormRow.
-     */
-    public function getChoices()
-    {
-        return $this->choices;
     }
 
     /**
