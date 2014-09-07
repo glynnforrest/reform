@@ -306,7 +306,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($f->isValid());
     }
 
-    public function validateProvider()
+    public function submitProvider()
     {
         return array(
             array(array(), false),
@@ -321,9 +321,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validateProvider()
+     * @dataProvider submitProvider()
      */
-    public function testValidation($values, $pass)
+    public function testSubmitForm($values, $pass)
     {
         $f = $this->createForm('/url');
         $f->text('username')
@@ -351,7 +351,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validateProvider()
+     * @dataProvider submitProvider()
      */
     public function testHandle($values, $pass)
     {
@@ -372,141 +372,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetValuesWithArray()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[0]')
-          ->setValue('data[0]', 'foo')
-          ->text('data[1]')
-          ->setValue('data[1]', 'bar');
-        $expected = array(
-            'data' => array(
-                'foo', 'bar'
-            )
-        );
-        $this->assertSame('foo', $f->getValue('data[0]'));
-        $this->assertSame('bar', $f->getValue('data[1]'));
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesWithComplexArray()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[rows][first]')
-          ->setValue('data[rows][first]', 'foo')
-
-          ->text('data[rows][second]')
-          ->setValue('data[rows][second]', 'bar')
-
-          ->text('data[foo]')
-          ->setValue('data[foo]', 'baz')
-
-          ->text('foo')
-          ->setValue('foo', 'bar');
-
-        $expected = array(
-            'data' => array(
-                'rows' => array(
-                    'first' => 'foo',
-                    'second' => 'bar',
-                ),
-                'foo' => 'baz'
-            ),
-            'foo' => 'bar'
-        );
-        $this->assertSame('foo', $f->getValue('data[rows][first]'));
-        $this->assertSame('bar', $f->getValue('data[rows][second]'));
-        $this->assertSame('baz', $f->getValue('data[foo]'));
-        $this->assertSame('bar', $f->getValue('foo'));
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesArrays()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[foo]')
-          ->setValue('data[foo]', 'foo')
-
-          ->text('data')
-          ->setValue('data', 'bar');
-        $expected = array(
-            'data' => 'bar'
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesRows()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data')
-          ->setValue('data', 'bar')
-
-          ->text('data[bar]')
-          ->setValue('data[bar]', 'bar');
-        $expected = array(
-            'data' => array(
-                'bar' => 'bar'
-            )
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesArraysNested()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[foo][bar][baz]')
-          ->setValue('data[foo][bar][baz]', 'foo')
-
-          ->text('data[foo][bar]')
-          ->setValue('data[foo][bar]', 'bar');
-        $expected = array(
-            'data' => array(
-                'foo' => array(
-                    'bar' => 'bar'
-                )
-            )
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesRowsNested()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[foo][bar]')
-          ->setValue('data[foo][bar]', 'bar')
-
-          ->text('data[foo][bar][baz]')
-          ->setValue('data[foo][bar][baz]', 'baz');
-        $expected = array(
-            'data' => array(
-                'foo' => array(
-                    'bar' => array(
-                        'baz' => 'baz'
-                    )
-                )
-            )
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testSetValuesWithArrays()
-    {
-        $values = array(
-            'foo' => 'foo',
-            'bar' => array(
-                'one' => 'one',
-                'two' => 'two'
-            )
-        );
-        $f = $this->createForm('/url');
-        $f->setValues($values, true);
-        $this->assertSame('foo', $f->getValue('foo'));
-        $this->assertSame('one', $f->getValue('bar[one]'));
-        $this->assertSame('two', $f->getValue('bar[two]'));
-        $this->assertSame($values, $f->getValues());
-    }
-
-    public function testMatchesRowsWithArrays()
+    public function testHandleWithArrays()
     {
         $values = array(
             'foo' => 'foo',
@@ -528,7 +394,10 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/url');
         $request->request->add($values);
         $f->handle($request);
-        $this->assertTrue($f->isValid());
+        $this->assertSame('foo', $f->getValue('foo'));
+        $this->assertSame('one', $f->getValue('bar[one]'));
+        $this->assertSame('two', $f->getValue('bar[two]'));
+        $this->assertSame('foo', $f->getValue('baz[one][two]'));
     }
 
     public function testGetId()
@@ -578,7 +447,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
                              'form.pre-validate',
                              'form.post-validate'
                          ));
-        $f->validate(array());
+        $f->submitForm(array());
     }
 
     public function testSetAndGetValidator()

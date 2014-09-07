@@ -24,6 +24,7 @@ class Form
     protected $rows = array();
     protected $validator;
     protected $valid = false;
+    protected $validator_built = false;
 
     public function __construct($action, $method = 'POST', $attributes = array())
     {
@@ -348,7 +349,7 @@ class Form
      */
     public function setValues(array $values = array())
     {
-        foreach ($this->flattenArray($values) as $name => $value) {
+        foreach ($values as $name => $value) {
             $this->setValue($name, $value);
         }
 
@@ -377,15 +378,13 @@ class Form
     }
 
     /**
-     * Get the values of all inputs attached to this form.
+     * Get the values of all rows.
      */
     public function getValues()
     {
         $values = array();
         foreach ($this->rows as $name => $row) {
-            //some rows may need to be represented as arrays, so
-            //create arrays as needed using parse_str
-            parse_str('values[' . preg_replace('`\[`', '][', $name, 1) . ']=' . $row->getValue());
+            $values[$name] = $row->getValue();
         }
 
         return $values;
@@ -414,8 +413,8 @@ class Form
 
     /**
      * Add multiple errors to this Form. $errors should be an array of
-     * keys and values, where a key is a name of a FormRow attached to
-     * this form, and a value is the error message.
+     * keys and values, where a key is a name of a FormRow and the
+     * value is the error message.
      *
      * @param array $errors An array of names and errors
      */
@@ -447,13 +446,62 @@ class Form
         return call_user_func_array(array($this, 'newRow'), $args);
     }
 
-    public function validate(array $values)
+    /**
+     * Add the rules from all rows to form a complete Validator for
+     * this form.
+     */
+    public function buildValidator(Validator $validator)
     {
-        $this->setValues($values);
+        foreach ($this->rows as $name => $row) {
+            foreach ($row->getRules() as $rule) {
+                $validator->check($name, $rule);
+            }
+            $row->disableRules();
+        }
 
+        return $validator;
+    }
+
+    /**
+     * Submit the form with an array of values. Execution happens in
+     * the following order:
+     *
+     * All rows are given the values to assign values to themselves.
+     *
+     * A pre-validate event is sent.
+     *
+     * The validator is 'built', disabling the addition of any more
+     * validation rules.
+     *
+     * The values are checked for validity, setting the form's
+     * isValid() state.
+     *
+     * The post-validate event is sent.
+     *
+     * @param array $values The submitted values.
+     *                      return Result A validation result.
+     */
+    public function submitForm(array $values)
+    {
+        //send the a flattened version of the values to each of the
+        //rows so they can assign values to themselves.
+        foreach ($this->rows as $row) {
+            $row->submitForm($this->flattenArray($values));
+        }
+
+        //assigning values before sending the pre-validate event
+        //allows for modification
         $this->sendEvent(FormEvent::PRE_VALIDATE);
 
-        $result = $this->validator->validateForm($values);
+        //construct the validator
+        //this is a one time thing
+        if (!$this->validator_built) {
+            $this->buildValidator($this->validator);
+            $this->validator_build = true;
+        }
+
+        //validate
+        $result = $this->validator->validateForm($this->getValues());
         if ($result->isValid()) {
             $this->valid = true;
         } else {
@@ -466,17 +514,6 @@ class Form
         return $result;
     }
 
-    protected function matchesRows(array $values)
-    {
-        foreach (array_keys($this->rows) as $name) {
-            if (!isset($values[$name])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function handle(Request $request)
     {
         //get the correct method
@@ -485,12 +522,13 @@ class Form
         } else {
             $values = $request->request->all();
         }
-        $values = $this->flattenArray($values);
 
-        if (!$this->matchesRows($values)) {
-            return true;
+        // The form is submitted if at least one field is present
+        if (count(array_intersect_key($values, $this->rows)) > 0) {
+            return $this->submitForm($values);
         }
-        $this->validate($values);
+
+        return;
     }
 
     protected function sendEvent($event_name)
