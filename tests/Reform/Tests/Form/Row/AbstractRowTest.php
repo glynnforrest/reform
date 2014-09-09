@@ -150,7 +150,7 @@ class AbstractRowTest extends \PHPUnit_Framework_TestCase
     {
         $r = $this->getRow('foo');
         $this->assertSame(null, $r->getValue());
-        $r->submitForm(['foo' => 'foo']);
+        $r->submitForm(array('foo' => 'foo'));
         $this->assertSame('foo', $r->getValue());
     }
 
