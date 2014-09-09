@@ -154,4 +154,10 @@ class AbstractRowTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('foo', $r->getValue());
     }
 
+    public function testGetName()
+    {
+        $r = $this->getRow('foo');
+        $this->assertSame('foo', $r->getName());
+    }
+
 }

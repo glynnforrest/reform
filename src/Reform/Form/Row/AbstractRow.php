@@ -33,6 +33,16 @@ abstract class AbstractRow
     }
 
     /**
+     * Get the name of this row.
+     *
+     * @return string The name
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Create a sensible, human readable default for $string,
      * e.g. creating a label for the name of form inputs.
      *
