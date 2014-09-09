@@ -287,9 +287,9 @@ class Form
         return $this->rows[$name];
     }
 
-    public function addRow($name, AbstractRow $row)
+    public function addRow(AbstractRow $row)
     {
-        $this->rows[$name] = $row;
+        $this->rows[$row->getName()] = $row;
     }
 
     /**

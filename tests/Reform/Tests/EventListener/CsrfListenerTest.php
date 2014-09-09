@@ -46,9 +46,10 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                       ->will($this->returnValue('csrf_id'));
         $this->form->expects($this->once())
                    ->method('addRow')
-                   ->with('_token', $this->callback(function ($row) {
+                   ->with($this->callback(function ($row) {
                        return $row instanceof \Reform\Form\Row\Hidden &&
-                           $row->getValue() === 'csrf_id';
+                           $row->getValue() === 'csrf_id' &&
+                           $row->getName() === '_token';
                    }));
         $this->listener->onFormCreate($this->newEvent());
     }
@@ -65,9 +66,10 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                       ->will($this->returnValue('csrf_id'));
         $this->form->expects($this->once())
                    ->method('addRow')
-                   ->with('__csrf_token', $this->callback(function ($row) {
+                   ->with($this->callback(function ($row) {
                        return $row instanceof \Reform\Form\Row\Hidden &&
-                           $row->getValue() === 'csrf_id';
+                           $row->getValue() === 'csrf_id' &&
+                           $row->getName() === '__csrf_token';
                    }));
         $listener->onFormCreate($this->newEvent());
     }

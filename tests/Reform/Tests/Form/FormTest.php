@@ -484,4 +484,17 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($validator, $f->getValidator());
     }
 
+    public function testAddRow()
+    {
+        $f = $this->createForm('/url');
+        $row = $this->getMockBuilder('Reform\Form\Row\AbstractRow')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+        $row->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue('foo'));
+        $f->addRow($row);
+        $this->assertSame($row, $f->getRow('foo'));
+    }
+
 }
