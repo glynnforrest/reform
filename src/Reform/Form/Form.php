@@ -5,6 +5,7 @@ namespace Reform\Form;
 use Reform\Helper\Html;
 use Reform\Validation\Validator;
 use Reform\Validation\Rule\AbstractRule;
+use Reform\Form\Row\AbstractRow;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,7 @@ class Form
     protected $rows = array();
     protected $validator;
     protected $valid = false;
+    protected $validator_built = false;
 
     public function __construct($action, $method = 'POST', $attributes = array())
     {
@@ -64,7 +66,14 @@ class Form
 
     protected function init()
     {
-        $this->addFormRow('Reform\Form\FormRow');
+        $this->registerType('text', 'Reform\Form\Row\Text');
+        $this->registerType('checkbox', 'Reform\Form\Row\Checkbox');
+        $this->registerType('hidden', 'Reform\Form\Row\Hidden');
+        $this->registerType('password', 'Reform\Form\Row\Password');
+        $this->registerType('radio', 'Reform\Form\Row\Radio');
+        $this->registerType('select', 'Reform\Form\Row\Select');
+        $this->registerType('submit', 'Reform\Form\Row\Submit');
+        $this->registerType('textarea', 'Reform\Form\Row\Textarea');
     }
 
     /**
@@ -258,15 +267,29 @@ class Form
         return $this->render();
     }
 
-    public function addRow($type, $name, $label = null, $attributes = array())
+    /**
+     * Create a new row and add it to the Form. If no label is
+     * supplied a label will be guessed using the $name attribute.
+     *
+     * @param string      $type       A registered form row type
+     * @param string      $name       The name of the row
+     * @param string|null $label      The label to give the row
+     * @param array       $attributes Any attributes to give the row
+     */
+    public function newRow($type, $name, $label = null, array $attributes = array())
     {
         if (!isset($this->types[$type])) {
             throw new \InvalidArgumentException(sprintf('Form type "%s" not registered', $type));
         }
         $class = $this->types[$type];
-        $this->rows[$name] = new $class($type, $name, $label, $attributes);
+        $this->rows[$name] = new $class($name, $label, $attributes);
 
-        return $this;
+        return $this->rows[$name];
+    }
+
+    public function addRow(AbstractRow $row)
+    {
+        $this->rows[$row->getName()] = $row;
     }
 
     /**
@@ -296,22 +319,14 @@ class Form
     }
 
     /**
-     * Set the value of the input attached to FormRow $name. If
-     * the row doesn't exist and $create_row is true, a new FormRow
-     * will be created with type 'text'.
+     * Set the value of FormRow $name.
      *
-     * @param string $name       The name of the FormRow
-     * @param string $value      The value
-     * @param bool   $create_row Create a new FormRow if it doesn't exist
+     * @param string $name  The name of the FormRow
+     * @param string $value The value
      */
-    public function setValue($name, $value, $create_row = false)
+    public function setValue($name, $value)
     {
-        if (!array_key_exists($name, $this->rows)) {
-            if ($create_row) {
-                $this->text($name);
-                return $this->setValue($name, $value);
-            }
-
+        if (!isset($this->rows[$name])) {
             return $this;
         }
         $this->rows[$name]->setValue($value);
@@ -328,17 +343,14 @@ class Form
     }
 
     /**
-     * Set the value of the input in multiple FormRows. If any row
-     * doesn't exist and $create_rows is true, new FormRows will be
-     * created with type 'text'.
+     * Set the value of multiple FormRows.
      *
-     * @param array $values     An array of keys and values to set
-     * @param bool  $create_row Create a new FormRow if it doesn't exist
+     * @param array $values The array of values
      */
-    public function setValues(array $values = array(), $create_rows = false)
+    public function setValues(array $values = array())
     {
-        foreach ($this->flattenArray($values) as $name => $value) {
-            $this->setValue($name, $value, $create_rows);
+        foreach ($values as $name => $value) {
+            $this->setValue($name, $value);
         }
 
         return $this;
@@ -366,15 +378,13 @@ class Form
     }
 
     /**
-     * Get the values of all inputs attached to this form.
+     * Get the values of all rows.
      */
     public function getValues()
     {
         $values = array();
         foreach ($this->rows as $name => $row) {
-            //some rows may need to be represented as arrays, so
-            //create arrays as needed using parse_str
-            parse_str('values[' . preg_replace('`\[`', '][', $name, 1) . ']=' . $row->getValue());
+            $values[$name] = $row->getValue();
         }
 
         return $values;
@@ -403,8 +413,8 @@ class Form
 
     /**
      * Add multiple errors to this Form. $errors should be an array of
-     * keys and values, where a key is a name of a FormRow attached to
-     * this form, and a value is the error message.
+     * keys and values, where a key is a name of a FormRow and the
+     * value is the error message.
      *
      * @param array $errors An array of names and errors
      */
@@ -430,18 +440,69 @@ class Form
 
     public function __call($method, array $args)
     {
+        //call newRow with the method name as the first argument
         array_unshift($args, $method);
 
-        return call_user_func_array(array($this, 'addRow'), $args);
+        return call_user_func_array(array($this, 'newRow'), $args);
     }
 
-    public function validate(array $values)
+    /**
+     * Add the rules from all rows to form a complete Validator for
+     * this form. The Validator can only be built once - no additional
+     * rules may be added after building.
+     */
+    public function buildValidator()
     {
-        $this->setValues($values);
+        if ($this->validator_built) {
+            return $this->validator;
+        }
 
+        foreach ($this->rows as $name => $row) {
+            foreach ($row->getRules() as $rule) {
+                $this->validator->addRule($name, $rule);
+            }
+            $row->disableRules();
+        }
+        $this->validator_built = true;
+
+        return $this->validator;
+    }
+
+    /**
+     * Submit the form with an array of values. Execution happens in
+     * the following order:
+     *
+     * All rows are given the values to assign values to themselves.
+     *
+     * A pre-validate event is sent.
+     *
+     * The validator is 'built', disabling the addition of any more
+     * validation rules.
+     *
+     * The values are checked for validity, setting the form's
+     * isValid() state.
+     *
+     * The post-validate event is sent.
+     *
+     * @param array $values The submitted values.
+     *                      return Result A validation result.
+     */
+    public function submitForm(array $values)
+    {
+        //send the a flattened version of the values to each of the
+        //rows so they can assign values to themselves.
+        foreach ($this->rows as $row) {
+            $row->submitForm($this->flattenArray($values));
+        }
+
+        //assigning values before sending the pre-validate event
+        //allows for modification
         $this->sendEvent(FormEvent::PRE_VALIDATE);
 
-        $result = $this->validator->validateForm($values);
+        $this->buildValidator();
+
+        //validate
+        $result = $this->validator->validateForm($this->getValues());
         if ($result->isValid()) {
             $this->valid = true;
         } else {
@@ -454,17 +515,6 @@ class Form
         return $result;
     }
 
-    protected function matchesRows(array $values)
-    {
-        foreach (array_keys($this->rows) as $name) {
-            if (!isset($values[$name])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function handle(Request $request)
     {
         //get the correct method
@@ -473,12 +523,13 @@ class Form
         } else {
             $values = $request->request->all();
         }
-        $values = $this->flattenArray($values);
 
-        if (!$this->matchesRows($values)) {
-            return true;
+        // The form is submitted if at least one field is present
+        if (count(array_intersect_key($values, $this->rows)) > 0) {
+            return $this->submitForm($values);
         }
-        $this->validate($values);
+
+        return;
     }
 
     protected function sendEvent($event_name)
@@ -493,9 +544,15 @@ class Form
         }
     }
 
-    public function check($name, AbstractRule $rule)
+    /**
+     * Add a validation rule to a row.
+     *
+     * @param string       $name The name of the row
+     * @param AbstractRule $rule The validation rule
+     */
+    public function addRule($name, AbstractRule $rule)
     {
-        $this->validator->check($name, $rule);
+        $this->getRow($name)->addRule($rule);
 
         return $this;
     }
@@ -505,11 +562,9 @@ class Form
         return $this->valid;
     }
 
-    public function addFormRow($class)
+    public function registerType($type, $class)
     {
-        foreach ($class::getSupportedTypes() as $type) {
-            $this->types[$type] = $class;
-        }
+        $this->types[$type] = $class;
     }
 
     /**

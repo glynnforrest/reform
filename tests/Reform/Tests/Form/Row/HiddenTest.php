@@ -1,35 +1,33 @@
 <?php
 
-namespace Reform\Tests\Form\FormRow;
+namespace Reform\Tests\Form\Row;
 
-use Reform\Form\FormRow;
+use Reform\Form\Row\Hidden;
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 /**
- * FormRowHiddenTest
+ * HiddenTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class FormRowHiddenTest extends \PHPUnit_Framework_TestCase
+class HiddenTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstruct()
+
+    protected function getRow($name, $label = null, $attributes = array())
     {
-        $r = new FormRow('hidden', 'token');
-        $this->assertSame('hidden', $r->getType());
+        return new Hidden($name, $label, $attributes);
     }
 
     public function testInput()
     {
-        $r = new FormRow('hidden', 'token');
+        $r = $this->getRow('token');
         $expected = Html::input('hidden', 'token');
         $this->assertSame($expected, $r->input());
     }
 
     public function testRow()
     {
-        $r = new FormRow('hidden', 'token');
+        $r = $this->getRow('token');
         $expected = Html::input('hidden', 'token');
         $this->assertSame($expected, $r->render());
     }
@@ -37,7 +35,7 @@ class FormRowHiddenTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $token = '12345';
-        $r = new FormRow('hidden', 'token');
+        $r = $this->getRow('token');
         $r->setValue($token);
         $expected = Html::input('hidden', 'token', $token);
         $this->assertSame($expected, $r->render());
@@ -45,7 +43,7 @@ class FormRowHiddenTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithError()
     {
-        $r = new FormRow('hidden', 'token');
+        $r = $this->getRow('token');
         $r->setError('Token is invalid.');
         $expected = Html::input('hidden', 'token');
         $this->assertSame($expected, $r->render());
@@ -54,7 +52,7 @@ class FormRowHiddenTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $token = '123456789';
-        $r = new FormRow('hidden', 'token');
+        $r = $this->getRow('token');
         $r->setValue($token);
         $r->setError('Token is invalid');
         $expected = Html::input('hidden', 'token', $token);

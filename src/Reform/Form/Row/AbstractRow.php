@@ -1,40 +1,45 @@
 <?php
 
-namespace Reform\Form;
+namespace Reform\Form\Row;
 
 use Reform\Helper\Html;
+use Reform\Validation\Rule\AbstractRule;
+use Reform\Exception\BuildValidationException;
 
 /**
- * AbstractFormRow
+ * AbstractRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-abstract class AbstractFormRow
+abstract class AbstractRow
 {
 
-    protected $type;
     protected $name;
     protected $value;
-    //only applicable for types that support it
-    protected $choices = array();
+
     protected $attributes;
     protected $label;
+    protected $rules = array();
+    protected $rules_enabled = true;
     protected $error;
     protected $row_string = ':label:input:error';
     protected $error_string = '<small class="error">:error</small>';
 
-    public function __construct($type, $name, $label = null, $attributes = array())
+    public function __construct($name, $label = null, $attributes = array())
     {
-        if (!in_array($type, static::getSupportedTypes())) {
-            throw new \InvalidArgumentException(sprintf(
-                '%s does not support type "%s"',
-                get_class($this),
-                $type));
-        }
-        $this->type = $type;
         $this->name = $name;
         $this->label = $label ? $label : $this->sensible($name);
         $this->attributes = $attributes;
+    }
+
+    /**
+     * Get the name of this row.
+     *
+     * @return string The name
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -132,26 +137,6 @@ abstract class AbstractFormRow
     }
 
     /**
-     * Set the type of input attached to this FormRow.
-     *
-     * @param string $type The input type.
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Get the type of input attached to this FormRow.
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
      * Set the html attributes of the input attached to this FormRow. All
      * previous attributes will be reset.
      *
@@ -185,75 +170,74 @@ abstract class AbstractFormRow
     }
 
     /**
-     * Return true if the type of this FormRow can use choices, and
-     * throw an Exception if not.
+     * Prevent any additional validation rules from being added to
+     * this row. This is used internally by the Form class when
+     * creating the Validator.
      */
-    protected function checkCanUseChoices()
+    public function disableRules()
     {
-        if ($this->type === 'select' || $this->type === 'radio') {
-            return true;
-        }
-        throw new \InvalidArgumentException("Form row '$this->name' with type '$this->type' does not support choices");
+        $this->rules_enabled = false;
     }
 
     /**
-     * Set the choices for the input attached to this FormRow. If no
-     * keys are given in the choices array or, due to PHP's array
-     * implementation, keys are strings containing valid integers,
-     * keys will be created automatically by calling
-     * FormRow::sensible. An Exception will be thrown if the type of
-     * this FormRow does not support choices.
-     *
-     * @param array $choices An array of keys and values to use in
-     *                       option tags
+     * Ensure that validation rules are allowed to be added.
      */
-    public function setChoices(array $choices)
+    protected function ensureRulesEnabled()
     {
-        $this->choices = array();
-        $this->addChoices($choices);
+        if (!$this->rules_enabled) {
+            throw new BuildValidationException("Adding rules is forbidden, validation has already been prepared");
+        }
+    }
+
+    /**
+     * Set the assigned validation rules.
+     *
+     * @param array $rules The validation rules
+     */
+    public function setRules(array $rules)
+    {
+        $this->ensureRulesEnabled();
+        $this->rules = $rules;
 
         return $this;
     }
 
     /**
-     * Add to the choices for the input attached to this FormRow. If
-     * no keys are given in the choices array or, due to PHP's array
-     * implementation, keys are strings containing valid integers,
-     * keys will be created automatically by calling
-     * FormRow::sensible. An Exception will be thrown if the type of
-     * this FormRow does not support choices.
+     * Assign a validation rule.
      *
-     * @param array $choices An array of keys and values to use in
-     *                       option tags
+     * @param AbstractRule $rule The validation rule
      */
-    public function addChoices(array $choices)
+    public function addRule(AbstractRule $rule)
     {
-        $this->checkCanUseChoices();
-        foreach ($choices as $k => $v) {
-            if (is_int($k)) {
-                $k = $this->sensible($v);
-            }
-            $this->choices[$k] = $v;
-        }
+        $this->ensureRulesEnabled();
+        $this->rules[] = $rule;
 
         return $this;
     }
 
     /**
-     * Get the choices for the input attached to this FormRow.
+     * Return the assigned validation rules.
+     *
+     * @return array An array of rules
      */
-    public function getChoices()
+    public function getRules()
     {
-        return $this->choices;
+        return $this->rules;
+    }
+
+    /**
+     * Pass in submitted values to allow the row to assign any values
+     * that are required.
+     *
+     * @param array $values The values
+     */
+    public function submitForm(array $values)
+    {
+        $this->value = isset($values[$this->name]) ? $values[$this->name] : null;
     }
 
     abstract public function input();
 
     abstract public function render();
-
-    public static function getSupportedTypes()
-    {
-        return array();
-    }
 
 }

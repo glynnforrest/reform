@@ -1,35 +1,33 @@
 <?php
 
-namespace Reform\Tests\Form\FormRow;
+namespace Reform\Tests\Form\Row;
 
-use Reform\Form\FormRow;
+use Reform\Form\Row\Password;
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 /**
- * FormRowPasswordTest
+ * PasswordTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class FormRowPasswordTest extends \PHPUnit_Framework_TestCase
+class PasswordTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstruct()
+
+    protected function getRow($name, $label = null, $attributes = array())
     {
-        $r = new FormRow('password', 'password');
-        $this->assertSame('password', $r->getType());
+        return new Password($name, $label, $attributes);
     }
 
     public function testInput()
     {
-        $r = new FormRow('password', 'password');
+        $r = $this->getRow('password');
         $expected = Html::input('password', 'password');
         $this->assertSame($expected, $r->input());
     }
 
     public function testRow()
     {
-        $r = new FormRow('password', 'password');
+        $r = $this->getRow('password');
         $expected = Html::label('password', 'Password');
         $expected .= Html::input('password', 'password');
         $this->assertSame($expected, $r->render());
@@ -38,7 +36,7 @@ class FormRowPasswordTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $password = 'hunter2';
-        $r = new FormRow('password', 'password');
+        $r = $this->getRow('password');
         $r->setValue($password);
         $expected = Html::label('password', 'Password');
         $expected .= Html::input('password', 'password');
@@ -47,7 +45,7 @@ class FormRowPasswordTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithError()
     {
-        $r = new FormRow('password', 'password');
+        $r = $this->getRow('password');
         $error = 'Password is incorrect.';
         $r->setError($error);
         $expected = Html::label('password', 'Password');
@@ -59,7 +57,7 @@ class FormRowPasswordTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $password = 'super_secret';
-        $r = new FormRow('password', 'password');
+        $r = $this->getRow('password');
         $r->setValue($password);
         $error = 'Password is incorrect.';
         $r->setError($error);

@@ -1,28 +1,26 @@
 <?php
 
-namespace Reform\Tests\Form\FormRow;
+namespace Reform\Tests\Form\Row;
 
-use Reform\Form\FormRow;
+use Reform\Form\Row\Submit;
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 /**
- * FormRowSubmitTest
+ * SubmitTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
+class SubmitTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstruct()
+
+    protected function getRow($name, $label = null, $attributes = array())
     {
-        $r = new FormRow('submit', 'save');
-        $this->assertSame('submit', $r->getType());
+        return new Submit($name, $label, $attributes);
     }
 
     public function testInput()
     {
-        $r = new FormRow('submit', 'submit-form');
+        $r = $this->getRow('submit-form');
         //Form Row should add a sensible title to the submit button
         $expected = Html::input('submit', 'submit-form', 'Submit form');
         $this->assertSame($expected, $r->input());
@@ -30,7 +28,7 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testInputValueCanBeOverridden()
     {
-        $r = new FormRow('submit', 'submit-form');
+        $r = $this->getRow('submit-form');
         $r->setValue('SAVE');
         $expected = Html::input('submit', 'submit-form', 'SAVE');
         $this->assertSame($expected, $r->input());
@@ -38,7 +36,7 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testRow()
     {
-        $r = new FormRow('submit', '_save');
+        $r = $this->getRow('_save');
         $expected = Html::input('submit', '_save', 'Save');
         //update this after row_html is implemented
         $this->assertSame($expected, $r->render());
@@ -46,7 +44,7 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValue()
     {
-        $r = new FormRow('submit', '_save');
+        $r = $this->getRow('_save');
         $r->setValue('GO');
         $expected = Html::input('submit', '_save', 'GO');
         $this->assertSame($expected, $r->render());
@@ -54,7 +52,7 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithError()
     {
-        $r = new FormRow('submit', '_save');
+        $r = $this->getRow('_save');
         $r->setError('An error occurred.');
         $expected = Html::input('submit', '_save', 'Save');
         $this->assertSame($expected, $r->render());
@@ -62,7 +60,7 @@ class FormRowSubmitTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithValueAndError()
     {
-        $r = new FormRow('submit', '_save');
+        $r = $this->getRow('_save');
         $r->setValue('SEND');
         $r->setError('An error occurred.');
         $expected = Html::input('submit', '_save', 'SEND');

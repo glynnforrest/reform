@@ -1,35 +1,28 @@
 <?php
 
-namespace Reform\Tests\Form\FormRow;
+namespace Reform\Tests\Form\Row;
 
-use Reform\Form\FormRow;
+use Reform\Form\Row\Text;
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 /**
- * FormRowTextTest
+ * TextTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class FormRowTextTest extends \PHPUnit_Framework_TestCase
+class TextTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstruct()
-    {
-        $r = new FormRow('text', 'username');
-        $this->assertSame('text', $r->getType());
-    }
 
     public function testInput()
     {
-        $r = new FormRow('text', 'name');
+        $r = new Text('name');
         $expected = Html::input('text', 'name');
         $this->assertSame($expected, $r->input());
     }
 
     public function testRow()
     {
-        $r = new FormRow('text', 'name');
+        $r = new Text('name');
         $expected = Html::label('name', 'Name');
         $expected .= Html::input('text', 'name');
         $this->assertSame($expected, $r->render());
@@ -38,7 +31,7 @@ class FormRowTextTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValue()
     {
         $email = 'test@example.com';
-        $r = new FormRow('text', 'email');
+        $r = new Text('email');
         $r->setValue($email);
         $expected = Html::label('email', 'Email');
         $expected .= Html::input('text', 'email', $email);
@@ -47,7 +40,7 @@ class FormRowTextTest extends \PHPUnit_Framework_TestCase
 
     public function testRowWithError()
     {
-        $r = new FormRow('text', 'email');
+        $r = new Text('email');
         $error = 'Email is incorrect.';
         $r->setError($error);
         $expected = Html::label('email', 'Email');
@@ -59,7 +52,7 @@ class FormRowTextTest extends \PHPUnit_Framework_TestCase
     public function testRowWithValueAndError()
     {
         $email = 'foo_bar';
-        $r = new FormRow('text', 'email');
+        $r = new Text('email');
         $r->setValue($email);
         $error = 'Email is invalid.';
         $r->setError($error);

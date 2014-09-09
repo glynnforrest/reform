@@ -65,7 +65,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testCreateSimpleForm()
     {
         $f = $this->createForm('/post/url', 'get');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->text('name'));
+        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->text('name'));
         $expected = Html::openTag('form', array('action' => '/post/url', 'method' => 'GET'));
         $expected .= Html::label('name', 'Name');
         $expected .= Html::input('text', 'name');
@@ -127,25 +127,15 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testSetValueIgnoresUndefinedRow()
     {
         $f = $this->createForm('/url');
-        $f->setValue('username', 'user42');
+        $this->assertSame($f, $f->setValue('username', 'user42'));
         $this->assertSame(array(), $f->getValues());
-    }
-
-    public function testSetCreateNewRow()
-    {
-        $f = $this->createForm('/url');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->setValue('username', 'user42', true));
-        $this->assertSame('user42', $f->getValue('username'));
-        $this->assertSame('text', $f->getRow('username')->getType());
     }
 
     public function testGetAndSetValues()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->setValue('username', 'glynn')
-          ->password('password')
-          ->setValue('password', 'secret');
+        $f->text('username')->setValue('glynn');
+        $f->password('password')->setValue('secret');
         $expected = array('username' => 'glynn', 'password' => 'secret');
         $this->assertSame($expected, $f->getValues());
         $changed = array('username' => 'glynnforrest', 'password' => 'token');
@@ -156,8 +146,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testSetValuesIgnoresUndefinedRow()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->password('password');
+        $f->text('username');
+        $f->password('password');
         $values = array('username' => 'glynn', 'password' => 'secret', 'foo' => 'bar');
         $expected = array('username' => 'glynn', 'password' => 'secret');
         $f->setValues($values);
@@ -195,22 +185,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($errors, $f->getErrors());
     }
 
-    public function testSetValuesCreateRows()
-    {
-        $f = $this->createForm('/url');
-        $new = array('foo' => 'bar', 'baz' => 'qux', 'fu bar' => 'foo bar');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->setValues($new, true));
-        foreach ($new as $name => $value) {
-            $this->assertSame($value, $f->getValue($name));
-            $this->assertSame('text', $f->getRow($name)->getType());
-        }
-    }
-
     public function testGetRow()
     {
         $f = $this->createForm('/url');
-        $this->assertInstanceOf('\Reform\Form\Form', $f->text('username'));
-        $this->assertInstanceOf('\Reform\Form\FormRow', $f->getRow('username'));
+        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->text('username'));
+        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->getRow('username'));
     }
 
     public function testRowIsReturnedByReference()
@@ -237,26 +216,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
         return $html;
     }
 
-    public function testCreateFromArray()
-    {
-        $f = $this->createForm('/url');
-        $values = array('username' => 'glynn', 'age' => 100);
-        $f->setValues($values, true);
-        $expected = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
-        $expected .= $this->stubRow('text', 'username', 'glynn');
-        $expected .= $this->stubRow('text', 'age', 100);
-        $expected .= '</form>';
-        $this->assertSame($expected, $f->render());
-    }
-
     public function testCreateAndModify()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->setValue('username', 'glynn');
+        $f->text('username')->setValue('glynn');
         $comment =  'Hello world';
-        $f->textarea('comment')
-          ->setValue('comment', $comment);
+        $f->textarea('comment')->setValue($comment);
 
         $first_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
         $first_form .= $this->stubRow('text', 'username', 'glynn');
@@ -269,11 +234,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $username_row->setValue('glynnforrest');
 
         $comment_row = $f->getRow('comment');
-        $comment_row->setType('text');
+        $comment_row->setValue('foo');
 
         $second_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
         $second_form .= $this->stubRow('text', 'username', 'glynnforrest');
-        $second_form .= $this->stubRow('text', 'comment', $comment);
+        $second_form .= $this->stubRow('textarea', 'comment', 'foo');
         $second_form .= '</form>';
         $this->assertSame($second_form, $f->render());
     }
@@ -287,9 +252,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testAddErrors()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->text('email')
-          ->setValue('email', 'foo');
+        $f->text('username');
+        $f->text('email');
+        $f->setValue('email', 'foo');
 
         $username_error = 'Username is required.';
         $email_error = 'Email is invalid';
@@ -327,12 +292,37 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $f->getFields());
     }
 
-    public function testCheck()
+    public function testBuildValidation()
+    {
+        $f = $this->createForm('/url');
+        $v = $this->getMock('Reform\Validation\Validator');
+        $f->setValidator($v);
+
+        $rule = new Rule\Required();
+        $f->text('foo')->addRule($rule);
+        $v->expects($this->once())
+          ->method('addRule')
+          ->with('foo', $rule);
+
+        $this->assertSame($v, $f->buildValidator());
+        //no matter how many times build is called, nothing changes
+        $this->assertSame($v, $f->buildValidator());
+        $this->assertSame($v, $f->buildValidator());
+
+        //allowing new rules is forbidden after building the validation
+        $this->setExpectedException('Reform\Exception\BuildValidationException');
+        $f->getRow('foo')->addRule($rule);
+    }
+
+    public function testAddRule()
     {
         $f = $this->createForm('/url');
         $f->text('foo');
-        $this->assertSame($f, $f->check('foo', new Rule\Required()));
+        $rule = new Rule\Required();
+        $this->assertSame($f, $f->addRule('foo', $rule));
+        $f->buildValidator();
         $validator = $f->getValidator();
+        $this->assertSame(array('foo' => array($rule)), $validator->getRules());
     }
 
     public function testIsValidDefaultsToFalse()
@@ -341,7 +331,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($f->isValid());
     }
 
-    public function validateProvider()
+    public function submitProvider()
     {
         return array(
             array(array(), false),
@@ -356,18 +346,18 @@ class FormTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validateProvider()
+     * @dataProvider submitProvider()
      */
-    public function testValidation($values, $pass)
+    public function testSubmitForm($values, $pass)
     {
         $f = $this->createForm('/url');
         $f->text('username')
-          ->check('username', new Rule\Required())
-          ->check('username', new Rule\AlphaNumeric())
-          ->password('password')
-          ->check('password', new Rule\Required());
+          ->addRule(new Rule\Required())
+          ->addRule(new Rule\AlphaNumeric());
+        $f->password('password')
+          ->addRule(new Rule\Required());
 
-        $f->validate($values);
+        $f->submitForm($values);
         if ($pass) {
             $this->assertTrue($f->isValid());
         } else {
@@ -378,25 +368,24 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testIsValidIsResetOnValidation()
     {
         $f = $this->createForm('/url');
-        $f->text('username')
-          ->check('username', new Rule\Required());
-        $f->validate(array('username' => 'foo'));
+        $f->text('username')->addRule(new Rule\Required());
+        $f->submitForm(array('username' => 'foo'));
         $this->assertTrue($f->isValid());
-        $f->validate(array('username' => ''));
+        $f->submitForm(array('username' => ''));
         $this->assertFalse($f->isValid());
     }
 
     /**
-     * @dataProvider validateProvider()
+     * @dataProvider submitProvider()
      */
     public function testHandle($values, $pass)
     {
         $f = $this->createForm('/url');
         $f->text('username')
-          ->check('username', new Rule\Required())
-          ->check('username', new Rule\AlphaNumeric())
-          ->password('password')
-          ->check('password', new Rule\Required());
+          ->addRule(new Rule\Required())
+          ->addRule(new Rule\AlphaNumeric());
+        $f->password('password')
+          ->addRule(new Rule\Required());
 
         $request = Request::create('/url');
         $request->request->add($values);
@@ -408,141 +397,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetValuesWithArray()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[0]')
-          ->setValue('data[0]', 'foo')
-          ->text('data[1]')
-          ->setValue('data[1]', 'bar');
-        $expected = array(
-            'data' => array(
-                'foo', 'bar'
-            )
-        );
-        $this->assertSame('foo', $f->getValue('data[0]'));
-        $this->assertSame('bar', $f->getValue('data[1]'));
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesWithComplexArray()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[rows][first]')
-          ->setValue('data[rows][first]', 'foo')
-
-          ->text('data[rows][second]')
-          ->setValue('data[rows][second]', 'bar')
-
-          ->text('data[foo]')
-          ->setValue('data[foo]', 'baz')
-
-          ->text('foo')
-          ->setValue('foo', 'bar');
-
-        $expected = array(
-            'data' => array(
-                'rows' => array(
-                    'first' => 'foo',
-                    'second' => 'bar',
-                ),
-                'foo' => 'baz'
-            ),
-            'foo' => 'bar'
-        );
-        $this->assertSame('foo', $f->getValue('data[rows][first]'));
-        $this->assertSame('bar', $f->getValue('data[rows][second]'));
-        $this->assertSame('baz', $f->getValue('data[foo]'));
-        $this->assertSame('bar', $f->getValue('foo'));
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesArrays()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[foo]')
-          ->setValue('data[foo]', 'foo')
-
-          ->text('data')
-          ->setValue('data', 'bar');
-        $expected = array(
-            'data' => 'bar'
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesRows()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data')
-          ->setValue('data', 'bar')
-
-          ->text('data[bar]')
-          ->setValue('data[bar]', 'bar');
-        $expected = array(
-            'data' => array(
-                'bar' => 'bar'
-            )
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesArraysNested()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[foo][bar][baz]')
-          ->setValue('data[foo][bar][baz]', 'foo')
-
-          ->text('data[foo][bar]')
-          ->setValue('data[foo][bar]', 'bar');
-        $expected = array(
-            'data' => array(
-                'foo' => array(
-                    'bar' => 'bar'
-                )
-            )
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testGetValuesOverwritesRowsNested()
-    {
-        $f = $this->createForm('/url');
-        $f->text('data[foo][bar]')
-          ->setValue('data[foo][bar]', 'bar')
-
-          ->text('data[foo][bar][baz]')
-          ->setValue('data[foo][bar][baz]', 'baz');
-        $expected = array(
-            'data' => array(
-                'foo' => array(
-                    'bar' => array(
-                        'baz' => 'baz'
-                    )
-                )
-            )
-        );
-        $this->assertSame($expected, $f->getValues());
-    }
-
-    public function testSetValuesWithArrays()
-    {
-        $values = array(
-            'foo' => 'foo',
-            'bar' => array(
-                'one' => 'one',
-                'two' => 'two'
-            )
-        );
-        $f = $this->createForm('/url');
-        $f->setValues($values, true);
-        $this->assertSame('foo', $f->getValue('foo'));
-        $this->assertSame('one', $f->getValue('bar[one]'));
-        $this->assertSame('two', $f->getValue('bar[two]'));
-        $this->assertSame($values, $f->getValues());
-    }
-
-    public function testMatchesRowsWithArrays()
+    public function testHandleWithArrays()
     {
         $values = array(
             'foo' => 'foo',
@@ -557,14 +412,17 @@ class FormTest extends \PHPUnit_Framework_TestCase
             )
         );
         $f = $this->createForm('/url');
-        $f->text('foo')
-          ->text('bar[one]')
-          ->text('bar[two]')
-          ->text('baz[one][two]');
+        $f->text('foo');
+        $f->text('bar[one]');
+        $f->text('bar[two]');
+        $f->text('baz[one][two]');
         $request = Request::create('/url');
         $request->request->add($values);
         $f->handle($request);
-        $this->assertTrue($f->isValid());
+        $this->assertSame('foo', $f->getValue('foo'));
+        $this->assertSame('one', $f->getValue('bar[one]'));
+        $this->assertSame('two', $f->getValue('bar[two]'));
+        $this->assertSame('foo', $f->getValue('baz[one][two]'));
     }
 
     public function testGetId()
@@ -614,7 +472,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
                              'form.pre-validate',
                              'form.post-validate'
                          ));
-        $f->validate(array());
+        $f->submitForm(array());
     }
 
     public function testSetAndGetValidator()
@@ -624,6 +482,19 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $validator = $this->getMock('\Reform\Validation\Validator');
         $this->assertSame($f, $f->setValidator($validator));
         $this->assertSame($validator, $f->getValidator());
+    }
+
+    public function testAddRow()
+    {
+        $f = $this->createForm('/url');
+        $row = $this->getMockBuilder('Reform\Form\Row\AbstractRow')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+        $row->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue('foo'));
+        $f->addRow($row);
+        $this->assertSame($row, $f->getRow('foo'));
     }
 
 }
