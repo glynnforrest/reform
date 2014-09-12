@@ -13,6 +13,19 @@ class Select extends AbstractRow
 {
 
     protected $choices = array();
+    protected $multiple;
+
+    /**
+     * Allow this row to accept multiple choices.
+     *
+     * @param bool $multiple Allow or disallow multiple choices
+     */
+    public function setMultiple($multiple = true)
+    {
+        $this->multiple = $multiple;
+
+        return $this;
+    }
 
     /**
      * Set the choices for this row. Keys will be created
@@ -56,9 +69,32 @@ class Select extends AbstractRow
         return $this->choices;
     }
 
+    public function submitForm(array $values)
+    {
+        if (!$this->multiple) {
+            $this->value = isset($values[$this->name]) ? $values[$this->name] : null;
+
+            return;
+        }
+
+        //expecting multiple values
+        //the array has been flattened, so take the keys that match
+        //$this->name[\d+]
+        $name = str_replace('[', '\[', $this->name);
+        $name = str_replace(']', '\]', $name);
+        $pattern = sprintf('`%s\[\d+\]`', $name);
+
+        $keys = array_filter(array_keys($values), function ($key) use ($pattern) {
+            return preg_match($pattern, $key);
+        });
+        $this->value = array_values(array_intersect_key($values, array_flip($keys)));
+    }
+
     public function input()
     {
-        return Html::select($this->name, $this->choices, $this->value, $this->attributes);
+        $name = $this->multiple ? $this->name . '[]' : $this->name;
+
+        return Html::select($name, $this->choices, $this->value, $this->multiple, $this->attributes);
     }
 
     public function render()

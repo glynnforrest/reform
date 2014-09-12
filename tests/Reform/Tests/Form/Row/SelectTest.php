@@ -144,4 +144,47 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $r->render());
     }
 
+    public function testMultiple()
+    {
+        $r = $this->getRow('fruits');
+        $this->assertSame($r, $r->setMultiple());
+        $r->setChoices(array('banana', 'apple', 'orange'));
+        $r->setValue(array('apple', 'orange'));
+        $expected = Html::label('fruits', 'Fruits');
+        $expected .= Html::select('fruits[]', array('Banana' => 'banana', 'Apple' => 'apple', 'Orange' => 'orange'), array('apple', 'orange'), true);
+        $this->assertSame($expected, $r->render());
+    }
+
+    public function testSubmitForm()
+    {
+        //this is how a form submission will be flattened
+        $values = array(
+            'foo' => 'bar',
+            'fruits[0]' => 'apple',
+            'fruits[1]' => 'orange',
+            'baz' => 'bar'
+        );
+        $r = $this->getRow('baz');
+        $r->submitForm($values);
+        $this->assertSame('bar', $r->getValue());
+    }
+
+    public function testSubmitFormMultiple()
+    {
+        //this is how a form submission will be flattened
+        $values = array(
+            'foo' => 'bar',
+            'fruits[favourite][0]' => 'apple',
+            'fruits[favourite][1]' => 'orange',
+            //more than 1 digit indexes
+            'fruits[favourite][11]' => 'banana',
+            'fruits[favourite][204]' => 'strawberry',
+            'baz' => 'bar'
+        );
+        $r = $this->getRow('fruits[favourite]');
+        $r->setMultiple();
+        $r->submitForm($values);
+        $this->assertSame(array('apple', 'orange', 'banana', 'strawberry'), $r->getValue());
+    }
+
 }
