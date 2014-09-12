@@ -147,13 +147,41 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::select('choice', array('Foo' => 'foo')));
     }
 
-    public function testSelectWithAttributes()
+    public function testSelectWithSelected()
     {
         $expected = '<select name="choice">';
         $expected .= '<option value="foo">Foo</option>';
         $expected .= '<option value="bar" selected="selected">Bar</option>';
         $expected .= '</select>';
         $this->assertSame($expected, Html::select('choice', array('Foo' => 'foo', 'Bar' => 'bar'), 'bar'));
+    }
+
+    public function testSelectUsesLooseTypeChecking()
+    {
+
+        $expected = '<select name="choice">';
+        $expected .= '<option value="0" selected="selected">Zero</option>';
+        $expected .= '<option value="1">One</option>';
+        $expected .= '</select>';
+        $this->assertSame($expected, Html::select('choice', array('Zero' => 0, 'One' => 1), '0'));
+    }
+
+    public function testSelectMultiple()
+    {
+        $expected = '<select name="choice" multiple="multiple" class="foo">';
+        $expected .= '<option value="foo">Foo</option>';
+        $expected .= '<option value="bar" selected="selected">Bar</option>';
+        $expected .= '<option value="baz" selected="selected">Baz</option>';
+        $expected .= '</select>';
+        $choices = array('Foo' => 'foo', 'Bar' => 'bar', 'Baz' => 'baz');
+        $this->assertSame($expected, Html::select('choice', $choices, array('bar', 'baz'), true, array('class' => 'foo')));
+    }
+
+    public function testSelectThrowsExceptionForArrayWithoutMultiple()
+    {
+        $msg = 'Html::select() must be passed the "multiple" argument to use multiple selections';
+        $this->setExpectedException('\InvalidArgumentException', $msg);
+        Html::select('choice', array('foo'), array());
     }
 
 }

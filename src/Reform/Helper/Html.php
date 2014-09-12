@@ -85,26 +85,40 @@ class Html
      * content of the tag (the name visible in the browser) and values
      * become the value of the tag (the value attribute). Pass
      * $selected, where $selected is a value (not a key) in $values,
-     * to pre-select one of the options.
+     * to pre-select one of the options. Select more than one with an
+     * array and by setting the $multiple attribute.
      *
-     * @param string $name     The name attribute of the select tag
-     * @param array  $name     An array of keys and value to use as option tags.
-     * @param string $selected The value of the input to pre-select.
-     * @param attributes array An array of html attributes.
+     * @param string $name       The name attribute of the select tag
+     * @param array  $name       An array of keys and value to use as option tags.
+     * @param string $selected   The value of the input to pre-select.
+     * @param bool   $multiple   Allow for multiple selections
+     * @param array  $attributes An array of html attributes.
      */
-    public static function select($name, array $values, $selected = null, $attributes = array())
+    public static function select($name, array $values, $selected = null, $multiple = false, array $attributes = array())
     {
-        $attributes['name'] = $name;
+        $attr = $multiple ? array('name' => $name, 'multiple') : array('name' => $name);
+        $attributes = array_merge($attr, $attributes);
+
+        if (is_array($selected) && !$multiple) {
+            throw new \InvalidArgumentException('Html::select() must be passed the "multiple" argument to use multiple selections');
+        }
+
         $text = self::openTag('select', $attributes);
+
         foreach ($values as $k => $v) {
             if (is_numeric($k)) {
                 $k = $v;
             }
-            if ($v === $selected) {
+
+            //this comparison and in_array do not check types intentionally
+            if ($v == $selected) {
                 $attributes = array('value' => $v, 'selected');
+            } elseif (is_array($selected)) {
+                $attributes = in_array($v, $selected) ? array('value' => $v, 'selected') : array('value' => $v);
             } else {
                 $attributes = array('value' => $v);
             }
+
             $text .= self::tag('option', $k, $attributes);
         }
         $text .= self::closeTag('select');
