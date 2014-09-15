@@ -2,8 +2,6 @@
 
 namespace Reform\Tests\EventListener;
 
-require_once __DIR__ . '/../../../bootstrap.php';
-
 use Reform\EventListener\CsrfListener;
 use Reform\Form\FormEvent;
 

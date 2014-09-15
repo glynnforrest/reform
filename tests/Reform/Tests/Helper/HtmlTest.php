@@ -4,8 +4,6 @@ namespace Reform\Tests\Helper;
 
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../bootstrap.php';
-
 /**
  * HtmlTest
  * @author Glynn Forrest me@glynnforrest.com

@@ -5,8 +5,6 @@ namespace Reform\Tests\Form\Row;
 use Reform\Form\Row\Select;
 use Reform\Helper\Html;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 /**
  * SelectTest
  *

@@ -8,8 +8,6 @@ use Reform\Validation\Rule;
 
 use Symfony\Component\HttpFoundation\Request;
 
-require_once __DIR__ . '/../../../bootstrap.php';
-
 /**
  * FormTest
  * @author Glynn Forrest me@glynnforrest.com

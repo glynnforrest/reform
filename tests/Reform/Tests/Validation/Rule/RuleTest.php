@@ -2,8 +2,6 @@
 
 namespace Reform\Tests\Validation\Rule;
 
-require_once __DIR__ . '/../../../../bootstrap.php';
-
 use Reform\Validation\Rule\Rule;
 
 /**
