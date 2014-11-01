@@ -9,14 +9,8 @@ namespace Reform\Helper;
 class Html
 {
 
-    public static function attributes($attributes = array())
+    public static function attributes(array $attributes = array())
     {
-        if (!is_array($attributes)) {
-            $type = gettype($attributes);
-            throw new \InvalidArgumentException(
-                "Html::attributes() must be passed an array, $type given."
-            );
-        }
         $text = array();
         foreach ($attributes as $key => $value) {
             //if we have numeric keys (e.g. checked), set the value as

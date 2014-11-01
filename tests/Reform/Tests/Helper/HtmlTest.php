@@ -69,12 +69,6 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::input('textarea', 'comment', 'Something', array('id' => 'other-id')));
     }
 
-    public function testAttributesThrowsExceptionForBadAttributes()
-    {
-        $this->setExpectedException('\InvalidArgumentException');
-        Html::attributes(null);
-    }
-
     public function testLabel()
     {
         $expected = '<label for="username">Username</label>';
