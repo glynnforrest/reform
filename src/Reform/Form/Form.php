@@ -489,10 +489,11 @@ class Form
      */
     public function submitForm(array $values)
     {
-        //send the a flattened version of the values to each of the
+        //send a flattened version of the values to each of the
         //rows so they can assign values to themselves.
+        $flattened = $this->flattenArray($values);
         foreach ($this->rows as $row) {
-            $row->submitForm($this->flattenArray($values));
+            $row->submitForm($flattened);
         }
 
         //assigning values before sending the pre-validate event
