@@ -194,4 +194,10 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::input('text', 'foo', null, array('/><p>Götcha!</p>')));
     }
 
+    public function testTextareaContentIsEscaped()
+    {
+        $expected = '<textarea id="foo" name="foo">&lt;/textarea&gt;&lt;p&gt;Gotcha!&lt;/p&gt;</textarea>';
+        $this->assertSame($expected, Html::input('textarea', 'foo', '</textarea><p>Gotcha!</p>'));
+    }
+
 }

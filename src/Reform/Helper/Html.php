@@ -67,7 +67,7 @@ class Html
                 'name' => $name
             ), $attributes);
 
-            return self::tag('textarea', $value, $attributes);
+            return self::tag('textarea', htmlspecialchars($value), $attributes);
         }
         $attributes = array_merge(array(
             'type' => $type,
