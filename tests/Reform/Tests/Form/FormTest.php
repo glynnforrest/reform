@@ -286,17 +286,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f->getRow('foo')->addRule($rule);
     }
 
-    public function testAddRule()
-    {
-        $f = $this->createForm('/url');
-        $f->text('foo');
-        $rule = new Rule\Required();
-        $this->assertSame($f, $f->addRule('foo', $rule));
-        $f->buildValidator();
-        $validator = $f->getValidator();
-        $this->assertSame(array('foo' => array($rule)), $validator->getRules());
-    }
-
     public function testIsValidDefaultsToFalse()
     {
         $f = $this->createForm('/url');

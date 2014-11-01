@@ -472,19 +472,6 @@ class Form
         }
     }
 
-    /**
-     * Add a validation rule to a row.
-     *
-     * @param string       $name The name of the row
-     * @param AbstractRule $rule The validation rule
-     */
-    public function addRule($name, AbstractRule $rule)
-    {
-        $this->getRow($name)->addRule($rule);
-
-        return $this;
-    }
-
     public function isValid()
     {
         return $this->valid;
