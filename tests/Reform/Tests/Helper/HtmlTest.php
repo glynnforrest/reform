@@ -182,4 +182,16 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         Html::select('choice', array('foo'), array());
     }
 
+    public function testInputAttributesAreEscaped()
+    {
+        $expected = '<input type="text" id="foo" name="foo" value="&quot; /&gt; &lt;p&gt;Gotcha!&lt;/p&gt;" />';
+        $this->assertSame($expected, Html::input('text', 'foo', '" /> <p>Gotcha!</p>'));
+    }
+
+    public function testInputKeylessAttributesAreEscaped()
+    {
+        $expected = '<input type="text" id="foo" name="foo" value="" /&gt;&lt;p&gt;Götcha!&lt;/p&gt;="/&gt;&lt;p&gt;Götcha!&lt;/p&gt;" />';
+        $this->assertSame($expected, Html::input('text', 'foo', null, array('/><p>Götcha!</p>')));
+    }
+
 }

@@ -27,13 +27,13 @@ class Html
             //the $key (e.g. checked="checked"), but only if it
             //doesn't exist already
             if (is_numeric($key)) {
-                if (!array_key_exists($value, $attributes)) {
-                    $key = $value;
-                } else {
-                    continue;
+                $value = htmlspecialchars($value);
+                if (!isset($attributes[$value])) {
+                    $text[] = $value . '="' . $value . '"';
                 }
+                continue;
             }
-            $text[] = $key . '="' . $value . '"';
+            $text[] = $key . '="' . htmlspecialchars($value) . '"';
         }
 
         return empty($text) ? '' : ' ' . implode(' ', $text);
@@ -59,7 +59,7 @@ class Html
         return '<' . $tag . self::attributes($attributes) . ' />';
     }
 
-    public static function input($type, $name, $value = null, $attributes = array())
+    public static function input($type, $name, $value = null, array $attributes = array())
     {
         if ($type === 'textarea') {
             $attributes = array_merge(array(
