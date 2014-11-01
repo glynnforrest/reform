@@ -9,6 +9,12 @@ namespace Reform\Helper;
 class Html
 {
 
+    /**
+     * Create a string of attributes to use in an HTML tag.
+     *
+     * @param  array  $attributes An array of keys and values
+     * @return string The attributes with a leading space
+     */
     public static function attributes(array $attributes = array())
     {
         $text = array();
@@ -29,26 +35,64 @@ class Html
         return empty($text) ? '' : ' ' . implode(' ', $text);
     }
 
-    public static function openTag($tag, $attributes = array())
+    /**
+     * Open an HTML tag.
+     *
+     * @param  string $tag        The name of the tag
+     * @param  array  $attributes An array of html attributes
+     * @return string The tag
+     */
+    public static function openTag($tag, array $attributes = array())
     {
         return '<' . $tag . self::attributes($attributes) . '>';
     }
 
+    /**
+     * Close an HTML tag.
+     *
+     * @param string The name of the tag
+     * @return string The tag
+     */
     public static function closeTag($tag)
     {
         return '</' . $tag . '>';
     }
 
-    public static function tag($tag, $content = null, $attributes = array())
+    /**
+     * Create an HTML tag.
+     *
+     * @param  string $tag        The name of the tag
+     * @param  string $content    The HTML content of the tag
+     * @param  array  $attributes An array of html attributes
+     * @return string The tag
+     */
+    public static function tag($tag, $content = null, array $attributes = array())
     {
         return self::openTag($tag, $attributes) . $content . self::closeTag($tag);
     }
 
-    public static function selfTag($tag, $attributes = array())
+    /**
+     * Create a self closing HTML tag.
+     *
+     * @param  string $tag        The name of the tag
+     * @param  array  $attributes An array of html attributes
+     * @return string The tag
+     */
+    public static function selfTag($tag, array $attributes = array())
     {
         return '<' . $tag . self::attributes($attributes) . ' />';
     }
 
+    /**
+     * Create an input tag. If $type is 'textarea', a textarea tag
+     * will be rendered instead.
+     *
+     * @param  string $type       The type of the input
+     * @param  array  $name       The name of the input
+     * @param  string $value      The value of the input
+     * @param  array  $attributes An array of html attributes
+     * @return string The input tag
+     */
     public static function input($type, $name, $value = null, array $attributes = array())
     {
         if ($type === 'textarea') {
@@ -78,11 +122,12 @@ class Html
      * to pre-select one of the options. Select more than one with an
      * array and by setting the $multiple attribute.
      *
-     * @param string $name       The name attribute of the select tag
-     * @param array  $name       An array of keys and value to use as option tags.
-     * @param string $selected   The value of the input to pre-select.
-     * @param bool   $multiple   Allow for multiple selections
-     * @param array  $attributes An array of html attributes.
+     * @param  string $name       The name attribute of the select tag
+     * @param  array  $values     An array of keys and value to use as option tags
+     * @param  string $selected   The value of the option to pre-select
+     * @param  bool   $multiple   Allow for multiple selections
+     * @param  array  $attributes An array of html attributes
+     * @return string The select tag
      */
     public static function select($name, array $values, $selected = null, $multiple = false, array $attributes = array())
     {
@@ -116,7 +161,15 @@ class Html
         return $text;
     }
 
-    public static function label($for, $content = null, $attributes = array())
+    /**
+     * Create a label tag.
+     *
+     * @param  string $for        The name of the input the label is for
+     * @param  string $content    The content of the label, if any
+     * @param  array  $attributes An array of html attributes
+     * @return string The label tag
+     */
+    public static function label($for, $content = null, array $attributes = array())
     {
         $attributes = array_merge(array('for' => $for), $attributes);
 
