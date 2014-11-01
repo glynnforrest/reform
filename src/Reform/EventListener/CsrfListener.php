@@ -42,11 +42,12 @@ class CsrfListener implements EventSubscriberInterface
             return;
         }
         $id = $form->getId();
-        $token = $form->getValue($this->form_field);
+        $input = $form->getRow($this->form_field);
+        $token = $input->getValue();
         $this->manager->check($id, $token);
         //the token is valid and is now removed. Generate a new token
         //in case the form needs to be submitted again.
-        $form->setValue($this->form_field, $this->manager->init($id));
+        $input->setValue($this->manager->init($id));
     }
 
     public static function getSubscribedEvents()

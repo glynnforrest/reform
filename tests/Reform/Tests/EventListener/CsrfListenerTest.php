@@ -4,6 +4,7 @@ namespace Reform\Tests\EventListener;
 
 use Reform\EventListener\CsrfListener;
 use Reform\Form\FormEvent;
+use Reform\Form\Row\Hidden;
 
 /**
  * CsrfListenerTest
@@ -80,14 +81,26 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
                    ->method('getId')
                    ->will($this->returnValue('foo'));
+
+        $input = new Hidden('_token');
+        $input->setValue('csrf_token');
         $this->form->expects($this->once())
-                   ->method('getValue')
-                   ->will($this->returnValue('csrf_token'));
+            ->method('getRow')
+            ->with('_token')
+            ->will($this->returnValue($input));
+
         $this->manager->expects($this->once())
                       ->method('check')
                       ->with('foo', 'csrf_token')
                       ->will($this->returnValue(true));
+
+        //after the token has been verified, assert that a new token is generated
+        $this->manager->expects($this->once())
+            ->method('init')
+            ->with('foo')
+            ->will($this->returnValue('new_token'));
         $this->listener->afterFormValidate($this->newEvent());
+        $this->assertSame('new_token', $input->getValue());
     }
 
     public function testTokenIsNotCheckedIfFormIsNotValid()
@@ -98,9 +111,11 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->never())
                    ->method('getId');
         $this->form->expects($this->never())
-                   ->method('getValue');
+                   ->method('getRow');
         $this->manager->expects($this->never())
                       ->method('check');
+        $this->manager->expects($this->never())
+                      ->method('init');
         $this->listener->afterFormValidate($this->newEvent());
     }
 
