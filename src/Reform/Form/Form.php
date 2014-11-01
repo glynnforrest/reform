@@ -317,13 +317,22 @@ class Form
      * keys and values, where a key is a name of a FormRow and the
      * value is the error message.
      *
-     * @param array $errors An array of names and errors
+     * @param array $errors         The array of errors
+     * @param bool  $ignore_unknown Whether to ignore any unknown form rows
      */
-    public function setErrors(array $errors = array())
+    public function setErrors(array $errors = array(), $ignore_unknown = false)
     {
-        foreach ($errors as $name => $msg) {
-            $this->getRow($name)->setError($msg);
+        foreach ($errors as $name => $error) {
+            try {
+                $this->getRow($name)->setError($error);
+            } catch (\InvalidArgumentException $e) {
+                if (!$ignore_unknown) {
+                    throw $e;
+                }
+            }
         }
+
+        return $this;
     }
 
     /**

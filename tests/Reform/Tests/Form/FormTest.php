@@ -121,24 +121,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $f->getValues());
     }
 
-    public function testGetAndSetError()
-    {
-        $f = $this->createForm('/url');
-        $f->text('username');
-        $f->setErrors(array('username' => 'Username error'));
-        $this->assertSame('Username error', $f->getRow('username')->getError());
-        $f->setErrors(array('username' => 'A different error'));
-        $this->assertSame('A different error', $f->getRow('username')->getError());
-    }
-
-    public function testSetErrorThrowsExceptionUndefinedRow()
-    {
-        $f = $this->createForm('/url');
-        $this->setExpectedException('InvalidArgumentException');
-        $f->setError('username', 'user42');
-    }
-
-    public function testGetErrors()
+    public function testGetAndSetErrors()
     {
         $f = $this->createForm('/url');
         $f->text('username')->setError('Username error');
@@ -148,6 +131,30 @@ class FormTest extends \PHPUnit_Framework_TestCase
             'password' => 'Password error'
         );
         $this->assertSame($errors, $f->getErrors());
+        $changed = array('username' => 'bad', 'password' => 'incorrect');
+        $this->assertSame($f, $f->setErrors($changed));
+        $this->assertSame($changed, $f->getErrors());
+    }
+
+    public function testSetErrorsThrowsExceptionOnUnknown()
+    {
+        $f = $this->createForm('/url');
+        $f->text('username');
+        $f->password('password');
+        $errors = array('username' => 'bad', 'foo' => 'poor', 'password' => 'unacceptable');
+        $this->setExpectedException('\InvalidArgumentException');
+        $f->setErrors($errors);
+    }
+
+    public function testSetErrorsIgnoreUnknown()
+    {
+        $f = $this->createForm('/url');
+        $f->text('username');
+        $f->password('password');
+        $errors = array('username' => 'bad', 'foo' => 'poor', 'password' => 'unacceptable');
+        $expected = array('username' => 'bad', 'password' => 'unacceptable');
+        $f->setErrors($errors, true);
+        $this->assertSame($expected, $f->getErrors());
     }
 
     public function testGetRow()
