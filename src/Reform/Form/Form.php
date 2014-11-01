@@ -503,10 +503,8 @@ class Form
 
         //validate
         $result = $this->validator->validateForm($this->getValues());
-        if ($result->isValid()) {
-            $this->valid = true;
-        } else {
-            $this->valid = false;
+        $this->valid = $result->isValid();
+        if (!$this->valid) {
             $this->setErrors($result->getFirstErrors());
         }
 
@@ -528,8 +526,6 @@ class Form
         if (count(array_intersect_key($values, $this->rows)) > 0) {
             return $this->submitForm($values);
         }
-
-        return;
     }
 
     protected function sendEvent($event_name)
