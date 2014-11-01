@@ -279,30 +279,6 @@ class Form
     }
 
     /**
-     * Set the value of FormRow $name.
-     *
-     * @param string $name  The name of the FormRow
-     * @param string $value The value
-     */
-    public function setValue($name, $value)
-    {
-        if (!isset($this->rows[$name])) {
-            return $this;
-        }
-        $this->rows[$name]->setValue($value);
-
-        return $this;
-    }
-
-    /**
-     * Get the value of the input attached to FormRow $name.
-     */
-    public function getValue($name)
-    {
-        return $this->getRow($name)->getValue();
-    }
-
-    /**
      * Set the value of multiple FormRows.
      *
      * @param array $values The array of values
@@ -310,31 +286,10 @@ class Form
     public function setValues(array $values = array())
     {
         foreach ($values as $name => $value) {
-            $this->setValue($name, $value);
+            $this->getRow($name)->setValue($value);
         }
 
         return $this;
-    }
-
-    /**
-     * Flatten a multidimensional array into a one-dimensional array, using
-     * square brackets to show the structure of the original array.
-     */
-    protected function flattenArray(array $values, $previous = '')
-    {
-        $result = array();
-        foreach ($values as $key => $value) {
-            if ($previous) {
-                $key = $previous . '[' . $key .']';
-            }
-            if (is_array($value)) {
-                $result = $result + $this->flattenArray($value, $key);
-            } else {
-                $result[$key] = $value;
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -348,27 +303,6 @@ class Form
         }
 
         return $values;
-    }
-
-    /**
-     * Set the error of FormRow $name.
-     *
-     * @param string $name  The name of the FormRow
-     * @param string $error The error message
-     */
-    public function setError($name, $error)
-    {
-        return $this->getRow($name)->setError($error);
-    }
-
-    /**
-     * Get the error of FormRow $name.
-     *
-     * @param string $name The name of the FormRow
-     */
-    public function getError($name)
-    {
-        return $this->getRow($name)->getError();
     }
 
     /**
@@ -426,6 +360,27 @@ class Form
         $this->validator_built = true;
 
         return $this->validator;
+    }
+
+    /**
+     * Flatten a multidimensional array into a one-dimensional array, using
+     * square brackets to show the structure of the original array.
+     */
+    protected function flattenArray(array $values, $previous = '')
+    {
+        $result = array();
+        foreach ($values as $key => $value) {
+            if ($previous) {
+                $key = $previous . '[' . $key .']';
+            }
+            if (is_array($value)) {
+                $result = $result + $this->flattenArray($value, $key);
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
