@@ -100,15 +100,25 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($changed, $f->getValues());
     }
 
-    public function testSetValuesIgnoreUndefined()
+    public function testSetValuesThrowsExceptionOnUnknown()
     {
         $f = $this->createForm('/url');
         $f->text('username');
         $f->password('password');
-        $values = array('username' => 'glynn', 'password' => 'secret', 'foo' => 'bar');
+        $values = array('username' => 'glynn', 'foo' => 'bar', 'password' => 'secret');
+        $this->setExpectedException('\InvalidArgumentException');
+        $f->setValues($values);
+    }
+
+    public function testSetValuesIgnoreUnknown()
+    {
+        $f = $this->createForm('/url');
+        $f->text('username');
+        $f->password('password');
+        $values = array('username' => 'glynn', 'foo' => 'bar', 'password' => 'secret');
         $expected = array('username' => 'glynn', 'password' => 'secret');
-        /* $f->setValues($values, true); */
-        /* $this->assertSame($expected, $f->getValues()); */
+        $f->setValues($values, true);
+        $this->assertSame($expected, $f->getValues());
     }
 
     public function testGetAndSetError()

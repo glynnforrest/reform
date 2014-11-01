@@ -281,12 +281,19 @@ class Form
     /**
      * Set the value of multiple FormRows.
      *
-     * @param array $values The array of values
+     * @param array $values         The array of values
+     * @param bool  $ignore_unknown Whether to ignore any unknown form rows
      */
-    public function setValues(array $values = array())
+    public function setValues(array $values = array(), $ignore_unknown = false)
     {
         foreach ($values as $name => $value) {
-            $this->getRow($name)->setValue($value);
+            try {
+                $this->getRow($name)->setValue($value);
+            } catch (\InvalidArgumentException $e) {
+                if (!$ignore_unknown) {
+                    throw $e;
+                }
+            }
         }
 
         return $this;
