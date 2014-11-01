@@ -8,10 +8,6 @@ namespace Reform\Helper;
  */
 class Html
 {
-    public static function escape($string)
-    {
-        return htmlentities($string, ENT_QUOTES, 'UTF-8', false);
-    }
 
     public static function attributes($attributes = array())
     {
@@ -124,25 +120,6 @@ class Html
         $text .= self::closeTag('select');
 
         return $text;
-    }
-
-    public static function js($src, $attributes = array())
-    {
-        $attributes = array_merge(array(
-            'type' => 'text/javascript',
-            'src' => $src), $attributes);
-
-        return self::tag('script', null, $attributes) . PHP_EOL;
-    }
-
-    public static function css($src, $attributes = array())
-    {
-        $attributes = array_merge(array(
-            'rel' => 'stylesheet',
-            'type' => 'text/css',
-            'href' => $src), $attributes);
-
-        return self::selfTag('link', $attributes) . PHP_EOL;
     }
 
     public static function label($for, $content = null, $attributes = array())

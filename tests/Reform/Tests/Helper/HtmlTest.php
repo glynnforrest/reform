@@ -10,40 +10,6 @@ use Reform\Helper\Html;
  **/
 class HtmlTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
-    public function testJs()
-    {
-        $this->assertSame('<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL, Html::js('/js/test.js'));
-    }
-
-    public function testJsAttributes()
-    {
-        $this->assertSame('<script type="text/javascript" src="/js/test.js" id="my_script" class="script"></script>' . PHP_EOL, Html::js('/js/test.js', array(
-        'id' => 'my_script', 'class' => 'script')));
-    }
-
-    public function testCss()
-    {
-        $this->assertSame('<link rel="stylesheet" type="text/css" href="/css/style.css" />' . PHP_EOL, Html::css('/css/style.css'));
-    }
-
-    public function testCssAttributes()
-    {
-        $this->assertSame('<link rel="stylesheet" type="text/css" href="/css/style.css" id="my_style" class="style" />' . PHP_EOL, Html::css('/css/style.css', array(
-        'id' => 'my_style', 'class' => 'style')));
-    }
-
-    public function testEscape()
-    {
-        $this->assertSame('&lt;p&gt;Paragraph&lt;/p&gt;', Html::escape('<p>Paragraph</p>'));
-    }
 
     public function testOpenTag()
     {
