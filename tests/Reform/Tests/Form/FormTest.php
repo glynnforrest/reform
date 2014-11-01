@@ -35,31 +35,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $f->render());
     }
 
-    public function testInput()
-    {
-        $f = $this->createForm('/url');
-        $f->text('name');
-        $this->assertSame(Html::input('text', 'name'), $f->input('name'));
-    }
-
-    public function testLabel()
-    {
-        $f = $this->createForm('/url');
-        $f->text('username');
-        $this->assertSame(Html::label('username', 'Username'), $f->label('username'));
-    }
-
-    public function testError()
-    {
-        $f = $this->createForm('/url');
-        $f->text('email');
-        $this->assertNull($f->error('email'));
-        $error_msg = 'Email is invalid.';
-        $f->getRow('email')->setError($error_msg);
-        $expected = '<small class="error">Email is invalid.</small>';
-        $this->assertSame($expected, $f->error('email'));
-    }
-
     public function testCreateSimpleForm()
     {
         $f = $this->createForm('/post/url', 'get');
@@ -247,7 +222,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($f->render(), $f->__toString());
     }
 
-    public function testAddErrors()
+    public function testSetErrors()
     {
         $f = $this->createForm('/url');
         $f->text('username');
@@ -267,9 +242,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
 
         //test the error html is rendered
         $username_error_html = '<small class="error">' . $username_error . '</small>';
-        $this->assertSame($username_error_html, $f->error('username'));
+        $this->assertSame($username_error_html, $f->getRow('username')->error());
         $email_error_html = '<small class="error">' . $email_error . '</small>';
-        $this->assertSame($email_error_html, $f->error('email'));
+        $this->assertSame($email_error_html, $f->getRow('email')->error());
 
         //test the completed form contains the errors
         $form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));

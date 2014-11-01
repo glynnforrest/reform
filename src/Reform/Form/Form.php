@@ -209,46 +209,6 @@ class Form
     }
 
     /**
-     * Render the label of FormRow $name as Html.
-     *
-     * @param string $name The name of the FormRow label to render.
-     */
-    public function label($name)
-    {
-        return $this->getRow($name)->label();
-    }
-
-    /**
-     * Render the input of FormRow $name as Html.
-     *
-     * @param string $name The name of the FormRow input to render.
-     */
-    public function input($name)
-    {
-        return $this->getRow($name)->input();
-    }
-
-    /**
-     * Render the error of FormRow $name as Html.
-     *
-     * @param string $name The name of the FormRow error to render.
-     */
-    public function error($name)
-    {
-        return $this->getRow($name)->error();
-    }
-
-    /**
-     * Render the FormRow $name as Html.
-     *
-     * @param string $name The name of the FormRow render.
-     */
-    public function row($name)
-    {
-        return $this->getRow($name)->render();
-    }
-
-    /**
      * Render the entire Form as Html.
      */
     public function render()
@@ -421,7 +381,7 @@ class Form
     public function setErrors(array $errors = array())
     {
         foreach ($errors as $name => $msg) {
-            $this->setError($name, $msg);
+            $this->getRow($name)->setError($msg);
         }
     }
 
