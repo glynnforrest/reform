@@ -185,4 +185,47 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::addToAttribute($attribute, $addition));
     }
 
+    /**
+     * @dataProvider attributeAddProvider()
+     */
+    public function testAddToAttributeArray($attribute, $addition, $expected)
+    {
+        $attributes = array(
+            'id' => 'my-element',
+            'class' => $attribute
+        );
+        $expected = array(
+            'id' => 'my-element',
+            'class' => $expected
+        );
+        $this->assertSame($expected, Html::addToAttributeArray($attributes, 'class', $addition));
+    }
+
+    public function notSetAttributeAddProvider()
+    {
+        return array(
+            array('foo bar', 'foo bar'),
+            array(' foo bar baz', 'foo bar baz'),
+            array(' foo ', 'foo'),
+            array('', ''),
+            array(' ', ''),
+            array('  ', ''),
+        );
+    }
+
+    /**
+     * @dataProvider notSetAttributeAddProvider()
+     */
+    public function testAddToAttributeArrayNotSet($addition, $expected)
+    {
+        $attributes = array(
+            'id' => 'my-element'
+        );
+        $expected = array(
+            'id' => 'my-element',
+            'class' => $expected
+        );
+        $this->assertSame($expected, Html::addToAttributeArray($attributes, 'class', $addition));
+    }
+
 }

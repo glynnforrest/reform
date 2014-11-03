@@ -51,6 +51,22 @@ class Html
     }
 
     /**
+     * Add to the value of an attribute in an array of attributes. The
+     * attribute will be created if it doesn't exist.
+     *
+     * @param array  $attributes The attributes
+     * @param string $name       The name of the attribute to add to
+     * @param string $addition   The text to add
+     */
+    public static function addToAttributeArray(array $attributes, $name, $addition)
+    {
+        $attribute = isset($attributes[$name]) ? $attributes[$name] : '';
+        $attributes[$name] = self::addToAttribute($attribute, $addition);
+
+        return $attributes;
+    }
+
+    /**
      * Open an HTML tag.
      *
      * @param  string $tag        The name of the tag
