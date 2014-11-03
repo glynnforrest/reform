@@ -169,11 +169,13 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
             array('foo bar ', 'baz', 'foo bar baz'),
             array('foo bar', ' baz', 'foo bar baz'),
             array('foo bar ', 'baz ', 'foo bar baz'),
+            array('foo    bar ', 'baz ', 'foo bar baz'),
             array('foo bar', 'foo', 'foo bar'),
             array('', 'foo bar', 'foo bar'),
             array('foo bar', '', 'foo bar'),
             array('', '', ''),
-            array('a lot of class names', 'some more class names', 'a lot of class names some more')
+            array('a lot of class names', 'some more class names', 'a lot of class names some more'),
+            array('a     lot of     class names    ', '    some   more    class names', 'a lot of class names some more')
         );
     }
 

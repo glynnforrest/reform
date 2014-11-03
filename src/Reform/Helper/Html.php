@@ -45,9 +45,15 @@ class Html
      */
     public static function addToAttribute($attribute, $addition)
     {
-        $new = array_unique(array_merge(explode(' ', trim($attribute)), explode(' ', trim($addition))));
+        $new = array_unique(array_merge(explode(' ', $attribute), explode(' ', $addition)));
 
-        return trim(implode(' ', $new));
+        //strip out any empty strings from extra whitespace between values
+        //e.g. class=" foo bar     baz "
+        $new = array_filter($new, function($value) {
+            return $value !== '';
+        });
+
+        return implode(' ', $new);
     }
 
     /**
