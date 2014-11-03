@@ -160,4 +160,29 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, Html::input('textarea', 'foo', '</textarea><p>Gotcha!</p>'));
     }
 
+    public function attributeAddProvider()
+    {
+        return array(
+            array('foo', 'bar', 'foo bar'),
+            array('foo bar', 'baz', 'foo bar baz'),
+            array(' foo bar', 'baz', 'foo bar baz'),
+            array('foo bar ', 'baz', 'foo bar baz'),
+            array('foo bar', ' baz', 'foo bar baz'),
+            array('foo bar ', 'baz ', 'foo bar baz'),
+            array('foo bar', 'foo', 'foo bar'),
+            array('', 'foo bar', 'foo bar'),
+            array('foo bar', '', 'foo bar'),
+            array('', '', ''),
+            array('a lot of class names', 'some more class names', 'a lot of class names some more')
+        );
+    }
+
+    /**
+     * @dataProvider attributeAddProvider()
+     */
+    public function testAddToAttribute($attribute, $addition, $expected)
+    {
+        $this->assertSame($expected, Html::addToAttribute($attribute, $addition));
+    }
+
 }

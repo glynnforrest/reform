@@ -36,6 +36,21 @@ class Html
     }
 
     /**
+     * Add to the value of an attribute, checking for duplicates. This
+     * could be used to add css classes when css classes already
+     * exist.
+     *
+     * @param string $attribute The value of the attribute
+     * @param string $addition  The text to add
+     */
+    public static function addToAttribute($attribute, $addition)
+    {
+        $new = array_unique(array_merge(explode(' ', trim($attribute)), explode(' ', trim($addition))));
+
+        return trim(implode(' ', $new));
+    }
+
+    /**
      * Open an HTML tag.
      *
      * @param  string $tag        The name of the tag
