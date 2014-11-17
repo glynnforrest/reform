@@ -58,13 +58,6 @@ class AbstractRowTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($name, $r->getLabel());
     }
 
-    public function testLabelHtml()
-    {
-        $r = $this->getRow('pass-word');
-        $html = Html::label('pass-word', 'Pass word');
-        $this->assertSame($html, $r->label());
-    }
-
     public function testGetAndSetError()
     {
         $r = $this->getRow('username');
@@ -72,16 +65,6 @@ class AbstractRowTest extends \PHPUnit_Framework_TestCase
         $msg = 'Username is required.';
         $this->assertSame($r, $r->setError($msg));
         $this->assertSame($msg, $r->getError());
-    }
-
-    public function testErrorHtml()
-    {
-        $r = $this->getRow('username');
-        $this->assertNull($r->getError());
-        $msg = 'Username is required.';
-        $this->assertSame($r, $r->setError($msg));
-        $html = '<small class="error">Username is required.</small>';
-        $this->assertSame($html, $r->error());
     }
 
     public function testGetAndSetAttributes()

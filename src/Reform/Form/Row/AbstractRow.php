@@ -5,6 +5,7 @@ namespace Reform\Form\Row;
 use Reform\Helper\Html;
 use Reform\Validation\Rule\AbstractRule;
 use Reform\Exception\BuildValidationException;
+use Reform\Form\Renderer\RendererInterface;
 
 /**
  * AbstractRow
@@ -22,8 +23,6 @@ abstract class AbstractRow
     protected $rules = array();
     protected $rules_enabled = true;
     protected $error;
-    protected $row_string = ':label:input:error';
-    protected $error_string = '<small class="error">:error</small>';
 
     public function __construct($name, $label = null, $attributes = array())
     {
@@ -69,18 +68,6 @@ abstract class AbstractRow
     }
 
     /**
-     * Render the error attached to this FormRow as Html.
-     */
-    public function error()
-    {
-        if ($this->error) {
-            return str_replace(':error', $this->error, $this->error_string);
-        }
-
-        return null;
-    }
-
-    /**
      * Get the error message attached to this FormRow.
      */
     public function getError()
@@ -106,14 +93,6 @@ abstract class AbstractRow
     public function getLabel()
     {
         return $this->label;
-    }
-
-    /**
-     * Render the label attached to this FormRow as Html.
-     */
-    public function label()
-    {
-        return Html::label($this->name, $this->label);
     }
 
     /**
@@ -236,8 +215,8 @@ abstract class AbstractRow
         $this->value = isset($values[$this->name]) ? $values[$this->name] : null;
     }
 
-    abstract public function input();
+    abstract public function input(RendererInterface $renderer);
 
-    abstract public function render();
+    abstract public function render(RendererInterface $renderer);
 
 }
