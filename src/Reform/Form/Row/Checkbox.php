@@ -2,7 +2,7 @@
 
 namespace Reform\Form\Row;
 
-use Reform\Helper\Html;
+use Reform\Form\Renderer\RendererInterface;
 
 /**
  * Checkbox
@@ -11,23 +11,17 @@ use Reform\Helper\Html;
  **/
 class Checkbox extends AbstractRow
 {
-
-    public function input()
+    public function input(RendererInterface $renderer)
     {
-        if ($this->value !== null) {
+        if ((bool) $this->value !== false) {
             $this->addAttributes(array('checked'));
         }
         //no matter what, the value of the input is 'checked'
-        return Html::input('checkbox', $this->name, 'checked', $this->attributes);
+        return $renderer->input('checkbox', $this->name, 'checked', $this->attributes);
     }
 
-    public function render()
+    public function render(RendererInterface $renderer)
     {
-        $str = str_replace(':label', $this->label(), $this->row_string);
-        $str = str_replace(':error', $this->error(), $str);
-        $str = str_replace(':input', $this->input(), $str);
-
-        return $str;
+        return $renderer->row($this);
     }
-
 }
