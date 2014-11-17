@@ -2,7 +2,7 @@
 
 namespace Reform\Form\Row;
 
-use Reform\Helper\Html;
+use Reform\Form\Renderer\RendererInterface;
 
 /**
  * Select
@@ -11,7 +11,6 @@ use Reform\Helper\Html;
  **/
 class Select extends AbstractRow
 {
-
     protected $choices = array();
     protected $multiple;
 
@@ -90,20 +89,15 @@ class Select extends AbstractRow
         $this->value = array_values(array_intersect_key($values, array_flip($keys)));
     }
 
-    public function input()
+    public function input(RendererInterface $renderer)
     {
-        $name = $this->multiple ? $this->name . '[]' : $this->name;
+        $name = $this->multiple ? $this->name.'[]' : $this->name;
 
-        return Html::select($name, $this->choices, $this->value, $this->multiple, $this->attributes);
+        return $renderer->select($name, $this->choices, $this->value, $this->multiple, $this->attributes);
     }
 
-    public function render()
+    public function render(RendererInterface $renderer)
     {
-        $str = str_replace(':label', $this->label(), $this->row_string);
-        $str = str_replace(':error', $this->error(), $str);
-        $str = str_replace(':input', $this->input(), $str);
-
-        return $str;
+        return $renderer->row($this);
     }
-
 }

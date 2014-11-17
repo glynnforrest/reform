@@ -3,16 +3,14 @@
 namespace Reform\Tests\Form\Row;
 
 use Reform\Form\Row\Select;
-use Reform\Helper\Html;
 
 /**
  * SelectTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class SelectTest extends \PHPUnit_Framework_TestCase
+class SelectTest extends RowTestCase
 {
-
     protected function getRow($name, $label = null, $attributes = array())
     {
         return new Select($name, $label, $attributes);
@@ -37,8 +35,8 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $nice_array = array('First name' => 'first_name', 'Last name' => 'last_name');
         $this->assertSame($nice_array, $r->getChoices());
 
-        $html = Html::select('variables', $nice_array);
-        $this->assertSame($html, $r->input());
+        $this->expectSelect('variables', $nice_array);
+        $this->assertSame('select', $r->input($this->renderer));
     }
 
     public function testSetChoicesDoesNotChangeFloatKeys()
@@ -58,90 +56,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $r->getChoices());
     }
 
-    public function testInput()
-    {
-        $r = $this->getRow('decision');
-        $html = Html::select('decision', array());
-        $this->assertSame($html, $r->input());
-    }
-
-    public function testInputWithChoices()
-    {
-        $r = $this->getRow('decision');
-        $r->setChoices(array('Yes' => 'yes', 'No' => 'no'));
-        $html = Html::select('decision', array('Yes' => 'yes', 'No' => 'no'));
-        $this->assertSame($html, $r->input());
-    }
-
-    public function testInputWithValue()
-    {
-        $r = $this->getRow('decision');
-        $r->setValue('yes');
-        $html = Html::select('decision', array());
-        $this->assertSame($html, $r->input());
-    }
-
-    public function testInputWithValueAndChoices()
-    {
-        $r = $this->getRow('decision');
-        $r->setChoices(array('Yes' => 'yes', 'No' => 'no'));
-        $r->setValue('no');
-        $html = Html::select('decision', array('Yes' => 'yes', 'No' => 'no'), 'no');
-        $this->assertSame($html, $r->input());
-    }
-
-    public function testRow()
-    {
-        $r = $this->getRow('decision');
-        $r->setChoices(array('yes', 'no'));
-        $expected = Html::label('decision', 'Decision');
-        $expected .= Html::select('decision', array('Yes' => 'yes', 'No' => 'no'));
-        $this->assertSame($expected, $r->render());
-    }
-
-    public function testRowWithValue()
-    {
-        $r = $this->getRow('decision');
-        $r->setValue('yes');
-        $r->setChoices(array('yes', 'no'));
-        $expected = Html::label('decision', 'Decision');
-        $expected .= Html::select('decision', array('Yes' => 'yes', 'No' => 'no'), 'yes');
-        $this->assertSame($expected, $r->render());
-    }
-
-    public function testRowWithError()
-    {
-        $r = $this->getRow('decision');
-        $error = 'No choice given.';
-        $r->setError($error);
-        $expected = Html::label('decision', 'Decision');
-        $expected .= Html::select('decision', array());
-        $expected .= '<small class="error">' . $error . '</small>';
-        $this->assertSame($expected, $r->render());
-    }
-
-    public function testRowWithValueAndError()
-    {
-        $r = $this->getRow('decision');
-        $r->setValue('no');
-        $error = 'Bad move, pal.';
-        $r->setError($error);
-        $r->setChoices(array('yes', 'no'));
-        $expected = Html::label('decision', 'Decision');
-        $expected .= Html::select('decision', array('Yes' => 'yes', 'No' => 'no'), 'no');
-        $expected .= '<small class="error">' . $error . '</small>';
-        $this->assertSame($expected, $r->render());
-    }
-
     public function testMultiple()
     {
         $r = $this->getRow('fruits');
         $this->assertSame($r, $r->setMultiple());
         $r->setChoices(array('banana', 'apple', 'orange'));
         $r->setValue(array('apple', 'orange'));
-        $expected = Html::label('fruits', 'Fruits');
-        $expected .= Html::select('fruits[]', array('Banana' => 'banana', 'Apple' => 'apple', 'Orange' => 'orange'), array('apple', 'orange'), true);
-        $this->assertSame($expected, $r->render());
+        $this->expectSelect('fruits[]', array('Banana' => 'banana', 'Apple' => 'apple', 'Orange' => 'orange'), array('apple', 'orange'), true);
+        $this->assertSame('select', $r->input($this->renderer));
     }
 
     public function testSubmitForm()
@@ -151,7 +73,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'fruits[0]' => 'apple',
             'fruits[1]' => 'orange',
-            'baz' => 'bar'
+            'baz' => 'bar',
         );
         $r = $this->getRow('baz');
         $r->submitForm($values);
@@ -168,7 +90,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
             //more than 1 digit indexes
             'fruits[favourite][11]' => 'banana',
             'fruits[favourite][204]' => 'strawberry',
-            'baz' => 'bar'
+            'baz' => 'bar',
         );
         $r = $this->getRow('fruits[favourite]');
         $r->setMultiple();
@@ -176,4 +98,51 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array('apple', 'orange', 'banana', 'strawberry'), $r->getValue());
     }
 
+    protected function expectSelect($name, array $values = array(), $selected = null, $multiple = false)
+    {
+        $this->renderer->expects($this->once())
+                       ->method('select')
+                       ->with($name, $values, $selected, $multiple)
+                       ->will($this->returnValue('select'));
+    }
+
+    protected function createRow()
+    {
+        return new Select('decision');
+    }
+
+    public function testInput()
+    {
+        $this->expectSelect('decision');
+        $this->assertSame('select', $this->row->input($this->renderer));
+    }
+
+    public function testInputWithChoices()
+    {
+        $this->row->setChoices(array('Yes' => 'yes', 'No' => 'no'));
+        $this->expectSelect('decision', array('Yes' => 'yes', 'No' => 'no'));
+        $this->assertSame('select', $this->row->input($this->renderer));
+    }
+
+    public function testInputWithValue()
+    {
+        $this->row->setValue('yes');
+        $this->expectSelect('decision', array(), 'yes');
+        $this->assertSame('select', $this->row->input($this->renderer));
+    }
+
+    public function testInputWithValueAndChoices()
+    {
+        $this->row->setChoices(array('Yes' => 'yes', 'No' => 'no'));
+        $this->row->setValue('no');
+        $this->expectSelect('decision', array('Yes' => 'yes', 'No' => 'no'), 'no');
+        $this->assertSame('select', $this->row->input($this->renderer));
+    }
+
+    public function testRow()
+    {
+        $this->row->setChoices(array('yes', 'no'));
+        $this->expectRow();
+        $this->assertSame('row', $this->row->render($this->renderer));
+    }
 }
