@@ -161,7 +161,7 @@ class Html
      *
      * @param  string $name       The name attribute of the select tag
      * @param  array  $values     An array of keys and value to use as option tags
-     * @param  string $selected   The value of the option to pre-select
+     * @param  mixed  $selected   The value of the option(s) to pre-select
      * @param  bool   $multiple   Allow for multiple selections
      * @param  array  $attributes An array of html attributes
      * @return string The select tag

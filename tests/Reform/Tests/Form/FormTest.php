@@ -5,6 +5,8 @@ namespace Reform\Tests\Form;
 use Reform\Form\Form;
 use Reform\Helper\Html;
 use Reform\Validation\Rule;
+use Reform\Form\Renderer\BootstrapRenderer;
+use Reform\Form\Row\Text;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,13 +21,31 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function setup()
     {
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->renderer = $this->getMock('Reform\Form\Renderer\RendererInterface');
     }
 
     protected function createForm($url, $method = 'POST', $attributes = array())
     {
         $form = new Form($url, $method, $attributes);
+        $form->setDefaultRenderer($this->renderer);
 
         return $form;
+    }
+
+    public function testGetAndSetDefaultRenderer()
+    {
+        $form = $this->createForm('/url');
+        $this->assertSame($this->renderer, $form->getDefaultRenderer());
+
+        $new_renderer = new BootstrapRenderer();
+        $this->assertSame($form, $form->setDefaultRenderer($new_renderer));
+        $this->assertSame($new_renderer, $form->getDefaultRenderer());
+    }
+
+    public function testGetDefaultRendererNoneSet()
+    {
+        $form = new Form('/url');
+        $this->assertInstanceOf('Reform\Form\Renderer\BootstrapRenderer', $form->getDefaultRenderer());
     }
 
     public function testCreateEmptyForm()
@@ -38,10 +58,16 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testCreateSimpleForm()
     {
         $f = $this->createForm('/post/url', 'get');
-        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->text('name'));
+        $row = new Text('foo');
+        $f->addRow($row);
+
         $expected = Html::openTag('form', array('action' => '/post/url', 'method' => 'GET'));
-        $expected .= Html::label('name', 'Name');
-        $expected .= Html::input('text', 'name');
+        $this->renderer->expects($this->once())
+              ->method('row')
+              ->with($row)
+              ->will($this->returnValue('row'));
+        $expected .= 'row';
+
         $expected .= '</form>';
         $this->assertSame($expected, $f->render());
     }
@@ -177,44 +203,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($first, $second);
     }
 
-    protected function stubRow($type, $name, $value = null, $error = null, $attributes = array())
-    {
-        $html = Html::label($name, ucfirst($name));
-        $html .= Html::input($type, $name, $value, $attributes);
-        if ($error) {
-            $html .= '<small class="error">' . $error . '</small>';
-        }
-
-        return $html;
-    }
-
-    public function testCreateAndModify()
-    {
-        $f = $this->createForm('/url');
-        $f->text('username')->setValue('glynn');
-        $comment =  'Hello world';
-        $f->textarea('comment')->setValue($comment);
-
-        $first_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
-        $first_form .= $this->stubRow('text', 'username', 'glynn');
-        $first_form .= $this->stubRow('textarea', 'comment', $comment);
-        $first_form .= '</form>';
-        $this->assertSame($first_form, $f->render());
-
-        //now modify the rows
-        $username_row = $f->getRow('username');
-        $username_row->setValue('glynnforrest');
-
-        $comment_row = $f->getRow('comment');
-        $comment_row->setValue('foo');
-
-        $second_form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
-        $second_form .= $this->stubRow('text', 'username', 'glynnforrest');
-        $second_form .= $this->stubRow('textarea', 'comment', 'foo');
-        $second_form .= '</form>';
-        $this->assertSame($second_form, $f->render());
-    }
-
     public function testToStringCallsRender()
     {
         $f = $this->createForm('/url');
@@ -238,19 +226,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         //test the error messages are stored in each FormRow instance
         $this->assertSame($username_error, $f->getRow('username')->getError());
         $this->assertSame($email_error, $f->getRow('email')->getError());
-
-        //test the error html is rendered
-        $username_error_html = '<small class="error">' . $username_error . '</small>';
-        $this->assertSame($username_error_html, $f->getRow('username')->error());
-        $email_error_html = '<small class="error">' . $email_error . '</small>';
-        $this->assertSame($email_error_html, $f->getRow('email')->error());
-
-        //test the completed form contains the errors
-        $form = Html::openTag('form', array('action' => '/url', 'method' => 'POST'));
-        $form .= $this->stubRow('text', 'username', null, $username_error);
-        $form .= $this->stubRow('text', 'email', 'foo', $email_error);
-        $form .= '</form>';
-        $this->assertSame($form, $f->render());
     }
 
     public function testGetFields()

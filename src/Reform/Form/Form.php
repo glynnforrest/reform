@@ -6,6 +6,8 @@ use Reform\Helper\Html;
 use Reform\Validation\Validator;
 use Reform\Validation\Rule\AbstractRule;
 use Reform\Form\Row\AbstractRow;
+use Reform\Form\Renderer\BootstrapRenderer;
+use Reform\Form\Renderer\RendererInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 class Form
 {
     protected $dispatcher;
+    protected $default_renderer;
     protected $types = array();
     protected $action;
     protected $method;
@@ -62,6 +65,33 @@ class Form
     public function getId()
     {
         return get_class($this);
+    }
+
+    /**
+     * Set the default renderer used when rendering this form.
+     *
+     * @param RendererInterface $renderer The renderer
+     * @return Form                     This Form instance
+     */
+    public function setDefaultRenderer(RendererInterface $renderer)
+    {
+        $this->default_renderer = $renderer;
+
+        return $this;
+    }
+
+    /**
+     * Get the default renderer used when rendering this form.
+     *
+     * @return RendererInterface $renderer The renderer
+     */
+    public function getDefaultRenderer()
+    {
+        if (!$this->default_renderer) {
+            $this->default_renderer = new BootstrapRenderer();
+        }
+
+        return $this->default_renderer;
     }
 
     protected function init()
@@ -209,13 +239,14 @@ class Form
     }
 
     /**
-     * Render the entire Form as Html.
+     * Render the entire Form.
      */
-    public function render()
+    public function render(RendererInterface $renderer = null)
     {
+        $renderer = $renderer ?: $this->getDefaultRenderer();
         $form = $this->header();
         foreach ($this->rows as $row) {
-            $form .= $row->render();
+            $form .= $row->render($renderer);
         }
         $form .= '</form>';
 
