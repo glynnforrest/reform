@@ -10,53 +10,30 @@ use Reform\Helper\Html;
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class HiddenTest extends \PHPUnit_Framework_TestCase
+class HiddenTest extends RowTestCase
 {
-
-    protected function getRow($name, $label = null, $attributes = array())
+    protected function createRow()
     {
-        return new Hidden($name, $label, $attributes);
+        return new Hidden('token');
     }
 
     public function testInput()
     {
-        $r = $this->getRow('token');
         $expected = Html::input('hidden', 'token');
-        $this->assertSame($expected, $r->input());
+        $this->assertSame($expected, $this->row->input($this->renderer));
     }
 
     public function testRow()
     {
-        $r = $this->getRow('token');
         $expected = Html::input('hidden', 'token');
-        $this->assertSame($expected, $r->render());
+        $this->assertSame($expected, $this->row->render($this->renderer));
     }
 
     public function testRowWithValue()
     {
         $token = '12345';
-        $r = $this->getRow('token');
-        $r->setValue($token);
+        $this->row->setValue($token);
         $expected = Html::input('hidden', 'token', $token);
-        $this->assertSame($expected, $r->render());
+        $this->assertSame($expected, $this->row->render($this->renderer));
     }
-
-    public function testRowWithError()
-    {
-        $r = $this->getRow('token');
-        $r->setError('Token is invalid.');
-        $expected = Html::input('hidden', 'token');
-        $this->assertSame($expected, $r->render());
-    }
-
-    public function testRowWithValueAndError()
-    {
-        $token = '123456789';
-        $r = $this->getRow('token');
-        $r->setValue($token);
-        $r->setError('Token is invalid');
-        $expected = Html::input('hidden', 'token', $token);
-        $this->assertSame($expected, $r->render());
-    }
-
 }

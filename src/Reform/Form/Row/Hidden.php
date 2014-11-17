@@ -3,6 +3,7 @@
 namespace Reform\Form\Row;
 
 use Reform\Helper\Html;
+use Reform\Form\Renderer\RendererInterface;
 
 /**
  * Hidden
@@ -11,15 +12,13 @@ use Reform\Helper\Html;
  **/
 class Hidden extends AbstractRow
 {
-
-    public function input()
+    public function input(RendererInterface $renderer)
     {
         return Html::input('hidden', $this->name, $this->value, $this->attributes);
     }
 
-    public function render()
+    public function render(RendererInterface $renderer)
     {
-        return $this->input();
+        return $this->input($renderer);
     }
-
 }
