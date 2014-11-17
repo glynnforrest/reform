@@ -122,6 +122,20 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
         $expected .= '<option value="1">One</option>';
         $expected .= '</select>';
         $this->assertSame($expected, Html::select('choice', array('Zero' => 0, 'One' => 1), '0'));
+        $this->assertSame($expected, Html::select('choice', array('Zero' => 0, 'One' => 1), 0));
+    }
+
+    public function testSelectWithStrangeTypes()
+    {
+        $choices = array(1.1 => 1, 2 => 2, '3' => 3, 4);
+        $expected = '<select name="choice">';
+        $expected .= '<option value="1" selected="selected">1</option>';
+        $expected .= '<option value="2">2</option>';
+        $expected .= '<option value="3">3</option>';
+        $expected .= '<option value="4">4</option>';
+        $expected .= '</select>';
+        $this->assertSame($expected, Html::select('choice', $choices, '1'));
+        $this->assertSame($expected, Html::select('choice', $choices, 1));
     }
 
     public function testSelectMultiple()

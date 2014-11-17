@@ -90,15 +90,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($html, $r->input());
     }
 
-    public function testInputWithStrangeTypes()
-    {
-        $r = $this->getRow('decision');
-        $choices = array(1.1 => 1, 2 => 2, '3' => 3, 4);
-        $r->setChoices($choices);
-        $html = Html::select('decision', $choices);
-        $this->assertSame($html, $r->input());
-    }
-
     public function testRow()
     {
         $r = $this->getRow('decision');
