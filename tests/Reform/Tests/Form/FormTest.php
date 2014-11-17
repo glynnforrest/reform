@@ -7,7 +7,6 @@ use Reform\Helper\Html;
 use Reform\Validation\Rule;
 use Reform\Form\Renderer\BootstrapRenderer;
 use Reform\Form\Row\Text;
-
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -70,6 +69,27 @@ class FormTest extends \PHPUnit_Framework_TestCase
 
         $expected .= '</form>';
         $this->assertSame($expected, $f->render());
+    }
+
+    public function testSimpleFormPassInRenderer()
+    {
+        $f = $this->createForm('/post/url', 'get');
+        $row = new Text('foo');
+        $f->addRow($row);
+
+        $expected = Html::openTag('form', array('action' => '/post/url', 'method' => 'GET'));
+        $this->renderer->expects($this->never())
+                       ->method('row');
+
+        $renderer = $this->getMock('Reform\Form\Renderer\RendererInterface');
+        $renderer->expects($this->once())
+              ->method('row')
+              ->with($row)
+              ->will($this->returnValue('row'));
+        $expected .= 'row';
+
+        $expected .= '</form>';
+        $this->assertSame($expected, $f->render($renderer));
     }
 
     public function testGetAndSetAction()
@@ -154,7 +174,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f->password('password')->setError('Password error');
         $errors = array(
             'username' => 'Username error',
-            'password' => 'Password error'
+            'password' => 'Password error',
         );
         $this->assertSame($errors, $f->getErrors());
         $changed = array('username' => 'bad', 'password' => 'incorrect');
@@ -220,7 +240,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $email_error = 'Email is invalid';
         $f->setErrors(array(
             'username' => $username_error,
-            'email' => $email_error
+            'email' => $email_error,
         ));
 
         //test the error messages are stored in each FormRow instance
@@ -339,13 +359,13 @@ class FormTest extends \PHPUnit_Framework_TestCase
             'foo' => 'foo',
             'bar' => array(
                 'one' => 'one',
-                'two' => 'two'
+                'two' => 'two',
             ),
             'baz' => array(
                 'one' => array(
-                    'two' => 'foo'
-                )
-            )
+                    'two' => 'foo',
+                ),
+            ),
         );
         $f = $this->createForm('/url');
         $f->text('foo');
@@ -432,5 +452,4 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f->addRow($row);
         $this->assertSame($row, $f->getRow('foo'));
     }
-
 }
