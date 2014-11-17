@@ -3,63 +3,37 @@
 namespace Reform\Tests\Form\Row;
 
 use Reform\Form\Row\Text;
-use Reform\Helper\Html;
 
 /**
  * TextTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class TextTest extends \PHPUnit_Framework_TestCase
+class TextTest extends RowTestCase
 {
+    protected function createRow()
+    {
+        return new Text('email');
+    }
 
     public function testInput()
     {
-        $r = new Text('name');
-        $expected = Html::input('text', 'name');
-        $this->assertSame($expected, $r->input());
+        $this->expectInput(1, 'text');
+        $this->assertSame('input', $this->row->input($this->renderer));
+    }
+
+    public function testInputWithValue()
+    {
+        $email = 'me@glynnforrest.com';
+        $this->row->setValue($email);
+        $this->expectInput(1, 'text', $email);
+
+        $this->assertSame('input', $this->row->input($this->renderer));
     }
 
     public function testRow()
     {
-        $r = new Text('name');
-        $expected = Html::label('name', 'Name');
-        $expected .= Html::input('text', 'name');
-        $this->assertSame($expected, $r->render());
+        $this->expectRow();
+        $this->assertSame('row', $this->row->render($this->renderer));
     }
-
-    public function testRowWithValue()
-    {
-        $email = 'test@example.com';
-        $r = new Text('email');
-        $r->setValue($email);
-        $expected = Html::label('email', 'Email');
-        $expected .= Html::input('text', 'email', $email);
-        $this->assertSame($expected, $r->render());
-    }
-
-    public function testRowWithError()
-    {
-        $r = new Text('email');
-        $error = 'Email is incorrect.';
-        $r->setError($error);
-        $expected = Html::label('email', 'Email');
-        $expected .= Html::input('text', 'email');
-        $expected .= '<small class="error">' . $error . '</small>';
-        $this->assertSame($expected, $r->render());
-    }
-
-    public function testRowWithValueAndError()
-    {
-        $email = 'foo_bar';
-        $r = new Text('email');
-        $r->setValue($email);
-        $error = 'Email is invalid.';
-        $r->setError($error);
-        $expected = Html::label('email', 'Email');
-        $expected .= Html::input('text', 'email', $email);
-        $expected .= '<small class="error">' . $error . '</small>';
-        $this->assertSame($expected, $r->render());
-    }
-
 }
