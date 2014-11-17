@@ -2,7 +2,7 @@
 
 namespace Reform\Form\Row;
 
-use Reform\Helper\Html;
+use Reform\Form\Renderer\RendererInterface;
 
 /**
  * Submit
@@ -11,23 +11,18 @@ use Reform\Helper\Html;
  **/
 class Submit extends AbstractRow
 {
-
-    public function input()
+    public function input(RendererInterface $renderer)
     {
         //add a value to the submit button if there is none
         if ($this->value === null) {
             $this->value = $this->sensible($this->name);
         }
-        return Html::input('submit', $this->name, $this->value, $this->attributes);
+
+        return $renderer->input('submit', $this->name, $this->value, $this->attributes);
     }
 
-    public function render()
+    public function render(RendererInterface $renderer)
     {
-        $str = str_replace(':error', '', $this->row_string);
-        $str = str_replace(':label', '', $str);
-        $str = str_replace(':input', $this->input(), $str);
-
-        return $str;
+        return $renderer->row($this, false);
     }
-
 }
