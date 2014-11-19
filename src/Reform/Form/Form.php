@@ -4,11 +4,9 @@ namespace Reform\Form;
 
 use Reform\Helper\Html;
 use Reform\Validation\Validator;
-use Reform\Validation\Rule\AbstractRule;
 use Reform\Form\Row\AbstractRow;
 use Reform\Form\Renderer\BootstrapRenderer;
 use Reform\Form\Renderer\RendererInterface;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -70,8 +68,8 @@ class Form
     /**
      * Set the default renderer used when rendering this form.
      *
-     * @param RendererInterface $renderer The renderer
-     * @return Form                     This Form instance
+     * @param  RendererInterface $renderer The renderer
+     * @return Form              This Form instance
      */
     public function setDefaultRenderer(RendererInterface $renderer)
     {
@@ -259,6 +257,34 @@ class Form
     }
 
     /**
+     * Render a row. If no renderer is supplied, the default renderer on this
+     * form will be used.
+     *
+     * @param string            $name     The name of the row
+     * @param RendererInterface $renderer The renderer to use
+     */
+    public function row($name, RendererInterface $renderer = null)
+    {
+        $renderer = $renderer ?: $this->getDefaultRenderer();
+
+        return $this->getRow($name)->render($renderer);
+    }
+
+    /**
+     * Render the input of a row. If no renderer is supplied, the default
+     * renderer on this form will be used.
+     *
+     * @param string            $name     The name of the row
+     * @param RendererInterface $renderer The renderer to use
+     */
+    public function input($name, RendererInterface $renderer = null)
+    {
+        $renderer = $renderer ?: $this->getDefaultRenderer();
+
+        return $this->getRow($name)->input($renderer);
+    }
+
+    /**
      * Create a new row and add it to the Form. If no label is
      * supplied a label will be guessed using the $name attribute.
      *
@@ -418,7 +444,7 @@ class Form
         $result = array();
         foreach ($values as $key => $value) {
             if ($previous) {
-                $key = $previous . '[' . $key .']';
+                $key = $previous.'['.$key.']';
             }
             if (is_array($value)) {
                 $result = $result + $this->flattenArray($value, $key);
@@ -447,7 +473,7 @@ class Form
      * The post-validate event is sent.
      *
      * @param array $values The submitted values.
-     *                      return Result A validation result.
+     * @return Result A validation result.
      */
     public function submitForm(array $values)
     {
@@ -523,5 +549,4 @@ class Form
     {
         return $this->addAttributes(array('enctype' => 'multipart/form-data'));
     }
-
 }
