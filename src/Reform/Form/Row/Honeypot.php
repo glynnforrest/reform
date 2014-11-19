@@ -3,6 +3,7 @@
 namespace Reform\Form\Row;
 
 use Reform\Helper\Html;
+use Reform\Form\Renderer\RendererInterface;
 
 /**
  * Honeypot
@@ -21,14 +22,14 @@ class Honeypot extends AbstractRow
         $this->visible = true;
     }
 
-    public function input()
+    public function input(RendererInterface $renderer)
     {
         $attributes = $this->visible ? $this->attributes : array_merge(array('style' => 'display: none;'), $this->attributes);
 
         return Html::input('text', $this->name, $this->value, $attributes);
     }
 
-    public function render()
+    public function render(RendererInterface $renderer)
     {
         if ($this->visible) {
             $label = sprintf('<label for="%s" id="%s">%s</label>', $this->name, $this->name, $this->label);
@@ -36,6 +37,6 @@ class Honeypot extends AbstractRow
             $label = sprintf('<label for="%s" id="%s" style="display: none;">%s</label>', $this->name, $this->name, $this->label);
         }
 
-        return $label.$this->input();
+        return $label.$this->input($renderer);
     }
 }
