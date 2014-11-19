@@ -1,6 +1,7 @@
 {
     "name": "glynnforrest/reform",
-    "description": "Forms using HttpFoundation that render and validate with ease.",
+    "description": "Create forms that render and validate with ease.",
+    "keywords": ["form", "validation", "csrf"],
     "license": "MIT",
     "authors": [
         {
