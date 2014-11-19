@@ -2,20 +2,30 @@
 
 [![Build Status](https://travis-ci.org/glynnforrest/reform.png)](https://travis-ci.org/glynnforrest/reform)
 
-Create PHP forms that render and validate with ease. Create a form,
-add rows and validation, then simply echo it to the browser.
+The Reform library makes it easy to create forms in PHP. Create a
+form, add rows and validation, then simply echo it to the
+browser. Everything else is done automatically - checking for
+submissions, validating data, setting values, creating labels and
+error messages, handling CSRF...
 
-* Many row types and validation rules. Easily add custom types to
-  match your requirements.
-* Use different renderers to apply styles to the form, e.g. Bootstrap,
-  without changing code.
+For greater control, the form can be rendered row-by-row, or even in
+individual pieces. You can use only a few features without the rest
+getting in the way.
+
+## Features
+
+* Many row types and validation rules. It is trivial to add custom
+  types to match your requirements.
+* Different renderers to apply styles to the form
+  (e.g. Bootstrap). Changing the renderer can be done with a single
+  line of code.
 * Integration with
   [Symfony HttpFoundation](https://github.com/symfony/HttpFoundation)
   to automatically submit forms.
 * Security measures like honeypot fields and timers, and integration
   with [Blockade](https://github.com/glynnforrest/blockade) for
   automatic CSRF protection.
-* Use events to customize how forms behave.
+* Events to customize how forms behave.
 
 ## Quickstart
 
@@ -38,7 +48,7 @@ $form->text('username')
     ->addRule(new Rule\Required('Did you forget your name?'))
     ->addRule(new Rule\Regex('`[A-z.]+`'))
 $form->password('password')
-    ->addRule(new Rule\Required('Did you forget your name?'));
+    ->addRule(new Rule\Required());
 $form->submit('login');
 ```
 
@@ -58,6 +68,8 @@ if ($form->isValid()) {
     //used and all validation rules passed
 
     //perform the login and redirect
+    login_user();
+    redirect_to_home_page();
 }
 //the form was either not submitted or failed the validation. $form
 //now has any submitted parameters bound to it, so all we need to do
