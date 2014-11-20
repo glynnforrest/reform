@@ -505,4 +505,33 @@ class FormTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('input'));
         $this->assertSame('input', $f->input('foo', $renderer));
     }
+
+    public function testTags()
+    {
+        $f = $this->createForm('/url');
+        $this->assertSame(array(), $f->getTags());
+        $this->assertFalse($f->hasTag('foo'));
+
+        $this->assertSame($f, $f->addTag('foo'));
+        $this->assertSame(array('foo'), $f->getTags());
+        $this->assertTrue($f->hasTag('foo'));
+
+        $this->assertSame($f, $f->addTag('bar'));
+        $this->assertSame(array('foo', 'bar'), $f->getTags());
+        $this->assertTrue($f->hasTag('bar'));
+
+        //check for duplicates
+        $this->assertSame($f, $f->addTag('foo'));
+        $this->assertSame(array('foo', 'bar'), $f->getTags());
+        $this->assertTrue($f->hasTag('foo'));
+
+        $this->assertSame($f, $f->removeTag('foo'));
+        $this->assertSame(array('bar'), $f->getTags());
+        $this->assertFalse($f->hasTag('foo'));
+
+        //remove non-existing tag
+        $this->assertSame($f, $f->removeTag('baz'));
+        $this->assertSame(array('bar'), $f->getTags());
+        $this->assertFalse($f->hasTag('baz'));
+    }
 }

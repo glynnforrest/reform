@@ -26,6 +26,7 @@ class Form
     protected $validator;
     protected $valid = false;
     protected $validator_built = false;
+    protected $tags = array();
 
     public function __construct($action, $method = 'POST', $attributes = array())
     {
@@ -207,6 +208,53 @@ class Form
     public function getAttributes()
     {
         return $this->attributes;
+    }
+
+    /**
+     * Give a tag to this form.
+     *
+     * @param  string $tag The name of the tag
+     * @return Form   This form
+     */
+    public function addTag($tag)
+    {
+        $this->tags[$tag] = true;
+
+        return $this;
+    }
+
+    /**
+     * Remove a tag from this form.
+     *
+     * @param  string $tag The name of the tag
+     * @return Form   This form
+     */
+    public function removeTag($tag)
+    {
+        unset($this->tags[$tag]);
+
+        return $this;
+    }
+
+    /**
+     * Check if this form has a tag.
+     *
+     * @param  string $tag The name of the tag
+     * @return bool
+     */
+    public function hasTag($tag)
+    {
+        return isset($this->tags[$tag]);
+    }
+
+    /**
+     * Get all tags given to this form.
+     *
+     * @return array The tags
+     */
+    public function getTags()
+    {
+        return array_keys($this->tags);
     }
 
     /**
@@ -472,7 +520,7 @@ class Form
      *
      * The post-validate event is sent.
      *
-     * @param array $values The submitted values.
+     * @param  array  $values The submitted values.
      * @return Result A validation result.
      */
     public function submitForm(array $values)
