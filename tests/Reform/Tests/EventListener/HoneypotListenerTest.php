@@ -48,22 +48,25 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testHoneypotCaught()
     {
+        //to pass into function scope for PHP 5.3
+        $form = $this->form;
+
         $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $dispatcher->expects($this->once())
                    ->method('dispatch')
                    ->with(
                        Honeypot::CAUGHT,
-                       $this->callback(function ($event) {
-                           return $event instanceof HoneypotEvent &&
-                               $event->getForm() === $this->form &&
-                               $event->getRowName() === 'rating';
-                       }));
+                       $this->callback(function ($event) use ($form) {
+                               return $event instanceof HoneypotEvent &&
+                                   $event->getForm() === $form &&
+                                   $event->getRowName() === 'rating';
+                           }));
 
         //init the honeypot field
         $this->listener->onFormCreate($this->newEvent());
 
         //submit the form with something in the field
-        $this->form->submitForm(['rating' => 'spam']);
+        $this->form->submitForm(array('rating' => 'spam'));
 
         //form is valid and the honeypot field has input
         $this->assertTrue($this->form->isValid());
@@ -82,7 +85,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onFormCreate($this->newEvent());
 
         //submit the form
-        $this->form->submitForm([]);
+        $this->form->submitForm(array());
 
         //form is valid but the honeypot field is empty
         $this->assertTrue($this->form->isValid());
