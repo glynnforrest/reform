@@ -32,7 +32,9 @@ class HoneypotListener implements EventSubscriberInterface
     {
         $input = new Honeypot($this->form_field);
         $input->setLabel($this->form_label);
-        $event->getForm()->addRow($input);
+        $form = $event->getForm();
+        $form->addRow($input);
+        $form->addTag(Honeypot::ROW_TAG, $this->form_field);
     }
 
     public function afterFormValidate(FormEvent $event, $name, EventDispatcherInterface $dispatcher)
