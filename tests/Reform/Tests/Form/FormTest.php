@@ -534,4 +534,27 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array('bar'), $f->getTags());
         $this->assertFalse($f->hasTag('baz'));
     }
+
+    public function testTagsWithValues()
+    {
+        $f = $this->createForm('/url');
+        $this->assertSame(array(), $f->getTags());
+        $this->assertFalse($f->hasTag('foo'));
+        $this->assertNull($f->getTag('foo'));
+
+        $this->assertSame($f, $f->addTag('foo', 'foo-value'));
+        $this->assertSame(array('foo'), $f->getTags());
+        $this->assertTrue($f->hasTag('foo'));
+        $this->assertSame('foo-value', $f->getTag('foo'));
+
+        $this->assertSame($f, $f->addTag('bar', 'bar-value'));
+        $this->assertSame(array('foo', 'bar'), $f->getTags());
+        $this->assertTrue($f->hasTag('bar'));
+        $this->assertSame('bar-value', $f->getTag('bar'));
+
+        $this->assertSame($f, $f->addTag('foo', 'foo-value-again'));
+        $this->assertSame(array('foo', 'bar'), $f->getTags());
+        $this->assertTrue($f->hasTag('foo'));
+        $this->assertSame('foo-value-again', $f->getTag('foo'));
+    }
 }
