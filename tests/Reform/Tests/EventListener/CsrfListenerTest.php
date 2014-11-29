@@ -13,7 +13,6 @@ use Reform\Form\Row\Hidden;
  **/
 class CsrfListenerTest extends \PHPUnit_Framework_TestCase
 {
-
     protected $manager;
     protected $listener;
     protected $form;
@@ -46,7 +45,7 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
                    ->method('addRow')
                    ->with($this->callback(function ($row) {
-                       return $row instanceof \Reform\Form\Row\Hidden &&
+                       return $row instanceof Hidden &&
                            $row->getValue() === 'csrf_id' &&
                            $row->getName() === '_token';
                    }));
@@ -66,7 +65,7 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
                    ->method('addRow')
                    ->with($this->callback(function ($row) {
-                       return $row instanceof \Reform\Form\Row\Hidden &&
+                       return $row instanceof Hidden &&
                            $row->getValue() === 'csrf_id' &&
                            $row->getName() === '__csrf_token';
                    }));
@@ -85,9 +84,9 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $input = new Hidden('_token');
         $input->setValue('csrf_token');
         $this->form->expects($this->once())
-            ->method('getRow')
-            ->with('_token')
-            ->will($this->returnValue($input));
+                   ->method('getRow')
+                   ->with('_token')
+                   ->will($this->returnValue($input));
 
         $this->manager->expects($this->once())
                       ->method('check')
@@ -96,9 +95,9 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
 
         //after the token has been verified, assert that a new token is generated
         $this->manager->expects($this->once())
-            ->method('init')
-            ->with('foo')
-            ->will($this->returnValue('new_token'));
+                      ->method('init')
+                      ->with('foo')
+                      ->will($this->returnValue('new_token'));
         $this->listener->afterFormValidate($this->newEvent());
         $this->assertSame('new_token', $input->getValue());
     }
@@ -123,9 +122,8 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
     {
         $expected = array(
             FormEvent::CREATE => array('onFormCreate'),
-            FormEvent::POST_VALIDATE => array('afterFormValidate')
+            FormEvent::POST_VALIDATE => array('afterFormValidate'),
         );
         $this->assertSame($expected, CsrfListener::getSubscribedEvents());
     }
-
 }
