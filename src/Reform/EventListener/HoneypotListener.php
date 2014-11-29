@@ -5,7 +5,9 @@ namespace Reform\EventListener;
 use Reform\Form\FormEvent;
 use Reform\Form\Row\Honeypot;
 use Reform\Exception\HoneypotException;
+use Reform\Event\HoneypotEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * HoneypotListener adds a dummy text field hidden with inline css. A form
@@ -15,31 +17,36 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  **/
 class HoneypotListener implements EventSubscriberInterface
 {
-    protected $manager;
+    protected $throw_exception;
     protected $form_field;
     protected $form_label;
 
-    public function __construct($form_field = 'rating', $form_label = 'Do not complete this field')
+    public function __construct($throw_exception = false, $form_field = 'rating', $form_label = 'Do not complete this field')
     {
+        $this->throw_exception = $throw_exception;
         $this->form_field = $form_field;
         $this->form_label = $form_label;
     }
 
     public function onFormCreate(FormEvent $event)
     {
-        $form = $event->getForm();
         $input = new Honeypot($this->form_field);
         $input->setLabel($this->form_label);
-        $form->addRow($input);
+        $event->getForm()->addRow($input);
     }
 
-    public function afterFormValidate(FormEvent $event)
+    public function afterFormValidate(FormEvent $event, $name, EventDispatcherInterface $dispatcher)
     {
         $form = $event->getForm();
-        if (!$form->isValid()) {
+        if (!$form->isValid() || (string) $form->getRow($this->form_field)->getValue() === '') {
             return;
         }
-        if ((string) $form->getRow($this->form_field)->getValue() !== '') {
+
+        $form->addTag(HoneypotEvent::CAUGHT);
+        $honeypot_event = new HoneypotEvent($form, $this->form_field);
+        $dispatcher->dispatch(HoneypotEvent::CAUGHT, $event);
+
+        if ($this->throw_exception) {
             throw new HoneypotException(sprintf('Honeypot field "%s" tripped on form "%s"', $this->form_field, $form->getId()));
         }
     }

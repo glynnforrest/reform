@@ -1,7 +1,7 @@
 {
     "name": "glynnforrest/reform",
     "description": "Create forms that render and validate with ease.",
-    "keywords": ["form", "validation", "csrf"],
+    "keywords": ["form", "validation", "csrf", "honeypot"],
     "license": "MIT",
     "authors": [
         {
@@ -21,7 +21,7 @@
     "suggest": {
         "symfony/http-foundation": "(~2.3) Submit forms automatically using a Request object",
         "symfony/event-dispatcher": "(~2.3) Allow the sending of form events",
-        "glynnforrest/blockade": "Enable automatic csrf protection"
+        "glynnforrest/blockade": "Throw and handle security exceptions automatically"
     },
     "autoload": {
         "psr-4": {
