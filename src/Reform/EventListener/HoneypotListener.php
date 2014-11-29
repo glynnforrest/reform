@@ -46,7 +46,7 @@ class HoneypotListener implements EventSubscriberInterface
 
         $form->addTag(Honeypot::CAUGHT);
         $honeypot_event = new HoneypotEvent($form, $this->form_field);
-        $dispatcher->dispatch(Honeypot::CAUGHT, $event);
+        $dispatcher->dispatch(Honeypot::CAUGHT, $honeypot_event);
 
         if ($this->throw_exception) {
             throw new HoneypotException(sprintf('Honeypot field "%s" tripped on form "%s"', $this->form_field, $form->getId()));
