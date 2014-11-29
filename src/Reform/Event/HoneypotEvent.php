@@ -12,8 +12,6 @@ use Reform\Form\Form;
  **/
 class HoneypotEvent extends Event
 {
-    const CAUGHT = 'honeypot.caught';
-
     protected $form;
     protected $form_field;
 
