@@ -213,12 +213,13 @@ class Form
     /**
      * Give a tag to this form.
      *
-     * @param  string $tag The name of the tag
+     * @param  string $tag   The name of the tag
+     * @param  mixed  $value The value of the tag (optional)
      * @return Form   This form
      */
-    public function addTag($tag)
+    public function addTag($tag, $value = false)
     {
-        $this->tags[$tag] = true;
+        $this->tags[$tag] = $value;
 
         return $this;
     }
@@ -245,6 +246,17 @@ class Form
     public function hasTag($tag)
     {
         return isset($this->tags[$tag]);
+    }
+
+    /**
+     * Get the value of a tag, or null if it doesn't exist.
+     *
+     * @param  string $tag The name of the tag
+     * @return mixed  The value of the tag or null
+     */
+    public function getTag($tag)
+    {
+        return isset($this->tags[$tag]) ? $this->tags[$tag] : null;
     }
 
     /**
