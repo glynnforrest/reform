@@ -40,7 +40,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testSpecifiedFieldIsAppliedToForm()
     {
-        $this->listener = new HoneypotListener(false, 'foo');
+        $this->listener = new HoneypotListener('foo');
         $this->assertNull($this->form->getTag(HoneypotListener::ROW));
         $this->listener->onFormCreate($this->newEvent());
         $this->assertSame('foo', $this->form->getTag(HoneypotListener::ROW));
@@ -78,7 +78,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testHoneypotCaughtThrowException()
     {
-        $listener = new HoneypotListener(true);
+        $listener = new HoneypotListener('rating', 'Do not complete', true);
 
         //to pass into function scope for PHP 5.3
         $form = $this->form;

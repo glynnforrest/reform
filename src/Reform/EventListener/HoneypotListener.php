@@ -26,7 +26,7 @@ class HoneypotListener implements EventSubscriberInterface
     protected $form_field;
     protected $form_label;
 
-    public function __construct($throw_exception = false, $form_field = 'rating', $form_label = 'Do not complete this field')
+    public function __construct($form_field = 'rating', $form_label = 'Do not complete this field', $throw_exception = false)
     {
         $this->throw_exception = $throw_exception;
         $this->form_field = $form_field;
