@@ -223,12 +223,6 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($first, $second);
     }
 
-    public function testToStringCallsRender()
-    {
-        $f = $this->createForm('/url');
-        $this->assertSame($f->render(), $f->__toString());
-    }
-
     public function testSetErrors()
     {
         $f = $this->createForm('/url');

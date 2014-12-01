@@ -311,11 +311,6 @@ class Form
         return $form;
     }
 
-    public function __toString()
-    {
-        return $this->render();
-    }
-
     /**
      * Render a row. If no renderer is supplied, the default renderer on this
      * form will be used.
