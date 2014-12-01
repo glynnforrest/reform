@@ -359,9 +359,17 @@ class Form
         return $this->rows[$name];
     }
 
+    /**
+     * Add a row to the Form.
+     *
+     * @param  AbstractRow $row The row
+     * @return Form        This Form instance.
+     */
     public function addRow(AbstractRow $row)
     {
         $this->rows[$row->getName()] = $row;
+
+        return $this;
     }
 
     /**
@@ -371,7 +379,7 @@ class Form
      */
     public function getRow($name)
     {
-        if (!array_key_exists($name, $this->rows)) {
+        if (!isset($this->rows[$name])) {
             throw new \InvalidArgumentException(
                 "Attempting to access unknown form row '$name'"
             );

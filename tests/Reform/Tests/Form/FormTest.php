@@ -438,7 +438,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $f = $this->createForm('/url');
         $row = $this->getMockForAbstractClass('Reform\Form\Row\AbstractRow', array('foo'));
-        $f->addRow($row);
+        $this->assertSame($f, $f->addRow($row));
         $this->assertSame($row, $f->getRow('foo'));
     }
 
