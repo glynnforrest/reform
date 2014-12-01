@@ -608,6 +608,13 @@ class Form
         return $this->valid;
     }
 
+    /**
+     * Register a new row type to be available when calling
+     * newRow(). $class must extend Reform\Form\Row\AbstractRow.
+     *
+     * @string $type The name of the type, e.g. 'text'
+     * @string $class The class name, e.g. 'Reform\Form\Row\Text'
+     */
     public function registerType($type, $class)
     {
         $this->types[$type] = $class;
