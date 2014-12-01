@@ -3,7 +3,6 @@
 namespace Reform\Csrf;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Reform\Exception\CsrfTokenException;
 
 /**
  * CsrfChecker
@@ -92,7 +91,7 @@ class CsrfChecker
      */
     public function get($id)
     {
-        return $this->session->get($this->session_key.$id);
+        return $this->session->get($this->session_key.$id, null);
     }
 
     /**
@@ -100,19 +99,17 @@ class CsrfChecker
      * supplied token. If the token matches, it will be removed from
      * the session to prevent additional usage.
      *
-     * @param  string             $id    The identifier of the token
-     * @param  string             $token The supplied token
-     * @throws CsrfTokenException when the supplied token does not match.
+     * @param  string $id    The identifier of the token
+     * @param  string $token The supplied token
+     * @return bool
      */
     public function check($id, $token)
     {
-        if (!$token) {
-            throw new CsrfTokenException('No CSRF token submitted');
-        }
+        $stored_token = $this->get($id);
 
-        $session_token = $this->get($id);
-        if ($session_token !== $token) {
-            throw new CsrfTokenException();
+        //fail when tokens don't match or stored token doesn't exist
+        if ($stored_token !== $token || $stored_token === null) {
+            return false;
         }
 
         //remove the token from the session after it has been used

@@ -45,12 +45,7 @@ class CrsfCheckerTest extends \PHPUnit_Framework_TestCase
     public function testCheck($token, $session_token, $pass = false)
     {
         $this->setSessionToken('testing', $session_token);
-        if ($pass) {
-            $this->assertTrue($this->checker->check('testing', $token));
-        } else {
-            $this->setExpectedException('\Reform\Exception\CsrfTokenException');
-            $this->checker->check('testing', $token);
-        }
+        $this->assertSame($pass, $this->checker->check('testing', $token));
     }
 
     public function testTokenIsExpiredAfterSuccess()
@@ -58,8 +53,7 @@ class CrsfCheckerTest extends \PHPUnit_Framework_TestCase
         $this->setSessionToken('testing', 'secret');
         $this->assertTrue($this->checker->check('testing', 'secret'));
         //token should have now expired
-        $this->setExpectedException('\Reform\Exception\CsrfTokenException');
-        $this->checker->check('testing', 'secret');
+        $this->assertFalse($this->checker->check('testing', 'secret'));
     }
 
     public function testTokenIsNotExpiredOnFailure()
@@ -67,18 +61,13 @@ class CrsfCheckerTest extends \PHPUnit_Framework_TestCase
         $this->setSessionToken('testing', 'valid_token');
 
         //catch the exception so we can use assertions in this method
-        try {
-            $this->checker->check('testing', 'invalid_token');
-        } catch (CsrfTokenException $e) {
-        }
+        $this->assertFalse($this->checker->check('testing', 'invalid_token'));
 
         $this->assertTrue($this->checker->check('testing', 'valid_token'));
     }
 
-    public function testDifferentTokenIdIsInvalid()
+    public function testBadTokenId()
     {
-        $msg = 'Invalid CSRF token supplied';
-        $this->setExpectedException('\Reform\Exception\CsrfTokenException', $msg);
-        $this->checker->check('not-testing', 'token');
+        $this->assertFalse($this->checker->check('not_a_token_id', 'anything'));
     }
 }
