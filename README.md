@@ -22,9 +22,10 @@ getting in the way.
 * Integration with
   [Symfony HttpFoundation](https://github.com/symfony/HttpFoundation)
   to automatically submit forms.
-* Security measures like honeypot fields and timers, and integration
-  with [Blockade](https://github.com/glynnforrest/blockade) for
-  automatic CSRF protection.
+* Security measures like honeypot fields, timers, and CSRF
+  protection. Add the
+  [Blockade](https://github.com/glynnforrest/blockade) security
+  library to have these exceptions handled automatically.
 * Events to customize how forms behave.
 
 ## Quickstart
