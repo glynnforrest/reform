@@ -2,11 +2,11 @@
 
 namespace Reform\EventListener;
 
-use Blockade\CsrfManager;
 use Reform\Form\FormEvent;
 use Reform\Form\Row\Hidden;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Reform\Csrf\CsrfChecker;
 
 /**
  * CsrfListener
@@ -16,12 +16,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CsrfListener implements EventSubscriberInterface
 {
 
-    protected $manager;
+    protected $checker;
     protected $form_field;
 
-    public function __construct(CsrfManager $manager, $form_field = '_token')
+    public function __construct(CsrfChecker $checker, $form_field = '_token')
     {
-        $this->manager = $manager;
+        $this->checker = $checker;
         $this->form_field = $form_field;
     }
 
@@ -29,9 +29,9 @@ class CsrfListener implements EventSubscriberInterface
     {
         $form = $event->getForm();
         $id = $form->getId();
-        $this->manager->maybeInit($id);
+        $this->checker->maybeInit($id);
         $input = new Hidden($this->form_field);
-        $input->setValue($this->manager->get($id));
+        $input->setValue($this->checker->get($id));
         $form->addRow($input);
     }
 
@@ -44,10 +44,10 @@ class CsrfListener implements EventSubscriberInterface
         $id = $form->getId();
         $input = $form->getRow($this->form_field);
         $token = $input->getValue();
-        $this->manager->check($id, $token);
+        $this->checker->check($id, $token);
         //the token is valid and is now removed. Generate a new token
         //in case the form needs to be submitted again.
-        $input->setValue($this->manager->init($id));
+        $input->setValue($this->checker->init($id));
     }
 
     public static function getSubscribedEvents()

@@ -13,16 +13,16 @@ use Reform\Form\Row\Hidden;
  **/
 class CsrfListenerTest extends \PHPUnit_Framework_TestCase
 {
-    protected $manager;
+    protected $checker;
     protected $listener;
     protected $form;
 
     public function setUp()
     {
-        $this->manager = $this->getMockBuilder('Blockade\CsrfManager')
+        $this->checker = $this->getMockBuilder('Reform\Csrf\CsrfChecker')
                               ->disableOriginalConstructor()
                               ->getMock();
-        $this->listener = new CsrfListener($this->manager);
+        $this->listener = new CsrfListener($this->checker);
         $this->form = $this->getMockBuilder('Reform\Form\Form')
                            ->disableOriginalConstructor()
                            ->getMock();
@@ -38,7 +38,7 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
                    ->method('getId')
                    ->will($this->returnValue('foo'));
-        $this->manager->expects($this->once())
+        $this->checker->expects($this->once())
                       ->method('get')
                       ->with('foo')
                       ->will($this->returnValue('csrf_id'));
@@ -54,11 +54,11 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testSpecifiedFieldIsAppliedToForm()
     {
-        $listener = new CsrfListener($this->manager, '__csrf_token');
+        $listener = new CsrfListener($this->checker, '__csrf_token');
         $this->form->expects($this->once())
                    ->method('getId')
                    ->will($this->returnValue('foo'));
-        $this->manager->expects($this->once())
+        $this->checker->expects($this->once())
                       ->method('get')
                       ->with('foo')
                       ->will($this->returnValue('csrf_id'));
@@ -88,13 +88,13 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                    ->with('_token')
                    ->will($this->returnValue($input));
 
-        $this->manager->expects($this->once())
+        $this->checker->expects($this->once())
                       ->method('check')
                       ->with('foo', 'csrf_token')
                       ->will($this->returnValue(true));
 
         //after the token has been verified, assert that a new token is generated
-        $this->manager->expects($this->once())
+        $this->checker->expects($this->once())
                       ->method('init')
                       ->with('foo')
                       ->will($this->returnValue('new_token'));
@@ -111,9 +111,9 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                    ->method('getId');
         $this->form->expects($this->never())
                    ->method('getRow');
-        $this->manager->expects($this->never())
+        $this->checker->expects($this->never())
                       ->method('check');
-        $this->manager->expects($this->never())
+        $this->checker->expects($this->never())
                       ->method('init');
         $this->listener->afterFormValidate($this->newEvent());
     }
