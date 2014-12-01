@@ -39,6 +39,20 @@ class CrsfCheckerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testInit()
+    {
+        $foo = $this->checker->init('foo');
+        $this->assertSame($foo, $this->checker->get('foo'));
+        $this->assertSame(128, strlen($foo));
+
+        $bar = $this->checker->init('bar');
+        $this->assertSame($bar, $this->checker->get('bar'));
+        $this->assertSame(128, strlen($bar));
+
+        //generated tokens should be different
+        $this->assertNotSame($foo, $bar);
+    }
+
     /**
      * @dataProvider checkProvider()
      */

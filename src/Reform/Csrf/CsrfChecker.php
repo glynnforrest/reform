@@ -35,6 +35,7 @@ class CsrfChecker
      * current token with the same identifier will be replaced.
      *
      * @param string $id The identifier of the token
+     * @return string The token
      */
     public function init($id)
     {
@@ -64,6 +65,7 @@ class CsrfChecker
      * if it doesn't exist.
      *
      * @param string $id The identifier of the token
+     * @return string The token
      */
     public function maybeInit($id)
     {
@@ -88,6 +90,7 @@ class CsrfChecker
      * Get the token with identifier $id from the session.
      *
      * @param string $id The identifier of the token
+     * @return string The token
      */
     public function get($id)
     {
