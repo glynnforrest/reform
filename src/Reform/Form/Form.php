@@ -562,6 +562,12 @@ class Form
         return $result;
     }
 
+    /**
+     * Handle an incoming Request, calling submit() if the form has
+     * been submitted.
+     *
+     * @param Request $request The incoming request
+     */
     public function handle(Request $request)
     {
         //get the correct method
@@ -589,6 +595,11 @@ class Form
         }
     }
 
+    /**
+     * Check if this form is submitted and has passed validation.
+     *
+     * @return bool
+     */
     public function isValid()
     {
         return $this->valid;
