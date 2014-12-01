@@ -5,6 +5,9 @@ namespace Reform\Tests\EventListener;
 use Reform\EventListener\CsrfListener;
 use Reform\Form\FormEvent;
 use Reform\Form\Row\Hidden;
+use Reform\Event\CsrfEvent;
+use Reform\Tests\Fixtures\FooForm;
+use Reform\Exception\CsrfTokenException;
 
 /**
  * CsrfListenerTest
@@ -23,9 +26,7 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
                               ->disableOriginalConstructor()
                               ->getMock();
         $this->listener = new CsrfListener($this->checker);
-        $this->form = $this->getMockBuilder('Reform\Form\Form')
-                           ->disableOriginalConstructor()
-                           ->getMock();
+        $this->form = new FooForm('/url');
     }
 
     protected function newEvent()
@@ -35,87 +36,141 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testFieldIsAppliedToForm()
     {
-        $this->form->expects($this->once())
-                   ->method('getId')
-                   ->will($this->returnValue('foo'));
+        $this->assertNull($this->form->getTag(CsrfListener::ROW));
         $this->checker->expects($this->once())
                       ->method('get')
                       ->with('foo')
-                      ->will($this->returnValue('csrf_id'));
-        $this->form->expects($this->once())
-                   ->method('addRow')
-                   ->with($this->callback(function ($row) {
-                       return $row instanceof Hidden &&
-                           $row->getValue() === 'csrf_id' &&
-                           $row->getName() === '_token';
-                   }));
+                      ->will($this->returnValue('csrf_token'));
+
         $this->listener->onFormCreate($this->newEvent());
+        $this->assertSame('_token', $this->form->getTag(CsrfListener::ROW));
+        $row = $this->form->getRow('_token');
+        $this->assertInstanceOf('Reform\Form\Row\Hidden', $row);
+        $this->assertSame('csrf_token', $row->getValue());
+        $this->assertSame('_token', $row->getName());
     }
 
     public function testSpecifiedFieldIsAppliedToForm()
     {
         $listener = new CsrfListener($this->checker, '__csrf_token');
-        $this->form->expects($this->once())
-                   ->method('getId')
-                   ->will($this->returnValue('foo'));
+        $this->assertNull($this->form->getTag(CsrfListener::ROW));
         $this->checker->expects($this->once())
                       ->method('get')
                       ->with('foo')
-                      ->will($this->returnValue('csrf_id'));
-        $this->form->expects($this->once())
-                   ->method('addRow')
-                   ->with($this->callback(function ($row) {
-                       return $row instanceof Hidden &&
-                           $row->getValue() === 'csrf_id' &&
-                           $row->getName() === '__csrf_token';
-                   }));
+                      ->will($this->returnValue('csrf_token'));
+
         $listener->onFormCreate($this->newEvent());
+        $this->assertSame('__csrf_token', $this->form->getTag(CsrfListener::ROW));
+        $row = $this->form->getRow('__csrf_token');
+        $this->assertInstanceOf('Reform\Form\Row\Hidden', $row);
+        $this->assertSame('csrf_token', $row->getValue());
+        $this->assertSame('__csrf_token', $row->getName());
     }
 
-    public function testTokenIsCheckedAfterValidation()
+    public function testCheckWithValidToken()
     {
-        $this->form->expects($this->once())
-                   ->method('isValid')
-                   ->will($this->returnValue(true));
-        $this->form->expects($this->once())
-                   ->method('getId')
-                   ->will($this->returnValue('foo'));
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->expects($this->never())
+                   ->method('dispatch');
 
-        $input = new Hidden('_token');
-        $input->setValue('csrf_token');
-        $this->form->expects($this->once())
-                   ->method('getRow')
-                   ->with('_token')
-                   ->will($this->returnValue($input));
-
+        //init the csrf field
+        $this->listener->onFormCreate($this->newEvent());
         $this->checker->expects($this->once())
                       ->method('check')
-                      ->with('foo', 'csrf_token')
+                      ->with('foo', 'submitted_token')
                       ->will($this->returnValue(true));
 
-        //after the token has been verified, assert that a new token is generated
-        $this->checker->expects($this->once())
-                      ->method('init')
-                      ->with('foo')
-                      ->will($this->returnValue('new_token'));
-        $this->listener->afterFormValidate($this->newEvent());
-        $this->assertSame('new_token', $input->getValue());
+        //submit the form
+        $this->form->submitForm(array('_token' => 'submitted_token'));
+
+        $this->assertTrue($this->form->isValid());
+        $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
+        $this->assertFalse($this->form->hasTag(CsrfListener::INVALID));
     }
 
-    public function testTokenIsNotCheckedIfFormIsNotValid()
+    public function testCheckWithInvalidToken()
     {
-        $this->form->expects($this->once())
-                   ->method('isValid')
-                   ->will($this->returnValue(false));
-        $this->form->expects($this->never())
-                   ->method('getId');
-        $this->form->expects($this->never())
-                   ->method('getRow');
-        $this->checker->expects($this->never())
-                      ->method('check');
-        $this->checker->expects($this->never())
-                      ->method('init');
-        $this->listener->afterFormValidate($this->newEvent());
+        //init the csrf field
+        $this->listener->onFormCreate($this->newEvent());
+        $this->checker->expects($this->once())
+                      ->method('check')
+                      ->with('foo', 'invalid_token')
+                      ->will($this->returnValue(false));
+
+        //submit the form with an invalid token
+        $this->form->submitForm(array('_token' => 'invalid_token'));
+
+        //to pass into function scope for PHP 5.3
+        $form = $this->form;
+
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->expects($this->once())
+                   ->method('dispatch')
+                   ->with(
+                       CsrfListener::INVALID,
+                       $this->callback(function ($event) use ($form) {
+                               return $event instanceof CsrfEvent &&
+                                   $event->getForm() === $form &&
+                                   $event->getRowName() === '_token';
+                           }));
+
+        $this->assertTrue($this->form->isValid());
+        $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
+        $this->assertTrue($this->form->hasTag(CsrfListener::INVALID));
+    }
+
+    public function testCheckWithInvalidTokenThrowException()
+    {
+        $listener = new CsrfListener($this->checker, '_token', true);
+        //init the csrf field
+        $listener->onFormCreate($this->newEvent());
+        $this->checker->expects($this->once())
+                      ->method('check')
+                      ->with('foo', 'invalid_token')
+                      ->will($this->returnValue(false));
+
+        //submit the form with an invalid token
+        $this->form->submitForm(array('_token' => 'invalid_token'));
+
+        $this->assertTrue($this->form->isValid());
+
+        //to pass into function scope for PHP 5.3
+        $form = $this->form;
+
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->expects($this->once())
+                   ->method('dispatch')
+                   ->with(
+                       CsrfListener::INVALID,
+                       $this->callback(function ($event) use ($form) {
+                               return $event instanceof CsrfEvent &&
+                                   $event->getForm() === $form &&
+                                   $event->getRowName() === '_token';
+                           }));
+
+        //catching the exception here to check an event is sent and tag is applied
+        try {
+            $listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
+        } catch (CsrfTokenException $e) {
+            $msg = 'Csrf field "_token" on form "foo" is invalid.';
+            $this->assertSame($msg, $e->getMessage());
+            $this->assertTrue($this->form->hasTag(CsrfListener::INVALID));
+
+            return;
+        }
+        $this->fail('CsrfTokenException was not thrown.');
+    }
+
+    public function testNoCheckForInvalidForm()
+    {
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->expects($this->never())
+                   ->method('dispatch');
+
+        //form isn't valid so no check will be made
+        $this->assertFalse($this->form->isValid());
+        $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
+        $this->assertFalse($this->form->hasTag(CsrfListener::INVALID));
     }
 
     public function testSubscribedEvents()
