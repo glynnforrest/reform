@@ -17,6 +17,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  **/
 class HoneypotListener implements EventSubscriberInterface
 {
+    //the tag on the form that contains the name of the honeypot row
+    const ROW = 'reform.honeypot.field';
+    //the tag on the form when the field is tripped
+    const CAUGHT = 'reform.honeypot.caught';
+
     protected $throw_exception;
     protected $form_field;
     protected $form_label;
@@ -34,7 +39,7 @@ class HoneypotListener implements EventSubscriberInterface
         $input->setLabel($this->form_label);
         $form = $event->getForm();
         $form->addRow($input);
-        $form->addTag(Honeypot::ROW_TAG, $this->form_field);
+        $form->addTag(self::ROW, $this->form_field);
     }
 
     public function afterFormValidate(FormEvent $event, $name, EventDispatcherInterface $dispatcher)
@@ -44,9 +49,9 @@ class HoneypotListener implements EventSubscriberInterface
             return;
         }
 
-        $form->addTag(Honeypot::CAUGHT);
+        $form->addTag(self::CAUGHT);
         $honeypot_event = new HoneypotEvent($form, $this->form_field);
-        $dispatcher->dispatch(Honeypot::CAUGHT, $honeypot_event);
+        $dispatcher->dispatch(self::CAUGHT, $honeypot_event);
 
         if ($this->throw_exception) {
             throw new HoneypotException(sprintf('Honeypot field "%s" tripped on form "%s"', $this->form_field, $form->getId()));

@@ -12,11 +12,6 @@ use Reform\Form\Renderer\RendererInterface;
  **/
 class Honeypot extends AbstractRow
 {
-    //the tag on the form when the field is tripped
-    const CAUGHT = 'honeypot.caught';
-    //the tag on the form that contains the name of the honeypot row
-    const ROW_TAG = 'honeypot.field';
-
     protected $visible;
 
     /**

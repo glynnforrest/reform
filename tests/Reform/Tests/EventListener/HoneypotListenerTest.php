@@ -32,18 +32,18 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testFieldIsAppliedToForm()
     {
-        $this->assertNull($this->form->getTag(Honeypot::ROW_TAG));
+        $this->assertNull($this->form->getTag(HoneypotListener::ROW));
         $this->listener->onFormCreate($this->newEvent());
-        $this->assertSame('rating', $this->form->getTag(Honeypot::ROW_TAG));
+        $this->assertSame('rating', $this->form->getTag(HoneypotListener::ROW));
         $this->assertInstanceOf('Reform\Form\Row\Honeypot', $this->form->getRow('rating'));
     }
 
     public function testSpecifiedFieldIsAppliedToForm()
     {
         $this->listener = new HoneypotListener(false, 'foo');
-        $this->assertNull($this->form->getTag(Honeypot::ROW_TAG));
+        $this->assertNull($this->form->getTag(HoneypotListener::ROW));
         $this->listener->onFormCreate($this->newEvent());
-        $this->assertSame('foo', $this->form->getTag(Honeypot::ROW_TAG));
+        $this->assertSame('foo', $this->form->getTag(HoneypotListener::ROW));
         $this->assertInstanceOf('Reform\Form\Row\Honeypot', $this->form->getRow('foo'));
     }
 
@@ -56,7 +56,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $dispatcher->expects($this->once())
                    ->method('dispatch')
                    ->with(
-                       Honeypot::CAUGHT,
+                       HoneypotListener::CAUGHT,
                        $this->callback(function ($event) use ($form) {
                                return $event instanceof HoneypotEvent &&
                                    $event->getForm() === $form &&
@@ -71,9 +71,9 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
 
         //form is valid and the honeypot field has input
         $this->assertTrue($this->form->isValid());
-        $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
+        $this->assertFalse($this->form->hasTag(HoneypotListener::CAUGHT));
         $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
-        $this->assertTrue($this->form->hasTag(Honeypot::CAUGHT));
+        $this->assertTrue($this->form->hasTag(HoneypotListener::CAUGHT));
     }
 
     public function testHoneypotCaughtThrowException()
@@ -87,7 +87,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $dispatcher->expects($this->once())
                    ->method('dispatch')
                    ->with(
-                       Honeypot::CAUGHT,
+                       HoneypotListener::CAUGHT,
                        $this->callback(function ($event) use ($form) {
                                return $event instanceof HoneypotEvent &&
                                    $event->getForm() === $form &&
@@ -102,7 +102,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
 
         //form is valid and the honeypot field has input
         $this->assertTrue($this->form->isValid());
-        $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
+        $this->assertFalse($this->form->hasTag(HoneypotListener::CAUGHT));
 
         //catching the exception here to check an event is sent and tag is applied
         try {
@@ -110,7 +110,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         } catch (HoneypotException $e) {
             $msg = 'Honeypot field "rating" tripped on form "Reform\Form\Form"';
             $this->assertSame($msg, $e->getMessage());
-            $this->assertTrue($this->form->hasTag(Honeypot::CAUGHT));
+            $this->assertTrue($this->form->hasTag(HoneypotListener::CAUGHT));
 
             return;
         }
@@ -132,7 +132,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         //form is valid but the honeypot field is empty
         $this->assertTrue($this->form->isValid());
         $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
-        $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
+        $this->assertFalse($this->form->hasTag(HoneypotListener::CAUGHT));
     }
 
     public function testNoCheckForInvalidForm()
@@ -147,7 +147,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         //form isn't valid so no check will be made
         $this->assertFalse($this->form->isValid());
         $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
-        $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
+        $this->assertFalse($this->form->hasTag(HoneypotListener::CAUGHT));
     }
 
     public function testSubscribedEvents()
