@@ -7,6 +7,7 @@ use Reform\Form\FormEvent;
 use Reform\Form\Row\Honeypot;
 use Reform\Form\Form;
 use Reform\Event\HoneypotEvent;
+use Reform\Exception\HoneypotException;
 
 /**
  * HoneypotListenerTest
@@ -75,6 +76,47 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->form->hasTag(Honeypot::CAUGHT));
     }
 
+    public function testHoneypotCaughtThrowException()
+    {
+        $listener = new HoneypotListener(true);
+
+        //to pass into function scope for PHP 5.3
+        $form = $this->form;
+
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->expects($this->once())
+                   ->method('dispatch')
+                   ->with(
+                       Honeypot::CAUGHT,
+                       $this->callback(function ($event) use ($form) {
+                               return $event instanceof HoneypotEvent &&
+                                   $event->getForm() === $form &&
+                                   $event->getRowName() === 'rating';
+                           }));
+
+        //init the honeypot field
+        $listener->onFormCreate($this->newEvent());
+
+        //submit the form with something in the field
+        $this->form->submitForm(array('rating' => 'spam'));
+
+        //form is valid and the honeypot field has input
+        $this->assertTrue($this->form->isValid());
+        $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
+
+        //catching the exception here to check an event is sent and tag is applied
+        try {
+            $listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
+        } catch (HoneypotException $e) {
+            $msg = 'Honeypot field "rating" tripped on form "Reform\Form\Form"';
+            $this->assertSame($msg, $e->getMessage());
+            $this->assertTrue($this->form->hasTag(Honeypot::CAUGHT));
+
+            return;
+        }
+        $this->fail('HoneypotException was not thrown.');
+    }
+
     public function testHoneypotFieldEmpty()
     {
         $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
@@ -93,7 +135,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
     }
 
-    public function testFormNotValid()
+    public function testNoCheckForInvalidForm()
     {
         $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $dispatcher->expects($this->never())
@@ -107,22 +149,6 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->afterFormValidate($this->newEvent(), FormEvent::POST_VALIDATE, $dispatcher);
         $this->assertFalse($this->form->hasTag(Honeypot::CAUGHT));
     }
-
-    // public function testTokenIsNotCheckedIfFormIsNotValid()
-    // {
-    //     $this->form->expects($this->once())
-    //                ->method('isValid')
-    //                ->will($this->returnValue(false));
-    //     $this->form->expects($this->never())
-    //                ->method('getId');
-    //     $this->form->expects($this->never())
-    //                ->method('getRow');
-    //     $this->manager->expects($this->never())
-    //                   ->method('check');
-    //     $this->manager->expects($this->never())
-    //                   ->method('init');
-    //     $this->listener->afterFormValidate($this->newEvent());
-    // }
 
     public function testSubscribedEvents()
     {
