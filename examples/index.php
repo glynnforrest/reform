@@ -29,10 +29,15 @@ $request = Request::createFromGlobals();
 $form->handle($request);
 
 $renderer = isset($_GET['r']) ? $_GET['r'] : 'twbs';
+$css = array();
 
 switch ($renderer) {
 case 'twbs':
-    $css = 'bootstrap/dist/css/bootstrap.min.css';
+    $css[] = 'bootstrap/dist/css/bootstrap.min.css';
+    break;
+case 'zurb':
+    $css[] = 'foundation/css/normalize.css';
+    $css[] = 'foundation/css/foundation.css';
     break;
 default:
     $form->setDefaultRenderer(new BasicRenderer());
@@ -45,12 +50,12 @@ default:
   <head>
     <title>Reform Examples</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <?php if (isset($css)): ?>
-      <link rel="stylesheet" type="text/css" href="bower_components/<?=$css;?>" />
-    <?php endif; ?>
+    <?php foreach ($css as $href): ?>
+      <link rel="stylesheet" type="text/css" href="bower_components/<?=$href;?>" />
+    <?php endforeach; ?>
     <style>
      #_spacer {
-       width:900px;
+       width:700px;
        margin:0 auto;
      }
     </style>
