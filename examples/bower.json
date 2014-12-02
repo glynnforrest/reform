@@ -1,0 +1,9 @@
+{
+  "name": "glynnforrest/reform-examples",
+  "homepage": "https://github.com/glynnforrest/reform",
+  "authors": [
+    "Glynn Forrest <me@glynnforrest.com>"
+  ],
+  "license": "MIT",
+  "private": true
+}
