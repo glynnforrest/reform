@@ -99,8 +99,8 @@ class Form
         $this->registerType('text', 'Reform\Form\Row\Text');
         $this->registerType('checkbox', 'Reform\Form\Row\Checkbox');
         $this->registerType('hidden', 'Reform\Form\Row\Hidden');
+        $this->registerType('number', 'Reform\Form\Row\Number');
         $this->registerType('password', 'Reform\Form\Row\Password');
-        $this->registerType('radio', 'Reform\Form\Row\Radio');
         $this->registerType('select', 'Reform\Form\Row\Select');
         $this->registerType('submit', 'Reform\Form\Row\Submit');
         $this->registerType('textarea', 'Reform\Form\Row\Textarea');
