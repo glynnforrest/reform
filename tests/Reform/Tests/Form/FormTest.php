@@ -8,6 +8,7 @@ use Reform\Validation\Rule;
 use Reform\Form\Renderer\BootstrapRenderer;
 use Reform\Form\Row\Text;
 use Symfony\Component\HttpFoundation\Request;
+use Reform\Form\FormEvent;
 
 /**
  * FormTest
@@ -397,11 +398,11 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $f = $this->createForm('/url');
         $this->dispatcher->expects($this->once())
                          ->method('hasListeners')
-                         ->with('form.create')
+                         ->with(FormEvent::CREATE)
                          ->will($this->returnValue(true));
         $this->dispatcher->expects($this->once())
                          ->method('dispatch')
-                         ->with('form.create');
+                         ->with(FormEvent::CREATE);
         $this->assertSame($f, $f->setEventDispatcher($this->dispatcher));
     }
 
@@ -412,15 +413,15 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->dispatcher->expects($this->exactly(2))
                          ->method('hasListeners')
                          ->with($this->logicalOr(
-                             'form.pre-validate',
-                             'form.post-validate'
+                             FormEvent::PRE_VALIDATE,
+                             FormEvent::POST_VALIDATE
                          ))
                          ->will($this->returnValue(true));
         $this->dispatcher->expects($this->exactly(2))
                          ->method('dispatch')
                          ->with($this->logicalOr(
-                             'form.pre-validate',
-                             'form.post-validate'
+                             FormEvent::PRE_VALIDATE,
+                             FormEvent::POST_VALIDATE
                          ));
         $f->submitForm(array());
     }

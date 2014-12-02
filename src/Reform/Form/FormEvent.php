@@ -13,9 +13,9 @@ use Reform\Form\Form;
 class FormEvent extends Event
 {
 
-    const CREATE = 'form.create';
-    const PRE_VALIDATE = 'form.pre-validate';
-    const POST_VALIDATE = 'form.post-validate';
+    const CREATE = 'reform.create';
+    const PRE_VALIDATE = 'reform.pre-validate';
+    const POST_VALIDATE = 'reform.post-validate';
 
     protected $form;
 
@@ -28,5 +28,4 @@ class FormEvent extends Event
     {
         return $this->form;
     }
-
 }
