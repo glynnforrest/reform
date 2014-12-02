@@ -3,10 +3,9 @@
 [![Build Status](https://travis-ci.org/glynnforrest/reform.png)](https://travis-ci.org/glynnforrest/reform)
 
 The Reform library makes it easy to create forms in PHP. Create a
-form, add rows and validation, then simply echo it to the
-browser. Everything else is done automatically - checking for
-submissions, validating data, setting values, creating labels and
-error messages, handling CSRF...
+form, add rows and validation, then call `render()`. Everything else
+is done automatically - checking for submissions, validating data,
+setting values, creating labels and error messages, handling CSRF...
 
 For greater control, the form can be rendered row-by-row, or even in
 individual pieces. You can use only a few features without the rest
@@ -38,7 +37,7 @@ $form->text('username');
 $form->password('password');
 $form->submit('login');
 
-echo $form;
+echo $form->render();
 ```
 
 Now with some validation.
@@ -74,10 +73,10 @@ if ($form->isValid()) {
 }
 //the form was either not submitted or failed the validation. $form
 //now has any submitted parameters bound to it, so all we need to do
-//is echo the form again, and any values and errors will be added
+//is render the form again. Any values and errors will be added
 //automatically.
 
-echo $form;
+echo $form->render();
 ```
 
 See `docs/` for further documentation.
