@@ -3,7 +3,7 @@
 namespace Reform\Tests\EventListener;
 
 use Reform\EventListener\HoneypotListener;
-use Reform\Form\FormEvent;
+use Reform\Event\FormEvent;
 use Reform\Form\Row\Honeypot;
 use Reform\Form\Form;
 use Reform\Event\HoneypotEvent;

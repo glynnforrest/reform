@@ -2,7 +2,7 @@
 
 namespace Reform\EventListener;
 
-use Reform\Form\FormEvent;
+use Reform\Event\FormEvent;
 use Reform\Form\Row\Hidden;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Reform\Csrf\CsrfChecker;

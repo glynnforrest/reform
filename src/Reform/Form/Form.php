@@ -7,6 +7,7 @@ use Reform\Validation\Validator;
 use Reform\Form\Row\AbstractRow;
 use Reform\Form\Renderer\BootstrapRenderer;
 use Reform\Form\Renderer\RendererInterface;
+use Reform\Event\FormEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 

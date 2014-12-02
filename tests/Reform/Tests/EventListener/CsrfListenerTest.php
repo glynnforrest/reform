@@ -3,7 +3,7 @@
 namespace Reform\Tests\EventListener;
 
 use Reform\EventListener\CsrfListener;
-use Reform\Form\FormEvent;
+use Reform\Event\FormEvent;
 use Reform\Form\Row\Hidden;
 use Reform\Event\CsrfEvent;
 use Reform\Tests\Fixtures\FooForm;

@@ -8,7 +8,7 @@ use Reform\Validation\Rule;
 use Reform\Form\Renderer\BootstrapRenderer;
 use Reform\Form\Row\Text;
 use Symfony\Component\HttpFoundation\Request;
-use Reform\Form\FormEvent;
+use Reform\Event\FormEvent;
 
 /**
  * FormTest

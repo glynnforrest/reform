@@ -2,7 +2,7 @@
 
 namespace Reform\EventListener;
 
-use Reform\Form\FormEvent;
+use Reform\Event\FormEvent;
 use Reform\Form\Row\Honeypot;
 use Reform\Exception\HoneypotException;
 use Reform\Event\HoneypotEvent;
