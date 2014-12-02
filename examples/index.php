@@ -13,14 +13,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Reform\Form\Renderer\BasicRenderer;
 use Reform\Form\Form;
 use Reform\Validation\Rule;
+use Reform\Form\Renderer\FoundationRenderer;
 
 $form = new Form(null);
-$form->text('text')->addRule(new Rule\Required());
-$form->number('number');
+$form->text('email')
+     ->addRule(new Rule\Required())
+     ->addRule(new Rule\Email());
+$form->number('number')
+     ->addRule(new Rule\Range(10, 100));
+
 $form->textarea('textarea');
 $form->checkbox('checkbox');
 $form->hidden('hidden');
-$form->password('password');
+$form->password('password')
+     ->addRule(new Rule\Required());
 $form->select('select')->setChoices(array('Apple' => 'apple', 'Orange' => 'orange', 'Grapes' => 'grapes'));
 $form->select('multiple_select')->setChoices(array('Apple' => 'apple', 'Orange' => 'orange', 'Grapes' => 'grapes'))->setMultiple();
 $form->submit('submit');
@@ -38,6 +44,7 @@ case 'twbs':
 case 'zurb':
     $css[] = 'foundation/css/normalize.css';
     $css[] = 'foundation/css/foundation.css';
+    $form->setDefaultRenderer(new FoundationRenderer());
     break;
 default:
     $form->setDefaultRenderer(new BasicRenderer());
@@ -77,6 +84,11 @@ default:
           <a href="?r=tables">Tables</a>
         </li>
       </ul>
+      <?php if ($form->isValid()): ?>
+        <div>
+          <p>Form submitted correctly</p>
+        </div>
+      <?php endif; ?>
       <?=$form->render();?>
     </div>
   </body>
