@@ -94,6 +94,18 @@ Install using composer:
 }
 ```
 
+## Viewing the examples
+
+```bash
+composer install
+cd examples/
+bower install
+php -S localhost:8000
+```
+Then visit `localhost:8000` in your web browser.
+
+These instructions assume you have composer, bower and PHP 5.4 installed.
+
 ## License
 
 MIT, see LICENSE for details.
