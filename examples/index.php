@@ -27,8 +27,19 @@ $form->checkbox('checkbox');
 $form->hidden('hidden');
 $form->password('password')
      ->addRule(new Rule\Required());
-$form->select('select')->setChoices(array('Apple' => 'apple', 'Orange' => 'orange', 'Grapes' => 'grapes'));
-$form->select('multiple_select')->setChoices(array('Apple' => 'apple', 'Orange' => 'orange', 'Grapes' => 'grapes'))->setMultiple();
+$fruit = array('Apple' => 'apple', 'Orange' => 'orange', 'Grapes' => 'grapes');
+$form->choice('select')
+     ->setChoices($fruit);
+$form->choice('multiple_select')
+     ->setChoices($fruit)
+     ->setMultiple();
+$form->choice('radios')
+     ->setDivided()
+     ->setChoices($fruit);
+$form->choice('checkboxes')
+     ->setDivided()
+     ->setMultiple()
+     ->setChoices($fruit);
 $form->submit('submit');
 
 $request = Request::createFromGlobals();
