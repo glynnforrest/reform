@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Select;
+use Reform\Form\Row\Choice;
 
 /**
- * SelectTest
+ * ChoiceTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class SelectTest extends RowTestCase
+class ChoiceTest extends RowTestCase
 {
     protected function getRow($name, $label = null, $attributes = array())
     {
-        return new Select($name, $label, $attributes);
+        return new Choice($name, $label, $attributes);
     }
 
     public function testGetAndSetChoices()
@@ -108,7 +108,7 @@ class SelectTest extends RowTestCase
 
     protected function createRow()
     {
-        return new Select('decision');
+        return new Choice('decision');
     }
 
     public function testInput()

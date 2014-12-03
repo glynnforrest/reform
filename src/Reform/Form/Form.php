@@ -101,7 +101,7 @@ class Form
         $this->registerType('hidden', 'Reform\Form\Row\Hidden');
         $this->registerType('number', 'Reform\Form\Row\Number');
         $this->registerType('password', 'Reform\Form\Row\Password');
-        $this->registerType('select', 'Reform\Form\Row\Select');
+        $this->registerType('choice', 'Reform\Form\Row\Choice');
         $this->registerType('submit', 'Reform\Form\Row\Submit');
         $this->registerType('textarea', 'Reform\Form\Row\Textarea');
     }

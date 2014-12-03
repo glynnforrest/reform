@@ -5,11 +5,11 @@ namespace Reform\Form\Row;
 use Reform\Form\Renderer\RendererInterface;
 
 /**
- * Select
+ * Choice
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class Select extends AbstractRow
+class Choice extends AbstractRow
 {
     protected $choices = array();
     protected $multiple;
