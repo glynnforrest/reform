@@ -3,6 +3,7 @@
 namespace Reform\Form\Row;
 
 use Reform\Form\Renderer\RendererInterface;
+use Reform\Helper\Html;
 
 /**
  * Choice
@@ -13,6 +14,7 @@ class Choice extends AbstractRow
 {
     protected $choices = array();
     protected $multiple;
+    protected $divided;
 
     /**
      * Allow this row to accept multiple choices.
@@ -22,6 +24,18 @@ class Choice extends AbstractRow
     public function setMultiple($multiple = true)
     {
         $this->multiple = $multiple;
+
+        return $this;
+    }
+
+    /**
+     * Set this row to render checkboxes and radios.
+     *
+     * @param bool $divided Allow or disallow divided inputs
+     */
+    public function setDivided($divided = true)
+    {
+        $this->divided = $divided;
 
         return $this;
     }
@@ -93,7 +107,39 @@ class Choice extends AbstractRow
     {
         $name = $this->multiple ? $this->name.'[]' : $this->name;
 
-        return $renderer->select($name, $this->choices, $this->value, $this->multiple, $this->attributes);
+        if (!$this->divided) {
+            return $renderer->select($name, $this->choices, $this->value, $this->multiple, $this->attributes);
+        }
+
+        $input_type = $this->multiple ? 'checkbox' : 'radio';
+
+        $html = '';
+        $i = 0;
+        foreach ($this->choices as $label => $choice) {
+
+            //if no label is supplied, guess a sensible version
+            if (is_numeric($label)) {
+                $label = $this->sensible($choice);
+            }
+
+            //this comparison and in_array do not check types intentionally
+            if ($this->value == $choice) {
+                $attributes = array_merge($this->attributes, array('checked'));
+            } elseif (is_array($this->value) && in_array($choice, $this->value)){
+                $attributes = array_merge($this->attributes, array('checked'));
+            } else {
+                $attributes = $this->attributes;
+            }
+
+            $attributes = array_merge($attributes, array('id' => $this->name . $i));
+
+            $input = $renderer->input($input_type, $name, $choice, $attributes);
+            // $html .= Html::label($this->name . $i, $label . $input);
+            $html .= $input . $label;
+            $i++;
+        }
+
+        return $html;
     }
 
     public function render(RendererInterface $renderer)
