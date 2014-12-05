@@ -8,6 +8,7 @@ use Reform\Form\Row\Hidden;
 use Reform\Event\CsrfEvent;
 use Reform\Tests\Fixtures\FooForm;
 use Reform\Exception\CsrfTokenException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * CsrfListenerTest
@@ -180,5 +181,16 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
             FormEvent::POST_VALIDATE => array('afterFormValidate'),
         );
         $this->assertSame($expected, CsrfListener::getSubscribedEvents());
+    }
+
+    public function testDispatch()
+    {
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($this->listener);
+        $dispatcher->dispatch(FormEvent::CREATE, $this->newEvent());
+        $this->form->submitForm(array());
+        $this->assertTrue($this->form->isValid());
+        $dispatcher->dispatch(FormEvent::POST_VALIDATE, $this->newEvent());
+        $this->assertTrue($this->form->hasTag(CsrfListener::INVALID));
     }
 }

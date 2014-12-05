@@ -8,6 +8,7 @@ use Reform\Form\Row\Honeypot;
 use Reform\Form\Form;
 use Reform\Event\HoneypotEvent;
 use Reform\Exception\HoneypotException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * HoneypotListenerTest
@@ -157,5 +158,16 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
             FormEvent::POST_VALIDATE => array('afterFormValidate'),
         );
         $this->assertSame($expected, HoneypotListener::getSubscribedEvents());
+    }
+
+    public function testDispatch()
+    {
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($this->listener);
+        $dispatcher->dispatch(FormEvent::CREATE, $this->newEvent());
+        $this->form->submitForm(array('rating' => 'spam'));
+        $this->assertTrue($this->form->isValid());
+        $dispatcher->dispatch(FormEvent::POST_VALIDATE, $this->newEvent());
+        $this->assertTrue($this->form->hasTag(HoneypotListener::CAUGHT));
     }
 }
