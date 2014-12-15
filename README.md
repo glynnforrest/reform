@@ -90,7 +90,7 @@ Install using composer:
 ```json
 {
     "require": {
-        "glynnforrest/reform": "0.3.*"
+        "glynnforrest/reform": "0.4.*"
     }
 }
 ```

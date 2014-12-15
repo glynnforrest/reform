@@ -1,6 +1,29 @@
 Changelog
 =========
 
+### 0.4.0 2014-12-15
+
+Version 0.4 is a big refactoring of how rows are created and rendered.
+
+* Form rows are now separated into separate classes. Currently
+  implemented types are text, textarea, password, checkbox, hidden,
+  number, select and submit.
+* Select input supports multiple values.
+* Introduction of RendererInterface for rendering form rows. Three
+  renderers are supported so far - BootstrapRenderer,
+  FoundationRenderer and BasicRenderer.
+* Forms can have arbitrary tags applied to them, with or without values.
+* Adding Honeypot row and HoneypotListener for catching spam form
+  submissions. Forms with a captured honeypot field have the
+  HoneypotListener::CAUGHT tag applied to them. Optionally,
+  glynnforrest/blockade can be used to handle spam submissions
+  automatically.
+* Importing CSRF functionality away from
+  glynnforrest/blockade. Blockade is now only required to have CSRF
+  violations handled automatically. Forms with a CSRF violation have
+  the CrsfListener::INVALID tag applied to them.
+* Adding some examples.
+
 ### 0.3.1 2014-08-18
 
 By using the Blockade security library, this version uses form events
