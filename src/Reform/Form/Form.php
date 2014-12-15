@@ -376,7 +376,7 @@ class Form
     /**
      * Get the FormRow instance with name $name.
      *
-     * @param string $name The name of the FormRow instance to get.
+     * @param string $name The name of the row
      */
     public function getRow($name)
     {
@@ -400,7 +400,22 @@ class Form
     }
 
     /**
-     * Set the value of multiple FormRows.
+     * Set the value of a row.
+     *
+     * @param string $name  The name of the row
+     * @param mixed  $value The value
+     *
+     * @return Form This Form instance.
+     */
+    public function setValue($name, $value)
+    {
+        $this->getRow($name)->setValue($value);
+
+        return $this;
+    }
+
+    /**
+     * Set the value of multiple rows.
      *
      * @param array $values         The array of values
      * @param bool  $ignore_unknown Whether to ignore any unknown form rows
@@ -418,6 +433,18 @@ class Form
         }
 
         return $this;
+    }
+
+    /**
+     * Get the value of a row.
+     *
+     * @param string $name The name of the row
+     *
+     * @return mixed The value
+     */
+    public function getValue($name)
+    {
+        return $this->getRow($name)->getValue();
     }
 
     /**

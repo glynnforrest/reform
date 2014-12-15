@@ -135,6 +135,16 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($attributes, $f->getAttributes());
     }
 
+    public function testGetAndSetValue()
+    {
+        $f = $this->createForm('/url');
+        $f->text('username')->setValue('glynn');
+        $this->assertSame('glynn', $f->getValue('username'));
+
+        $this->assertSame($f, $f->setValue('username', 'foo'));
+        $this->assertSame('foo', $f->getRow('username')->getValue());
+    }
+
     public function testGetAndSetValues()
     {
         $f = $this->createForm('/url');
