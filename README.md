@@ -1,6 +1,8 @@
 # Reform
 
-[![Build Status](https://travis-ci.org/glynnforrest/reform.png)](https://travis-ci.org/glynnforrest/reform)
+[![Build Status](https://img.shields.io/travis/glynnforrest/reform/master.svg)](https://travis-ci.org/glynnforrest/reform)
+[![Packagist](http://img.shields.io/packagist/v/glynnforrest/reform.svg)](https://packagist.org/packages/glynnforrest/reform)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 The Reform library makes it easy to create forms in PHP. Create a
 form, add rows and validation, then call `render()`. Everything else
