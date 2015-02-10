@@ -1,0 +1,36 @@
+<?php
+
+namespace Reform\Tests\Form\Renderer;
+
+use Reform\Form\Renderer\BootstrapRenderer;
+
+/**
+ * BootstrapRendererTest
+ *
+ * @author Glynn Forrest <me@glynnforrest.com>
+ **/
+class BootstrapRendererTest extends \PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        $this->renderer = new BootstrapRenderer();
+    }
+
+    public function testTextInput()
+    {
+        $expected = '<input type="text" id="username" name="username" value="" class="form-control" />';
+        $this->assertSame($expected, $this->renderer->input('text', 'username'));
+    }
+
+    public function testTextInputWithValue()
+    {
+        $expected = '<input type="text" id="username" name="username" value="glynn" class="form-control" />';
+        $this->assertSame($expected, $this->renderer->input('text', 'username', 'glynn'));
+    }
+
+    public function testTextInputWithAttributes()
+    {
+        $expected = '<input type="text" id="username" name="username" value="glynn" data-foo="bar" class="form-control" />';
+        $this->assertSame($expected, $this->renderer->input('text', 'username', 'glynn', array('data-foo' => 'bar')));
+    }
+}
