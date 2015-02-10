@@ -4,10 +4,10 @@
 [![Packagist](http://img.shields.io/packagist/v/glynnforrest/reform.svg)](https://packagist.org/packages/glynnforrest/reform)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
-The Reform library makes it easy to create forms in PHP. Create a
-form, add rows and validation, then call `render()`. Everything else
-is done automatically - checking for submissions, validating data,
-setting values, creating labels and error messages, handling CSRF...
+Reform makes it easy to create forms in PHP. Create a form, add rows
+and validation, then call `render()`. Everything else is done
+automatically - checking for submissions, validating data, setting
+values, creating labels and error messages, handling CSRF...
 
 For greater control, the form can be rendered row-by-row, or even in
 individual pieces. You can use only a few features without the rest
