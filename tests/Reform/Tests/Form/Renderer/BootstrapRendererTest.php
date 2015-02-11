@@ -33,4 +33,10 @@ class BootstrapRendererTest extends \PHPUnit_Framework_TestCase
         $expected = '<input type="text" id="username" name="username" value="glynn" data-foo="bar" class="form-control" />';
         $this->assertSame($expected, $this->renderer->input('text', 'username', 'glynn', array('data-foo' => 'bar')));
     }
+
+    public function testTextInputWithSuppliedClass()
+    {
+        $expected = '<input type="text" id="username" name="username" value="glynn" class="foo bar form-control" />';
+        $this->assertSame($expected, $this->renderer->input('text', 'username', 'glynn', array('class' => 'foo bar')));
+    }
 }

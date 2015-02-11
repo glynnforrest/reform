@@ -38,7 +38,7 @@ class BootstrapRenderer implements RendererInterface
             //and unset from attributes
             $attributes['class'] = 'btn btn-primary';
         } else {
-            $attributes['class'] = 'form-control';
+            $attributes = Html::addToAttributeArray($attributes, 'class', 'form-control');
         }
 
         return Html::input($type, $name, $value, $attributes);
