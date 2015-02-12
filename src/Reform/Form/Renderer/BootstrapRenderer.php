@@ -36,7 +36,7 @@ class BootstrapRenderer implements RendererInterface
             //check for a btn (or button-type for compat with others?)
             //attribute, apply if it's set (primary, success, danger)
             //and unset from attributes
-            $attributes['class'] = 'btn btn-primary';
+            $attributes = Html::addToAttributeArray($attributes, 'class', 'btn btn-primary');
         } else {
             $attributes = Html::addToAttributeArray($attributes, 'class', 'form-control');
         }
