@@ -46,7 +46,7 @@ class BootstrapRenderer implements RendererInterface
 
     public function select($name, array $values, $selected = null, $multiple = false, array $attributes = array())
     {
-        $attributes['class'] = 'form-control';
+        $attributes = Html::addToAttributeArray($attributes, 'class', 'form-control');
 
         return Html::select($name, $values, $selected, $multiple, $attributes);
     }

@@ -45,4 +45,18 @@ class BootstrapRendererTest extends \PHPUnit_Framework_TestCase
         $expected = '<input type="submit" id="save" name="save" value="SAVE" class="foo bar btn btn-primary" />';
         $this->assertSame($expected, $this->renderer->input('submit', 'save', 'SAVE', array('class' => 'foo bar')));
     }
+
+    public function testSelectWithSuppliedClass()
+    {
+        $expected = '<select id="choose" name="choose" class="foo bar form-control">';
+        $expected .= '<option value="foo">Foo</option>';
+        $expected .= '<option value="bar">Bar</option>';
+        $expected .= '</select>';
+
+        $choices = array(
+            'Foo' => 'foo',
+            'Bar' => 'bar',
+        );
+        $this->assertSame($expected, $this->renderer->select('choose', $choices, null, false, array('class' => 'foo bar')));
+    }
 }
