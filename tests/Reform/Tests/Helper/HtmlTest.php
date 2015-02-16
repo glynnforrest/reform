@@ -99,7 +99,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
 
     public function testSelect()
     {
-        $expected = '<select name="choice">';
+        $expected = '<select id="choice" name="choice">';
         $expected .= '<option value="foo">Foo</option>';
         $expected .= '</select>';
         $this->assertSame($expected, Html::select('choice', array('Foo' => 'foo')));
@@ -107,7 +107,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
 
     public function testSelectWithSelected()
     {
-        $expected = '<select name="choice">';
+        $expected = '<select id="choice" name="choice">';
         $expected .= '<option value="foo">Foo</option>';
         $expected .= '<option value="bar" selected="selected">Bar</option>';
         $expected .= '</select>';
@@ -117,7 +117,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
     public function testSelectUsesLooseTypeChecking()
     {
 
-        $expected = '<select name="choice">';
+        $expected = '<select id="choice" name="choice">';
         $expected .= '<option value="0" selected="selected">Zero</option>';
         $expected .= '<option value="1">One</option>';
         $expected .= '</select>';
@@ -128,7 +128,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
     public function testSelectWithStrangeTypes()
     {
         $choices = array(1.1 => 1, 2 => 2, '3' => 3, 4);
-        $expected = '<select name="choice">';
+        $expected = '<select id="choice" name="choice">';
         $expected .= '<option value="1" selected="selected">1</option>';
         $expected .= '<option value="2">2</option>';
         $expected .= '<option value="3">3</option>';
@@ -140,7 +140,7 @@ class HtmlTest extends \PHPUnit_Framework_TestCase
 
     public function testSelectMultiple()
     {
-        $expected = '<select name="choice" multiple="multiple" class="foo">';
+        $expected = '<select id="choice" name="choice" multiple="multiple" class="foo">';
         $expected .= '<option value="foo">Foo</option>';
         $expected .= '<option value="bar" selected="selected">Bar</option>';
         $expected .= '<option value="baz" selected="selected">Baz</option>';

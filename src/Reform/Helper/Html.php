@@ -168,7 +168,11 @@ class Html
      */
     public static function select($name, array $values, $selected = null, $multiple = false, array $attributes = array())
     {
-        $attr = $multiple ? array('name' => $name, 'multiple') : array('name' => $name);
+        $attr = array('id' => $name, 'name' => $name);
+        if ($multiple) {
+            $attr[] = 'multiple';
+        }
+
         $attributes = array_merge($attr, $attributes);
 
         if (is_array($selected) && !$multiple) {
