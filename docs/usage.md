@@ -55,3 +55,49 @@ The following types are registered automatically:
 * select -> `Reform\Form\Row\Select`
 * submit -> `Reform\Form\Row\Submit`
 * textarea -> `Reform\Form\Row\Textarea`
+
+## Rendering forms
+
+After creating a form, use `render()` to display it to the user.
+
+```php
+$form->render();
+//render the whole form as HTML
+```
+
+Individual rows can be rendered using `row()`, or just the form inputs
+using `input()`. Both methods expect the first argument to be the name
+of the row.
+
+```php
+$form->row('username');
+//render username row
+
+$form->input('username');
+//render username input
+```
+
+### Renderers
+
+Renderers are objects responsible for actually rendering the form. By
+default, Reform creates forms with Twitter Bootstrap styling using the
+`BootstrapRenderer`.
+
+To use another renderer, either inject it when calling `render()`,
+`row()` or `input()`, or set it using `setDefaultRenderer()`.
+
+```php
+$foundation = new Reform\Form\Renderer\FoundationRenderer();
+
+$form->render($foundation);
+$form->row('username', $foundation);
+$form->input('username', $foundation);
+
+//OR
+
+$form->setDefaultRenderer($foundation);
+
+$form->render();
+$form->row('username');
+$form->input('username');
+```
