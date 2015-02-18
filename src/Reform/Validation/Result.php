@@ -93,9 +93,19 @@ class Result
         return $errors;
     }
 
-    public function hasErrors($name)
+    /**
+     * Check if this result has any errors. If $name is supplied, only
+     * check for errors on that row. Otherwise, check all rows.
+     *
+     * @param  null|string $name The name of the row, if supplied
+     * @return bool
+     */
+    public function hasErrors($name = null)
     {
+        if (!$name) {
+            return !empty($this->errors);
+        }
+
         return isset($this->errors[$name]);
     }
-
 }
