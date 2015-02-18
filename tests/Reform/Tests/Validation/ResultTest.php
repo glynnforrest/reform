@@ -93,4 +93,16 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $r->getFirstErrors());
     }
 
+    public function testHasErrors()
+    {
+        $r = new Result();
+
+        $this->assertFalse($r->hasErrors('foo'));
+        $r->addError('foo', 'Foo is wrong');
+        $this->assertTrue($r->hasErrors('foo'));
+
+        $this->assertFalse($r->hasErrors('bar'));
+        $r->addError('bar', 'Bar is wrong');
+        $this->assertTrue($r->hasErrors('bar'));
+    }
 }
