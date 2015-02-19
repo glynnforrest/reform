@@ -62,10 +62,15 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     public function testGetFirstError()
     {
         $r = new Result();
+
+        $this->assertNull($r->getFirstError());
+        $this->assertNull($r->getFirstError('foo'));
+
         $required = 'Foo is required.';
-        $alpha = 'Foo is not alphabetical.';
         $r->addError('foo', $required);
         $this->assertSame($required, $r->getFirstError('foo'));
+
+        $alpha = 'Foo is not alphabetical.';
         $r->addError('foo', $alpha);
         $this->assertSame($required, $r->getFirstError('foo'));
         $this->assertSame($required, $r->getFirstError());

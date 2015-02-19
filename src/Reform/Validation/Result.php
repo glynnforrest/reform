@@ -52,7 +52,7 @@ class Result
         if (!$name) {
             $errors = array();
             //flatten the errors array into a single array
-            array_walk_recursive($this->errors, function($error) use (&$errors) {
+            array_walk_recursive($this->errors, function ($error) use (&$errors) {
                     $errors[] = $error;
                 }
             );
@@ -74,7 +74,7 @@ class Result
         }
 
         if (!isset($this->errors[$name])) {
-            return null;
+            return;
         }
 
         return current($this->errors[$name]);
