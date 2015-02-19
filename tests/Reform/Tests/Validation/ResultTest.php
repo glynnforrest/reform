@@ -108,4 +108,15 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $r->addError('bar', 'Bar is wrong');
         $this->assertTrue($r->hasErrors('bar'));
     }
+
+    public function testGetValues()
+    {
+        $values = array(
+            'foo' => 'Foo',
+            'bar' => 'Some bar',
+        );
+        $r = new Result($values);
+
+        $this->assertSame($values, $r->getValues());
+    }
 }
