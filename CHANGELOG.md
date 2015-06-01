@@ -1,6 +1,15 @@
 Changelog
 =========
 
+### 0.4.1 2015-06-01
+
+* Form#hasErrors() now supports checking all rows by leaving the $name
+  parameter empty.
+* BootstrapRenderer merges form-control with other classes, and btn
+  and btn-primary for submit buttons.
+* Html::select() includes an id attribute in generated markup.
+* Adding docs/usage.md.
+
 ### 0.4.0 2014-12-15
 
 Version 0.4 is a big refactoring of how rows are created and rendered.
