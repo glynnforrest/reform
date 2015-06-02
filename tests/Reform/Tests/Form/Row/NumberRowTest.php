@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Number;
+use Reform\Form\Row\NumberRow;
 
 /**
- * NumberTest
+ * NumberRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class NumberTest extends RowTestCase
+class NumberRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Number('num');
+        return new NumberRow('num');
     }
 
     public function testInput()
