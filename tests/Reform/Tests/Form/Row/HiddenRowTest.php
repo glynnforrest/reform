@@ -2,19 +2,19 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Hidden;
+use Reform\Form\Row\HiddenRow;
 use Reform\Helper\Html;
 
 /**
- * HiddenTest
+ * HiddenRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class HiddenTest extends RowTestCase
+class HiddenRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Hidden('token');
+        return new HiddenRow('token');
     }
 
     public function testInput()

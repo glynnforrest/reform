@@ -6,11 +6,11 @@ use Reform\Helper\Html;
 use Reform\Form\Renderer\RendererInterface;
 
 /**
- * Hidden
+ * HiddenRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class Hidden extends AbstractRow
+class HiddenRow extends AbstractRow
 {
     public function input(RendererInterface $renderer)
     {
