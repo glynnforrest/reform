@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Checkbox;
+use Reform\Form\Row\CheckboxRow;
 
 /**
- * CheckboxTest
+ * CheckboxRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class CheckboxTest extends RowTestCase
+class CheckboxRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Checkbox('accept');
+        return new CheckboxRow('accept');
     }
 
     public function testInputUnchecked()

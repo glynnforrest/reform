@@ -5,11 +5,11 @@ namespace Reform\Form\Row;
 use Reform\Form\Renderer\RendererInterface;
 
 /**
- * Checkbox
+ * CheckboxRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class Checkbox extends AbstractRow
+class CheckboxRow extends AbstractRow
 {
     public function input(RendererInterface $renderer)
     {
