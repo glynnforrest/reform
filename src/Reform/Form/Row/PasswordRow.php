@@ -5,11 +5,11 @@ namespace Reform\Form\Row;
 use Reform\Form\Renderer\RendererInterface;
 
 /**
- * Password
+ * PasswordRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class Password extends AbstractRow
+class PasswordRow extends AbstractRow
 {
 
     public function input(RendererInterface $renderer)

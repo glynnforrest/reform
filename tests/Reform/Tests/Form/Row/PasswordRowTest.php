@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Password;
+use Reform\Form\Row\PasswordRow;
 
 /**
- * PasswordTest
+ * PasswordRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class PasswordTest extends RowTestCase
+class PasswordRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Password('email');
+        return new PasswordRow('email');
     }
 
     public function testInput()
