@@ -6,11 +6,11 @@ use Reform\Helper\Html;
 use Reform\Form\Renderer\RendererInterface;
 
 /**
- * Honeypot
+ * HoneypotRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class Honeypot extends AbstractRow
+class HoneypotRow extends AbstractRow
 {
     protected $visible;
 

@@ -2,21 +2,21 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Honeypot;
+use Reform\Form\Row\HoneypotRow;
 
 /**
- * HoneypotTest
+ * HoneypotRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class HoneypotTest extends RowTestCase
+class HoneypotRowTest extends RowTestCase
 {
     protected $input_html = '<input type="text" id="honeypot" name="honeypot" value="" style="display: none;" />';
     protected $input_visible_html = '<input type="text" id="honeypot" name="honeypot" value="" />';
 
     protected function createRow()
     {
-        return new Honeypot('honeypot');
+        return new HoneypotRow('honeypot');
     }
 
     public function testInput()

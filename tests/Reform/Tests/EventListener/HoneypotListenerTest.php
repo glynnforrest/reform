@@ -4,7 +4,7 @@ namespace Reform\Tests\EventListener;
 
 use Reform\EventListener\HoneypotListener;
 use Reform\Event\FormEvent;
-use Reform\Form\Row\Honeypot;
+use Reform\Form\Row\HoneypotRow;
 use Reform\Form\Form;
 use Reform\Event\HoneypotEvent;
 use Reform\Exception\HoneypotException;
@@ -36,7 +36,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->form->getTag(HoneypotListener::ROW));
         $this->listener->onFormCreate($this->newEvent());
         $this->assertSame('rating', $this->form->getTag(HoneypotListener::ROW));
-        $this->assertInstanceOf('Reform\Form\Row\Honeypot', $this->form->getRow('rating'));
+        $this->assertInstanceOf('Reform\Form\Row\HoneypotRow', $this->form->getRow('rating'));
     }
 
     public function testSpecifiedFieldIsAppliedToForm()
@@ -45,7 +45,7 @@ class HoneypotListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->form->getTag(HoneypotListener::ROW));
         $this->listener->onFormCreate($this->newEvent());
         $this->assertSame('foo', $this->form->getTag(HoneypotListener::ROW));
-        $this->assertInstanceOf('Reform\Form\Row\Honeypot', $this->form->getRow('foo'));
+        $this->assertInstanceOf('Reform\Form\Row\HoneypotRow', $this->form->getRow('foo'));
     }
 
     public function testHoneypotCaught()

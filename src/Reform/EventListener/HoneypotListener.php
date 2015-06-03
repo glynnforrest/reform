@@ -3,7 +3,7 @@
 namespace Reform\EventListener;
 
 use Reform\Event\FormEvent;
-use Reform\Form\Row\Honeypot;
+use Reform\Form\Row\HoneypotRow;
 use Reform\Exception\HoneypotException;
 use Reform\Event\HoneypotEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,7 +35,7 @@ class HoneypotListener implements EventSubscriberInterface
 
     public function onFormCreate(FormEvent $event)
     {
-        $input = new Honeypot($this->form_field);
+        $input = new HoneypotRow($this->form_field);
         $input->setLabel($this->form_label);
         $form = $event->getForm();
         $form->addRow($input);
