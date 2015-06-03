@@ -4,7 +4,7 @@ namespace Reform\Tests\EventListener;
 
 use Reform\EventListener\CsrfListener;
 use Reform\Event\FormEvent;
-use Reform\Form\Row\Hidden;
+use Reform\Form\Row\HiddenRow;
 use Reform\Event\CsrfEvent;
 use Reform\Tests\Fixtures\FooForm;
 use Reform\Exception\CsrfTokenException;
@@ -46,7 +46,7 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onFormCreate($this->newEvent());
         $this->assertSame('_token', $this->form->getTag(CsrfListener::ROW));
         $row = $this->form->getRow('_token');
-        $this->assertInstanceOf('Reform\Form\Row\Hidden', $row);
+        $this->assertInstanceOf('Reform\Form\Row\HiddenRow', $row);
         $this->assertSame('csrf_token', $row->getValue());
         $this->assertSame('_token', $row->getName());
     }
@@ -63,7 +63,7 @@ class CsrfListenerTest extends \PHPUnit_Framework_TestCase
         $listener->onFormCreate($this->newEvent());
         $this->assertSame('__csrf_token', $this->form->getTag(CsrfListener::ROW));
         $row = $this->form->getRow('__csrf_token');
-        $this->assertInstanceOf('Reform\Form\Row\Hidden', $row);
+        $this->assertInstanceOf('Reform\Form\Row\HiddenRow', $row);
         $this->assertSame('csrf_token', $row->getValue());
         $this->assertSame('__csrf_token', $row->getName());
     }

@@ -3,7 +3,7 @@
 namespace Reform\EventListener;
 
 use Reform\Event\FormEvent;
-use Reform\Form\Row\Hidden;
+use Reform\Form\Row\HiddenRow;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Reform\Csrf\CsrfChecker;
 use Reform\Exception\CsrfTokenException;
@@ -38,7 +38,7 @@ class CsrfListener implements EventSubscriberInterface
         $form = $event->getForm();
         $id = $form->getId();
         $this->checker->maybeInit($id);
-        $input = new Hidden($this->form_field);
+        $input = new HiddenRow($this->form_field);
         $input->setValue($this->checker->get($id));
         $form->addRow($input);
         $form->addTag(self::ROW, $this->form_field);
