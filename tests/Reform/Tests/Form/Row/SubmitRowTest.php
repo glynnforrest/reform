@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Submit;
+use Reform\Form\Row\SubmitRow;
 
 /**
- * SubmitTest
+ * SubmitRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class SubmitTest extends RowTestCase
+class SubmitRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Submit('submit-row');
+        return new SubmitRow('submit-row');
     }
 
     public function testInput()
