@@ -6,11 +6,11 @@ use Reform\Helper\Html;
 use Reform\Form\Renderer\RendererInterface;
 
 /**
- * Textarea
+ * TextareaRow
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class Textarea extends AbstractRow
+class TextareaRow extends AbstractRow
 {
 
     public function input(RendererInterface $renderer)

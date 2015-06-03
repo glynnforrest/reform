@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Textarea;
+use Reform\Form\Row\TextareaRow;
 
 /**
- * TextareaTest
+ * TextareaRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class TextareaTest extends RowTestCase
+class TextareaRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Textarea('comment');
+        return new TextareaRow('comment');
     }
 
     public function testInput()
