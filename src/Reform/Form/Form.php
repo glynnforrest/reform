@@ -96,14 +96,14 @@ class Form
 
     protected function init()
     {
-        $this->registerType('text', 'Reform\Form\Row\Text');
-        $this->registerType('checkbox', 'Reform\Form\Row\Checkbox');
-        $this->registerType('hidden', 'Reform\Form\Row\Hidden');
-        $this->registerType('number', 'Reform\Form\Row\Number');
-        $this->registerType('password', 'Reform\Form\Row\Password');
-        $this->registerType('select', 'Reform\Form\Row\Select');
-        $this->registerType('submit', 'Reform\Form\Row\Submit');
-        $this->registerType('textarea', 'Reform\Form\Row\Textarea');
+        $this->registerType('text', 'Reform\Form\Row\TextRow');
+        $this->registerType('checkbox', 'Reform\Form\Row\CheckboxRow');
+        $this->registerType('hidden', 'Reform\Form\Row\HiddenRow');
+        $this->registerType('number', 'Reform\Form\Row\NumberRow');
+        $this->registerType('password', 'Reform\Form\Row\PasswordRow');
+        $this->registerType('select', 'Reform\Form\Row\SelectRow');
+        $this->registerType('submit', 'Reform\Form\Row\SubmitRow');
+        $this->registerType('textarea', 'Reform\Form\Row\TextareaRow');
     }
 
     /**

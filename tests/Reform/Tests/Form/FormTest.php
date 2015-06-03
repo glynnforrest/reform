@@ -6,7 +6,7 @@ use Reform\Form\Form;
 use Reform\Helper\Html;
 use Reform\Validation\Rule;
 use Reform\Form\Renderer\BootstrapRenderer;
-use Reform\Form\Row\Text;
+use Reform\Form\Row\TextRow;
 use Symfony\Component\HttpFoundation\Request;
 use Reform\Event\FormEvent;
 
@@ -58,7 +58,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testCreateSimpleForm()
     {
         $f = $this->createForm('/post/url', 'get');
-        $row = new Text('foo');
+        $row = new TextRow('foo');
         $f->addRow($row);
 
         $expected = Html::openTag('form', array('action' => '/post/url', 'method' => 'GET'));
@@ -75,7 +75,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testSimpleFormPassInRenderer()
     {
         $f = $this->createForm('/post/url', 'get');
-        $row = new Text('foo');
+        $row = new TextRow('foo');
         $f->addRow($row);
 
         $expected = Html::openTag('form', array('action' => '/post/url', 'method' => 'GET'));
@@ -217,8 +217,8 @@ class FormTest extends \PHPUnit_Framework_TestCase
     public function testGetRow()
     {
         $f = $this->createForm('/url');
-        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->text('username'));
-        $this->assertInstanceOf('\Reform\Form\Row\Text', $f->getRow('username'));
+        $this->assertInstanceOf('\Reform\Form\Row\TextRow', $f->text('username'));
+        $this->assertInstanceOf('\Reform\Form\Row\TextRow', $f->getRow('username'));
     }
 
     public function testRowIsReturnedByReference()
