@@ -2,18 +2,18 @@
 
 namespace Reform\Tests\Form\Row;
 
-use Reform\Form\Row\Text;
+use Reform\Form\Row\TextRow;
 
 /**
- * TextTest
+ * TextRowTest
  *
  * @author Glynn Forrest <me@glynnforrest.com>
  **/
-class TextTest extends RowTestCase
+class TextRowTest extends RowTestCase
 {
     protected function createRow()
     {
-        return new Text('email');
+        return new TextRow('email');
     }
 
     public function testInput()
