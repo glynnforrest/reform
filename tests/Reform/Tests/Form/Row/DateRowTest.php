@@ -46,4 +46,14 @@ class DateRowTest extends RowTestCase
         $this->row->submitForm($values);
         $this->assertEquals(new \DateTime('2015/06/04'), $this->row->getValue());
     }
+
+    public function testSubmitReturnsNull()
+    {
+        $values = array(
+            'birthday' => ''
+        );
+        $this->assertNull($this->row->getValue());
+        $this->row->submitForm($values);
+        $this->assertNull($this->row->getValue());
+    }
 }
