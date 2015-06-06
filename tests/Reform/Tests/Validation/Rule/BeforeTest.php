@@ -29,7 +29,6 @@ class BeforeTest extends RuleTest
             array(new \DateTime('2000-01-01'), false),
             array(new \DateTime('1999-12-31'), true),
             array(new \DateTime('1999-01-31'), true),
-            array(new \DateTime('2000-01-01'), false),
         );
     }
 }
