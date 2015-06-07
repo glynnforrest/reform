@@ -22,7 +22,8 @@ $form->text('email')
 $form->number('number')
      ->addRule(new Rule\Range(10, 100));
 
-$form->date('date');
+$form->date('date')
+    ->addRule(new Rule\Before(new \DateTime()));
 
 $form->textarea('textarea');
 $form->checkbox('checkbox');
