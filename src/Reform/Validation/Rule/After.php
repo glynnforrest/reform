@@ -12,6 +12,7 @@ use Reform\Validation\Result;
 class After extends AbstractRule
 {
     protected $datetime;
+    protected $message = ':name must be after :date';
 
     public function __construct(\DateTime $datetime = null)
     {
@@ -24,6 +25,8 @@ class After extends AbstractRule
             return true;
         }
 
-        return $this->fail($result, $name, $value);
+        return $this->fail($result, $name, $value, array(
+            ':date' => $this->datetime->format('F j, Y')
+        ));
     }
 }
