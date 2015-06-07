@@ -12,7 +12,7 @@ use Reform\Validation\Result;
 abstract class AbstractRule
 {
 
-    protected $message;
+    protected $message = ':name is invalid.';
 
     abstract public function validate(Result $result, $name, $value, array $input = array());
 
