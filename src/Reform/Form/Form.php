@@ -105,6 +105,7 @@ class Form
         $this->registerType('submit', 'Reform\Form\Row\SubmitRow');
         $this->registerType('textarea', 'Reform\Form\Row\TextareaRow');
         $this->registerType('date', 'Reform\Form\Row\DateRow');
+        $this->registerType('datetime', 'Reform\Form\Row\DateTimeRow');
     }
 
     /**
