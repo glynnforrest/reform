@@ -29,4 +29,10 @@ class MatchesTest extends \PHPUnit_Framework_TestCase
         $result = $this->getMock('Reform\Validation\Result');
         $this->assertFalse($this->rule->validate($result, 'first', 'foo', array('second' => 'bar')));
     }
+
+    public function testOtherFieldNotInInput()
+    {
+        $result = $this->getMock('Reform\Validation\Result');
+        $this->assertFalse($this->rule->validate($result, 'first', 'foo'));
+    }
 }
