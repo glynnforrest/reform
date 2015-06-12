@@ -30,6 +30,9 @@ $form->datetime('datetime')
     ->addRule(new Rule\Before(new \DateTime()))
     ->addRule(new Rule\After(new \DateTime('2014-01-01')));
 
+$form->text('colour')
+    ->addRule(new Rule\Hex());
+
 $form->textarea('textarea');
 $form->checkbox('checkbox');
 $form->hidden('hidden');
